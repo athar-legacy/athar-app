@@ -18,7 +18,7 @@
             font-size: 1.4rem; text-align: center; color: #fff;
             text-shadow: 0 0 15px rgba(46, 204, 113, 0.8);
             padding: 20px; border-left: 2px solid #2ecc71; border-right: 2px solid #00f2ff;
-            max-width: 80%;
+            max-width: 80%; line-height: 1.6;
         }
 
         /* البطاقة */
@@ -29,7 +29,7 @@
             width: 85%; max-width: 380px; 
             z-index: 2; backdrop-filter: blur(15px);
             box-shadow: 0 0 40px rgba(46, 204, 113, 0.1);
-            text-align: center; display: none; /* تظهر بعد الترحيب */
+            text-align: center; display: none;
         }
 
         h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px #2ecc71; color: #fff; }
@@ -85,7 +85,7 @@
         }, 2500);
     };
 
-    // 2. كود الأسلاك (Microchip)
+    // 2. كود الأسلاك الضوئية
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
@@ -113,8 +113,8 @@
     }
     init(); animate();
 
-    // 3. الإرسال (باستخدام الرابط الجديد)
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbybEv7L3IsY1UF4qPIMyHMFRFpSL4yDSlyshPjAlD5e5uemB0S-kQKz3n2Y8PhsFCAS/exec';
+    // 3. الإرسال للرابط الجديد
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbzyqhUd-xraOvRPwFakor_h0Mr6fFbwHXfgjIGMvPJchjDsVANY3QdAW-TPDnSPM8_o/exec';
 
     document.getElementById('activationForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -129,10 +129,10 @@
             body: new URLSearchParams(formData)
         })
         .then(() => {
-            alert('تم التفعيل بنجاح! شوفي الجدول الآن.');
+            alert('تم التفعيل بنجاح! إرثك الرقمي الآن متصل بالخلود.');
             this.reset();
         })
-        .catch(() => alert('حدث خطأ، تأكدي من الإنترنت وحاولي مجدداً'))
+        .catch(() => alert('حدث خطأ، يرجى المحاولة مجدداً'))
         .finally(() => {
             btn.disabled = false;
             btn.innerText = 'بث الحياة في أثرك';
