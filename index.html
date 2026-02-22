@@ -57,7 +57,7 @@
 </div>
 
 <script>
-    // --- تأثير المايكرو شيب ---
+    // --- كود تأثير المايكرو شيب ---
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
@@ -66,7 +66,7 @@
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
         particles = [];
-        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        for (let i = 0; i < 70; i++) particles.push(new Particle());
     }
 
     class Particle {
@@ -74,7 +74,7 @@
         reset() {
             this.x = Math.random() * w;
             this.y = Math.random() * h;
-            this.v = Math.random() * 2 + 0.5;
+            this.v = Math.random() * 1.5 + 0.5;
             this.color = Math.random() > 0.5 ? '#2ecc71' : '#00f2ff';
             this.dir = Math.random() > 0.5 ? 'h' : 'v';
         }
@@ -88,7 +88,7 @@
     }
 
     function animate() {
-        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
         ctx.fillRect(0, 0, w, h);
         particles.forEach(p => p.draw());
         requestAnimationFrame(animate);
@@ -97,9 +97,8 @@
     window.addEventListener('resize', init);
     init(); animate();
 
-    // --- ربط قوقل شيت ---
-    // ضعي رابطك الجديد هنا بين علامتي التنصيص
-    const webAppUrl = 'رابط_قوقل_الجديد_هنا';
+    // --- ربط قوقل شيت (رابطك تم وضعه هنا) ---
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxwHcn6x2oJYh2szDHgjaKDAOJicETsHgOdE1H0VNYgOKQgPzEmWY08HmDnlIdeurIp/exec';
 
     document.getElementById('activationForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -116,10 +115,10 @@
 
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
         .then(() => {
-            alert('تم التفعيل بنجاح! الإرث الرقمي الآن متصل بالجدول.');
+            alert('تم التفعيل بنجاح! الإرث الرقمي الآن متصل.');
             document.getElementById('activationForm').reset();
         })
-        .catch(() => alert('عفواً، تأكدي من الربط وحاولي مرة أخرى'))
+        .catch(() => alert('عفواً، حاول مرة أخرى'))
         .finally(() => { 
             btn.disabled = false; 
             btn.innerText = 'بث الحياة في الأثر'; 
