@@ -10,18 +10,121 @@
         
         .card { 
             background: rgba(5, 5, 5, 0.9); 
-            padding: 2.5rem; border-radius: 25px; 
+            padding: 2.2rem; border-radius: 25px; 
             border: 1px solid rgba(46, 204, 113, 0.4); 
             width: 85%; max-width: 380px; 
             z-index: 2; backdrop-filter: blur(15px);
-            box-shadow: 0 0 50px rgba(46, 204, 113, 0.2);
+            box-shadow: 0 0 40px rgba(46, 204, 113, 0.2);
             text-align: center;
         }
 
-        h1 { margin: 0; font-size: 2.8rem; text-shadow: 0 0 15px #2ecc71; letter-spacing: 2px; }
-        .tagline { color: #00f2ff; font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 25px; opacity: 0.8; }
+        h1 { margin: 0; font-size: 2.6rem; text-shadow: 0 0 15px #2ecc71; letter-spacing: 2px; }
+        .tagline { color: #00f2ff; font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 20px; opacity: 0.8; }
 
         input { 
             width: 100%; padding: 12px; margin: 8px 0; 
-            background: rgba(15, 15, 15, 0.8); border: 1px solid #222; 
-            color: #fff; border-radius: 10px; box-sizing:
+            background: rgba(0, 0, 0, 0.6); border: 1px solid #222; 
+            color: #fff; border-radius: 10px; box-sizing: border-box; 
+            text-align: right; transition: 0.3s; font-size: 0.9rem;
+        }
+        input:focus { border-color: #00f2ff; outline: none; box-shadow: 0 0 8px rgba(0, 242, 255, 0.3); }
+
+        button { 
+            width: 100%; padding: 15px; margin-top: 15px;
+            background: linear-gradient(135deg, #2ecc71, #00f2ff);
+            border: none; border-radius: 10px; font-weight: bold; cursor: pointer;
+            color: #000; font-size: 1.1rem; transition: 0.4s;
+        }
+        button:hover { transform: scale(1.02); filter: brightness(1.2); }
+        button:disabled { background: #444; cursor: not-allowed; opacity: 0.6; }
+    </style>
+</head>
+<body>
+
+<canvas id="chipCanvas"></canvas>
+
+<div class="card">
+    <h1>أثَـــر</h1>
+    <div class="tagline">ATHAR LEGACY</div>
+    <form id="activationForm">
+        <input type="text" id="userName" placeholder="الاسم الكامل *" required>
+        <input type="tel" id="userPhone" placeholder="رقم الجوال *" required>
+        <input type="email" id="userEmail" placeholder="البريد الإلكتروني (اختياري)">
+        <input type="text" id="userAccount" placeholder="حساب التواصل (إنستقرام/تويتر)">
+        <input type="text" id="itemCode" placeholder="كود التفعيل الذهبي *" required>
+        <button type="submit" id="submitBtn">بث الحياة في الأثر</button>
+    </form>
+</div>
+
+<script>
+    // --- تأثير المايكرو شيب ---
+    const canvas = document.getElementById('chipCanvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, particles = [];
+
+    function init() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        particles = [];
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+    }
+
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * w;
+            this.y = Math.random() * h;
+            this.v = Math.random() * 2 + 0.5;
+            this.color = Math.random() > 0.5 ? '#2ecc71' : '#00f2ff';
+            this.dir = Math.random() > 0.5 ? 'h' : 'v';
+        }
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 5; ctx.shadowColor = this.color;
+            ctx.fillRect(this.x, this.y, 2, 2);
+            if (this.dir === 'h') this.x += this.v; else this.y += this.v;
+            if (this.x > w || this.y > h) this.reset();
+        }
+    }
+
+    function animate() {
+        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillRect(0, 0, w, h);
+        particles.forEach(p => p.draw());
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', init);
+    init(); animate();
+
+    // --- ربط قوقل شيت ---
+    // ضعي رابطك الجديد هنا بين علامتي التنصيص
+    const webAppUrl = 'رابط_قوقل_الجديد_هنا';
+
+    document.getElementById('activationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = 'جاري بث الحياة...';
+
+        const params = new URLSearchParams();
+        params.append('name', document.getElementById('userName').value);
+        params.append('phone', document.getElementById('userPhone').value);
+        params.append('email', document.getElementById('userEmail').value);
+        params.append('account', document.getElementById('userAccount').value);
+        params.append('itemCode', document.getElementById('itemCode').value);
+
+        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
+        .then(() => {
+            alert('تم التفعيل بنجاح! الإرث الرقمي الآن متصل بالجدول.');
+            document.getElementById('activationForm').reset();
+        })
+        .catch(() => alert('عفواً، تأكدي من الربط وحاولي مرة أخرى'))
+        .finally(() => { 
+            btn.disabled = false; 
+            btn.innerText = 'بث الحياة في الأثر'; 
+        });
+    });
+</script>
+</body>
+</html>
