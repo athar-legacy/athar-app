@@ -5,86 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أثر - تفعيل الإرث الرقمي</title>
     <style>
-        body { 
-            background-color: #000; 
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; margin: 0; color: #fff;
-            overflow: hidden; position: relative;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        .line { 
-            position: absolute; 
-            background: linear-gradient(90deg, transparent, #2ecc71, #00f2ff, transparent); 
-            height: 1.5px; width: 100%; opacity: 0.4; 
-            animation: moveLine 6s linear infinite; 
-        }
-        @keyframes moveLine { 0% { transform: translateY(-100vh); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(100vh); opacity: 0; } }
-
-        .card { 
-            background: rgba(10, 10, 10, 0.9); 
-            padding: 2.2rem; border-radius: 30px; 
-            box-shadow: 0 0 60px rgba(46, 204, 113, 0.2); 
-            width: 85%; max-width: 400px; text-align: center;
-            border: 1px solid rgba(46, 204, 113, 0.3);
-            z-index: 2; backdrop-filter: blur(15px);
-        }
-
-        h1 { font-size: 2.5rem; margin: 0; color: #fff; text-shadow: 0 0 20px #2ecc71; }
-        .tagline { color: #00f2ff; font-size: 0.7rem; letter-spacing: 4px; margin-bottom: 20px; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
+        .card { 
+            background: rgba(5, 5, 5, 0.9); 
+            padding: 2.2rem; border-radius: 25px; 
+            border: 1px solid rgba(46, 204, 113, 0.4); 
+            width: 85%; max-width: 380px; 
+            z-index: 2; backdrop-filter: blur(15px);
+            box-shadow: 0 0 40px rgba(46, 204, 113, 0.2);
+            text-align: center;
+        }
+
+        h1 { margin: 0; font-size: 2.6rem; text-shadow: 0 0 15px #2ecc71; letter-spacing: 2px; }
+        .tagline { color: #00f2ff; font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 20px; opacity: 0.8; }
+
         input { 
             width: 100%; padding: 12px; margin: 8px 0; 
-            border-radius: 12px; border: 1px solid #1a1a1a; 
-            background: #000; color: #fff; box-sizing: border-box;
-            transition: 0.3s; font-size: 0.9rem; text-align: right;
+            background: rgba(0, 0, 0, 0.6); border: 1px solid #222; 
+            color: #fff; border-radius: 10px; box-sizing: border-box; 
+            text-align: right; transition: 0.3s;
         }
-        input:focus { border-color: #00f2ff; box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); outline: none; }
+        input:focus { border-color: #00f2ff; outline: none; box-shadow: 0 0 8px rgba(0, 242, 255, 0.3); }
 
         button { 
-            width: 100%; padding: 15px; 
-            background: linear-gradient(135deg, #2ecc71, #00f2ff); 
-            border: none; border-radius: 12px; 
-            font-weight: bold; cursor: pointer; margin-top: 15px; 
+            width: 100%; padding: 15px; margin-top: 15px;
+            background: linear-gradient(135deg, #2ecc71, #00f2ff);
+            border: none; border-radius: 10px; font-weight: bold; cursor: pointer;
             color: #000; font-size: 1.1rem; transition: 0.4s;
         }
-        button:hover { transform: scale(1.03); filter: brightness(1.1); }
-        button:disabled { background: #444; color: #888; }
+        button:hover { transform: scale(1.02); filter: brightness(1.2); }
+        button:disabled { background: #444; cursor: not-allowed; opacity: 0.6; }
     </style>
 </head>
 <body>
-    <div class="lines-container" id="lines"></div>
-    <div class="card">
-        <h1>أثَـــر</h1>
-        <div class="tagline">ATHAR LEGACY</div>
-        <form id="activationForm">
-            <input type="text" id="userName" placeholder="الاسم الكامل *" required>
-            <input type="tel" id="userPhone" placeholder="رقم الجوال *" required>
-            <input type="email" id="userEmail" placeholder="البريد الإلكتروني">
-            <input type="text" id="userAccount" placeholder="حساب التواصل (إنستقرام/تويتر)">
-            <input type="text" id="itemCode" placeholder="كود التفعيل الذهبي *" required>
-            <button type="submit" id="submitBtn">بث الحياة في الأثر</button>
-        </form>
-    </div>
+
+<canvas id="chipCanvas"></canvas>
+
+<div class="card">
+    <h1>أثَـــر</h1>
+    <div class="tagline">ATHAR LEGACY</div>
+    <form id="activationForm">
+        <input type="text" id="userName" placeholder="الاسم الكامل *" required>
+        <input type="tel" id="userPhone" placeholder="رقم الجوال *" required>
+        <input type="email" id="userEmail" placeholder="البريد الإلكتروني (اختياري)">
+        <input type="text" id="userAccount" placeholder="حساب التواصل (إنستقرام/تويتر)">
+        <input type="text" id="itemCode" placeholder="كود التفعيل الذهبي *" required>
+        <button type="submit" id="submitBtn">بث الحياة في الأثر</button>
+    </form>
+</div>
 
 <script>
-    const container = document.getElementById('lines');
-    for (let i = 0; i < 20; i++) {
-        const line = document.createElement('div');
-        line.className = 'line';
-        line.style.top = Math.random() * 100 + 'vh';
-        line.style.animationDelay = Math.random() * 6 + 's';
-        container.appendChild(line);
+    // تأثير المايكرو شيب
+    const canvas = document.getElementById('chipCanvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, particles = [];
+
+    function init() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        particles = [];
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
     }
 
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwEW8QbHJXCv0qdoZEOrA_t3KLLKspBeyUSwmNqaj1_JLRjUMtDZvMPemihQsOEAuks/exec'; 
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * w;
+            this.y = Math.random() * h;
+            this.v = Math.random() * 2 + 0.5;
+            this.color = Math.random() > 0.5 ? '#2ecc71' : '#00f2ff';
+            this.dir = Math.random() > 0.5 ? 'h' : 'v';
+        }
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, 2, 2);
+            if (this.dir === 'h') this.x += this.v; else this.y += this.v;
+            if (this.x > w || this.y > h) this.reset();
+        }
+    }
+
+    function animate() {
+        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillRect(0, 0, w, h);
+        particles.forEach(p => p.draw());
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', init);
+    init(); animate();
+
+    // ربط قوقل شيت (رابطك الجديد تم وضعه هنا)
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxwHcn6x2oJYh2szDHgjaKDAOJicETsHgOdE1H0VNYgOKQgPzEmWY08HmDnlIdeurIp/exec';
 
     document.getElementById('activationForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
-        btn.innerText = 'جاري التفعيل...';
+        btn.innerText = 'جاري بث الحياة...';
 
         const params = new URLSearchParams();
         params.append('name', document.getElementById('userName').value);
@@ -95,13 +114,13 @@
 
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
         .then(() => {
-            alert('تم تفعيل أثرك بنجاح!');
+            alert('تم التفعيل بنجاح! الإرث الرقمي الآن متصل بالجدول.');
             document.getElementById('activationForm').reset();
         })
-        .catch(() => alert('حدث خطأ'))
-        .finally(() => {
-            btn.disabled = false;
-            btn.innerText = 'بث الحياة في الأثر';
+        .catch(() => alert('عفواً، حاول مرة أخرى'))
+        .finally(() => { 
+            btn.disabled = false; 
+            btn.innerText = 'بث الحياة في الأثر'; 
         });
     });
 </script>
