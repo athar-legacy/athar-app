@@ -57,7 +57,7 @@
 </div>
 
 <script>
-    // --- كود تأثير المايكرو شيب ---
+    // --- تأثير المايكرو شيب (خطوط ضوئية بزوايا) ---
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
@@ -97,8 +97,8 @@
     window.addEventListener('resize', init);
     init(); animate();
 
-    // --- ربط قوقل شيت (رابطك تم وضعه هنا) ---
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxwHcn6x2oJYh2szDHgjaKDAOJicETsHgOdE1H0VNYgOKQgPzEmWY08HmDnlIdeurIp/exec';
+    // --- ربط قوقل شيت (الرابط الأخير) ---
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxtgH5qGjzxGsX0IqeyYGXIXpVD8wNzOQyg1QWD-gUD0xmizmYYEAuyjXrTCxnYpAA/exec';
 
     document.getElementById('activationForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -115,10 +115,10 @@
 
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
         .then(() => {
-            alert('تم التفعيل بنجاح! الإرث الرقمي الآن متصل.');
+            alert('تم التفعيل بنجاح! الإرث الرقمي الآن متصل بالجدول.');
             document.getElementById('activationForm').reset();
         })
-        .catch(() => alert('عفواً، حاول مرة أخرى'))
+        .catch(() => alert('عفواً، حدث خطأ، يرجى المحاولة مرة أخرى'))
         .finally(() => { 
             btn.disabled = false; 
             btn.innerText = 'بث الحياة في الأثر'; 
