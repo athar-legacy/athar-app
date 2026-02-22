@@ -5,116 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أثر - تفعيل الإرث الرقمي</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #000; 
-            background-image: radial-gradient(circle at center, #0a1a0a 0%, #000 100%);
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; margin: 0; color: #fff;
-            overflow-x: hidden;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); text-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-            50% { transform: scale(1.05); text-shadow: 0 0 25px rgba(46, 204, 113, 0.6); }
-            100% { transform: scale(1); text-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-        }
-        .card { 
-            background: rgba(10, 10, 10, 0.95); 
-            padding: 2.5rem; border-radius: 30px; 
-            box-shadow: 0 0 50px rgba(46, 204, 113, 0.15); 
-            width: 85%; max-width: 420px; text-align: center;
-            border: 1px solid rgba(46, 204, 113, 0.3);
-            margin: 20px;
-            backdrop-filter: blur(10px);
-        }
-        h1 { color: #fff; margin-bottom: 5px; font-size: 2.8rem; font-weight: bold; animation: pulse 3s infinite ease-in-out; }
-        .tagline { color: #2ecc71; font-size: 0.8rem; margin-bottom: 2rem; letter-spacing: 5px; }
-        .input-group { text-align: right; margin-bottom: 1.2rem; }
-        label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: #aaa; margin-right: 5px; }
-        input { 
-            width: 100%; padding: 14px; border: 1px solid #1a1a1a; border-radius: 15px; 
-            box-sizing: border-box; font-size: 0.95rem; background-color: #050505; color: #fff;
-            transition: all 0.4s ease;
-        }
-        input:focus { border-color: #2ecc71; outline: none; box-shadow: 0 0 15px rgba(46, 204, 113, 0.3); background-color: #0a0a0a; }
-        .optional-tag { font-size: 0.7rem; color: #444; float: left; margin-top: 3px; }
-        button { 
-            width: 100%; padding: 16px; background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-            color: #000; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; 
-            cursor: pointer; transition: 0.4s; margin-top: 1rem; box-shadow: 0 5px 15px rgba(46, 204, 113, 0.2);
-        }
-        button:disabled { background: #444; cursor: not-allowed; }
-        .footer { margin-top: 2.5rem; font-size: 0.7rem; color: #333; letter-spacing: 2px; }
+        body { background-color: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #fff; overflow: hidden; position: relative; font-family: sans-serif; }
+        .lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .line { position: absolute; background: linear-gradient(90deg, transparent, #2ecc71, #00f2ff, transparent); height: 1px; width: 100%; opacity: 0.3; animation: moveLine 5s linear infinite; }
+        @keyframes moveLine { 0% { transform: translateY(-100vh); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateY(100vh); opacity: 0; } }
+        .card { background: rgba(10, 10, 10, 0.9); padding: 2.5rem; border-radius: 30px; box-shadow: 0 0 50px rgba(46, 204, 113, 0.2); width: 85%; max-width: 400px; text-align: center; border: 1px solid rgba(46, 204, 113, 0.3); z-index: 2; backdrop-filter: blur(10px); }
+        h1 { font-size: 2.5rem; margin-bottom: 0; color: #fff; text-shadow: 0 0 15px #2ecc71; }
+        .tagline { color: #00f2ff; font-size: 0.8rem; letter-spacing: 3px; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #222; background: #000; color: #fff; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; color: #000; }
+        button:disabled { background: #444; color: #888; }
     </style>
 </head>
 <body>
-
-<div class="card">
-    <h1>أثَـــر</h1>
-    <div class="tagline">ATHAR LEGACY</div>
-    
-    <form id="activationForm">
-        <div class="input-group">
-            <label>الاسم الكامل *</label>
-            <input type="text" id="name" required>
-        </div>
-        <div class="input-group">
-            <label>رقم الجوال *</label>
-            <input type="tel" id="phone" required>
-        </div>
-        <div class="input-group">
-            <label>البريد الإلكتروني <span class="optional-tag">(اختياري)</span></label>
-            <input type="email" id="email">
-        </div>
-        <div class="input-group">
-            <label>حساب التواصل <span class="optional-tag">(اختياري)</span></label>
-            <input type="text" id="social">
-        </div>
-        <div class="input-group">
-            <label>كود التفعيل الذهبي *</label>
-            <input type="text" id="itemCode" required>
-        </div>
-        <button type="submit" id="submitBtn">بث الحياة في الأثر</button>
-    </form>
-    <div class="footer">PREMIUM NFC TECHNOLOGY • 2026</div>
-</div>
+    <div class="lines-container" id="lines"></div>
+    <div class="card">
+        <h1>أثَـــر</h1>
+        <div class="tagline">ATHAR LEGACY</div>
+        <form id="activationForm">
+            <input type="text" id="userName" placeholder="الاسم الكامل" required>
+            <input type="tel" id="userPhone" placeholder="رقم الجوال" required>
+            <input type="text" id="itemCode" placeholder="كود التفعيل الذهبي" required>
+            <button type="submit" id="submitBtn">بث الحياة في الأثر</button>
+        </form>
+    </div>
 
 <script>
+    // رسم الأسلاك الضوئية
+    const container = document.getElementById('lines');
+    for (let i = 0; i < 15; i++) {
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.style.top = Math.random() * 100 + 'vh';
+        line.style.animationDelay = Math.random() * 5 + 's';
+        container.appendChild(line);
+    }
+
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbwEW8QbHJXCv0qdoZEOrA_t3KLLKspBeyUSwmNqaj1_JLRjUMtDZvMPemihQsOEAuks/exec'; 
 
     document.getElementById('activationForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
-        btn.innerText = 'جاري بث الحياة...';
+        btn.innerText = 'جاري التفعيل...';
 
-        const formData = new URLSearchParams();
-        formData.append('name', document.getElementById('name').value);
-        formData.append('phone', document.getElementById('phone').value);
-        formData.append('email', document.getElementById('email').value);
-        formData.append('social', document.getElementById('social').value);
-        formData.append('itemCode', document.getElementById('itemCode').value);
+        // تجميع البيانات لإرسالها
+        const params = new URLSearchParams();
+        params.append('name', document.getElementById('userName').value);
+        params.append('phone', document.getElementById('userPhone').value);
+        params.append('itemCode', document.getElementById('itemCode').value);
 
         fetch(webAppUrl, {
             method: 'POST',
             mode: 'no-cors',
-            body: formData
+            body: params
         })
         .then(() => {
-            alert('تم تفعيل أثرك بنجاح! الإرث الآن متصل بالقطعة.');
+            alert('تم التفعيل بنجاح! الإرث الآن متصل.');
             document.getElementById('activationForm').reset();
         })
-        .catch(error => {
-            console.error('Error!', error.message);
-            alert('حدث خطأ، تأكد من الاتصال بالإنترنت.');
-        })
+        .catch(() => alert('عفواً، حاول مرة أخرى'))
         .finally(() => {
             btn.disabled = false;
             btn.innerText = 'بث الحياة في الأثر';
         });
     });
 </script>
-
 </body>
 </html>
