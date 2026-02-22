@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أثر - تفعيل القطعة</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h1 { color: #333; margin-bottom: 1.5rem; font-size: 1.5rem; }
+        input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        button { width: 100%; padding: 12px; background-color: #2ecc71; color: white; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; transition: background 0.3s; }
+        button:hover { background-color: #27ae60; }
+        .footer { margin-top: 1rem; font-size: 0.8rem; color: #888; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>تفعيل "أثر" الخاص بك</h1>
+    <p>أدخل بياناتك لربط الذكرى بهذه القطعة</p>
+    
+    <form id="activationForm">
+        <input type="text" id="name" placeholder="الاسم الكامل" required>
+        <input type="tel" id="phone" placeholder="رقم الجوال" required>
+        <input type="text" id="code" placeholder="كود التفعيل (4 أرقام)" required>
+        <button type="submit">تفعيل الأثر الآن</button>
+    </form>
+
+    <div id="message" style="margin-top: 1rem; display: none;"></div>
+    
+    <div class="footer">صنع بكل حب - أثر Legacy</div>
+</div>
+
+<script>
+    // سنضع هنا لاحقاً الرابط الذي يربط الموقع بجدول جوجل الخاص بك
+    const form = document.getElementById('activationForm');
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        alert('تم استلام بياناتك! جاري الربط بجدول جوجل في الخطوة التالية...');
+    });
+</script>
+
+</body>
+</html>
