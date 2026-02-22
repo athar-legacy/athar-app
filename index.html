@@ -114,7 +114,6 @@
 
     <div class="footer">PREMIUM NFC TECHNOLOGY • 2026</div>
 </div>
-
 <script>
     const form = document.getElementById('activationForm');
     form.addEventListener('submit', async (e) => {
@@ -123,10 +122,31 @@
         submitBtn.disabled = true;
         submitBtn.innerText = 'جاري بث الحياة...';
 
-        // هنا سنضع الرابط السحري لاحقاً
-        alert('تم تفعيل أثرك بنجاح! الإرث الآن متصل بالقطعة.');
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'بث الحياة في الأثر';
+        // رابطك السحري تم وضعه هنا بشكل صحيح
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycyCbpkeU8EkeWDZ7pIkqYYNVAvQ0rC-RxkfA9EXriezIzh5t-o8lAvIVHGyL131zz8Q/exec'; 
+
+        const formData = {
+            name: document.getElementById('name').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value,
+            social: document.getElementById('social').value,
+            code: document.getElementById('code').value
+        };
+
+        try {
+            await fetch(webAppUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(formData)
+            });
+            alert('تم تفعيل أثرك بنجاح! الإرث الآن متصل بالقطعة.');
+            form.reset();
+        } catch (error) {
+            alert('حدث خطأ بسيط، يرجى المحاولة مرة أخرى.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'بث الحياة في الأثر';
+        }
     });
 </script>
 
