@@ -5,15 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أثر - تفعيل الإرث الرقمي</title>
     <style>
-        body { background-color: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: #fff; overflow: hidden; position: relative; font-family: sans-serif; }
+        body { 
+            background-color: #000; 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; margin: 0; color: #fff;
+            overflow: hidden; position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         .lines-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        .line { position: absolute; background: linear-gradient(90deg, transparent, #2ecc71, #00f2ff, transparent); height: 1px; width: 100%; opacity: 0.3; animation: moveLine 5s linear infinite; }
-        @keyframes moveLine { 0% { transform: translateY(-100vh); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateY(100vh); opacity: 0; } }
-        .card { background: rgba(10, 10, 10, 0.9); padding: 2.5rem; border-radius: 30px; box-shadow: 0 0 50px rgba(46, 204, 113, 0.2); width: 85%; max-width: 400px; text-align: center; border: 1px solid rgba(46, 204, 113, 0.3); z-index: 2; backdrop-filter: blur(10px); }
-        h1 { font-size: 2.5rem; margin-bottom: 0; color: #fff; text-shadow: 0 0 15px #2ecc71; }
-        .tagline { color: #00f2ff; font-size: 0.8rem; letter-spacing: 3px; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #222; background: #000; color: #fff; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; color: #000; }
+        .line { 
+            position: absolute; 
+            background: linear-gradient(90deg, transparent, #2ecc71, #00f2ff, transparent); 
+            height: 1.5px; width: 100%; opacity: 0.4; 
+            animation: moveLine 6s linear infinite; 
+        }
+        @keyframes moveLine { 0% { transform: translateY(-100vh); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(100vh); opacity: 0; } }
+
+        .card { 
+            background: rgba(10, 10, 10, 0.9); 
+            padding: 2.2rem; border-radius: 30px; 
+            box-shadow: 0 0 60px rgba(46, 204, 113, 0.2); 
+            width: 85%; max-width: 400px; text-align: center;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            z-index: 2; backdrop-filter: blur(15px);
+        }
+
+        h1 { font-size: 2.5rem; margin: 0; color: #fff; text-shadow: 0 0 20px #2ecc71; }
+        .tagline { color: #00f2ff; font-size: 0.7rem; letter-spacing: 4px; margin-bottom: 20px; }
+        
+        input { 
+            width: 100%; padding: 12px; margin: 8px 0; 
+            border-radius: 12px; border: 1px solid #1a1a1a; 
+            background: #000; color: #fff; box-sizing: border-box;
+            transition: 0.3s; font-size: 0.9rem; text-align: right;
+        }
+        input:focus { border-color: #00f2ff; box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); outline: none; }
+
+        button { 
+            width: 100%; padding: 15px; 
+            background: linear-gradient(135deg, #2ecc71, #00f2ff); 
+            border: none; border-radius: 12px; 
+            font-weight: bold; cursor: pointer; margin-top: 15px; 
+            color: #000; font-size: 1.1rem; transition: 0.4s;
+        }
+        button:hover { transform: scale(1.03); filter: brightness(1.1); }
         button:disabled { background: #444; color: #888; }
     </style>
 </head>
@@ -23,21 +59,22 @@
         <h1>أثَـــر</h1>
         <div class="tagline">ATHAR LEGACY</div>
         <form id="activationForm">
-            <input type="text" id="userName" placeholder="الاسم الكامل" required>
-            <input type="tel" id="userPhone" placeholder="رقم الجوال" required>
-            <input type="text" id="itemCode" placeholder="كود التفعيل الذهبي" required>
+            <input type="text" id="userName" placeholder="الاسم الكامل *" required>
+            <input type="tel" id="userPhone" placeholder="رقم الجوال *" required>
+            <input type="email" id="userEmail" placeholder="البريد الإلكتروني">
+            <input type="text" id="userAccount" placeholder="حساب التواصل (إنستقرام/تويتر)">
+            <input type="text" id="itemCode" placeholder="كود التفعيل الذهبي *" required>
             <button type="submit" id="submitBtn">بث الحياة في الأثر</button>
         </form>
     </div>
 
 <script>
-    // رسم الأسلاك الضوئية
     const container = document.getElementById('lines');
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 20; i++) {
         const line = document.createElement('div');
         line.className = 'line';
         line.style.top = Math.random() * 100 + 'vh';
-        line.style.animationDelay = Math.random() * 5 + 's';
+        line.style.animationDelay = Math.random() * 6 + 's';
         container.appendChild(line);
     }
 
@@ -49,22 +86,19 @@
         btn.disabled = true;
         btn.innerText = 'جاري التفعيل...';
 
-        // تجميع البيانات لإرسالها
         const params = new URLSearchParams();
         params.append('name', document.getElementById('userName').value);
         params.append('phone', document.getElementById('userPhone').value);
+        params.append('email', document.getElementById('userEmail').value);
+        params.append('account', document.getElementById('userAccount').value);
         params.append('itemCode', document.getElementById('itemCode').value);
 
-        fetch(webAppUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: params
-        })
+        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
         .then(() => {
-            alert('تم التفعيل بنجاح! الإرث الآن متصل.');
+            alert('تم تفعيل أثرك بنجاح!');
             document.getElementById('activationForm').reset();
         })
-        .catch(() => alert('عفواً، حاول مرة أخرى'))
+        .catch(() => alert('حدث خطأ'))
         .finally(() => {
             btn.disabled = false;
             btn.innerText = 'بث الحياة في الأثر';
