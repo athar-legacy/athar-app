@@ -8,11 +8,10 @@
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة الترحيب الرايقة */
         #welcome-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 100; display: flex; justify-content: center; align-items: center;
-            transition: opacity 2.5s ease-in-out; /* اختفاء ناعم جداً */
+            transition: opacity 2.5s ease-in-out;
         }
         #welcome-text {
             font-size: 1.6rem; text-align: center; color: #2ecc71;
@@ -27,9 +26,8 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* البطاقة الزجاجية الخضراء */
         .card { 
-            background: rgba(10, 30, 20, 0.85); /* لمحة خضراء في الخلفية */
+            background: rgba(10, 30, 20, 0.85); 
             padding: 2.5rem; border-radius: 30px; 
             border: 2px solid rgba(46, 204, 113, 0.5); 
             width: 85%; max-width: 380px; 
@@ -50,7 +48,14 @@
             color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right;
             transition: 0.3s;
         }
-        input:focus { border-color: #00f2ff; outline: none; background: rgba(0, 242, 255, 0.1); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
+        /* ستايل خاص للخانة لما تكون للقراءة فقط */
+        input:read-only {
+            background: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+            border-style: dashed;
+            cursor: not-allowed;
+        }
+        input:focus { border-color: #00f2ff; outline: none; background: rgba(0, 242, 255, 0.1); }
 
         button { 
             width: 100%; padding: 16px; margin-top: 15px;
@@ -77,25 +82,37 @@
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
         <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
         <input type="text" name="account" placeholder="حساب التواصل X / إنستقرام (اختياري)">
-        <input type="text" name="itemCode" placeholder="كود التفعيل الذهبي *" required>
+        <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل الذهبي *" required>
         <button type="submit" id="submitBtn">بث الحياة في أثرك</button>
     </form>
 </div>
 
 <script>
-    // التحكم بالشاشات (روقااان)
+    // --- وظيفة سحب الكود من الرابط تلقائياً ---
+    function autoFillCode() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code'); // يبحث عن ?code=
+        const codeInput = document.getElementById('itemCode');
+        
+        if (code) {
+            codeInput.value = code;
+            codeInput.readOnly = true; // يخلي الخانة للقراءة فقط عشان العميل ما يغلط
+        }
+    }
+
     window.onload = () => {
+        autoFillCode(); // نشغل الوظيفة أول ما يفتح الموقع
         setTimeout(() => {
             const welcome = document.getElementById('welcome-screen');
             welcome.style.opacity = '0';
             setTimeout(() => {
                 welcome.style.display = 'none';
                 document.getElementById('mainCard').style.display = 'block';
-            }, 2500); // وقت أطول للاختفاء بنعومة
+            }, 2500);
         }, 3500);
     };
 
-    // أسلاك ضوئية (أكثر اخضراراً وحيوية)
+    // --- أنيميشن الخلفية ---
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
@@ -113,7 +130,7 @@
         }
         draw() {
             ctx.fillStyle = this.color;
-            ctx.shadowBlur = 8; ctx.shadowColor = this.color; // زيادة الوهج الأخضر
+            ctx.shadowBlur = 8; ctx.shadowColor = this.color;
             ctx.fillRect(this.x, this.y, 2.5, 2.5);
             if (this.dir === 'h') this.x += this.v; else this.y += this.v;
             if (this.x > w || this.y > h) this.reset();
@@ -126,6 +143,7 @@
     }
     init(); animate();
 
+    // --- إرسال البيانات للجدول ---
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbzfMZe9IOr976vpocL2J61VI-mlZRigp7XzMrJs9vWoFAMCYVqt_-Mn8WN-SXqXlmoj/exec';
 
     document.getElementById('activationForm').addEventListener('submit', function(e) {
@@ -142,6 +160,7 @@
             alert('تم التفعيل بنجاح! إرثك الرقمي الآن متصل بالخلود.');
             this.reset();
         })
+        .catch(err => alert('حدث خطأ، يرجى المحاولة لاحقاً'))
         .finally(() => { btn.disabled = false; btn.innerText = 'بث الحياة في أثرك'; });
     });
 </script>
