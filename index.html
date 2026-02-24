@@ -11,15 +11,15 @@
         #welcome-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 100; display: flex; justify-content: center; align-items: center;
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 1.2s ease-in-out;
         }
         #welcome-text {
             font-size: 1.6rem; text-align: center; color: #2ecc71;
             text-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
             padding: 20px; border-bottom: 2px solid #00f2ff;
-            opacity: 0; animation: fadeInOut 3.5s forwards;
+            min-width: 300px;
+            transition: all 0.5s ease; /* لإضافة نعومة عند تغير النص */
         }
-        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.05); } }
 
         .card { 
             background: rgba(10, 30, 20, 0.9); 
@@ -29,35 +29,40 @@
             z-index: 2; backdrop-filter: blur(15px);
             box-shadow: 0 0 50px rgba(46, 204, 113, 0.5);
             text-align: center; display: none; opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 0.8s ease;
         }
 
         h1 { margin: 0; font-size: 3rem; text-shadow: 0 0 20px #2ecc71; color: #fff; font-weight: bold; }
         .tagline { color: #00f2ff; font-size: 0.85rem; letter-spacing: 5px; margin-bottom: 25px; text-shadow: 0 0 10px #00f2ff; }
 
+        .message-box {
+            background: rgba(46, 204, 113, 0.15);
+            padding: 15px; border-radius: 15px;
+            margin-bottom: 20px; border-right: 5px solid #2ecc71;
+            font-size: 1rem; line-height: 1.6; color: #fff; text-align: right;
+        }
+
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; margin: 12px 0; border-right: 5px solid #2ecc71; text-align: right; }
         .info-box strong { color: #00f2ff; display: block; font-size: 0.85rem; margin-bottom: 5px; }
         .info-box span { font-size: 1.2rem; color: #fff; font-weight: 500; }
 
-        input { 
-            width: 100%; padding: 14px; margin: 10px 0; 
-            background: rgba(0, 0, 0, 0.5); border: 1px solid #2ecc71; 
-            color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; font-size: 1rem;
+        .contact-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-contact { 
+            flex: 1; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; 
+            font-size: 1rem; border: none; transition: 0.3s; color: #000;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        input:read-only { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border-style: dashed; }
+        .btn-call { background: #2ecc71; }
+        .btn-wa { background: #25D366; }
 
-        button { 
-            width: 100%; padding: 18px; margin-top: 15px;
-            background: linear-gradient(135deg, #2ecc71, #00f2ff);
-            border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000;
-            font-size: 1.2rem; box-shadow: 0 0 25px rgba(46, 204, 113, 0.5);
-        }
+        input { width: 100%; padding: 14px; margin: 10px 0; background: rgba(0, 0, 0, 0.5); border: 1px solid #2ecc71; color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; font-size: 1rem; }
+        button#subBtn { width: 100%; padding: 18px; margin-top: 15px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
 <div id="welcome-screen">
-    <div id="welcome-text">كُل ما نتركهُ خلفنا.. يُحيينا</div>
+    <div id="welcome-text">أثَـــر</div>
 </div>
 
 <canvas id="chipCanvas"></canvas>
@@ -65,10 +70,15 @@
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
+    <div class="message-box">
+        لقد وجدتَ <span style="color: #00f2ff; font-weight: bold;">أثراً مفقوداً</span>.. 
+        بمسحك لهذا الكود، أنت الآن الخطوة الأولى لعودة هذا الأثر إلى صاحبه. فضلاً، تواصل عبر البيانات أدناه لإعادته.
+    </div>
     <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
-    <div class="info-box"><strong>رقم التواصل</strong> <span id="vPhone"></span></div>
-    <div class="info-box" id="vEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="vEmail"></span></div>
-    <div class="info-box" id="vAccountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="vAccount"></span></div>
+    <div class="contact-actions">
+        <button id="callLink" class="btn-contact btn-call">📞 اتصال</button>
+        <button id="waLink" class="btn-contact btn-wa">💬 واتساب</button>
+    </div>
 </div>
 
 <div class="card" id="regCard">
@@ -77,67 +87,76 @@
     <form id="regForm">
         <input type="text" name="name" placeholder="صاحب الأثر *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
-        <input type="email" name="email" placeholder="البريد الإلكتروني">
-        <input type="text" name="account" placeholder="حساب التواصل">
         <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل *" required>
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
 </div>
 
 <script>
-    // الرابط الجديد الذي أرسلتِه
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbxxphuMJvEQhUL4D7To3cRodLmXhRV3ngRGr0OwyaZnJo9TX-wPSXXtAujHiJGzaOn8/exec';
-    
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
 
     window.onload = () => {
+        const welcomeTextEl = document.getElementById('welcome-text');
+
+        if (!code) {
+            // حالة التسجيل
+            welcomeTextEl.innerText = "اصنع أثراً.. يبقى أبد الدهر";
+            finishWelcome(3000);
+        } else {
+            // حالة البحث عن أثر (الأنيميشن المتغير)
+            welcomeTextEl.innerText = "جاري البحث عن صاحب الأثر..";
+            
+            // جلب البيانات
+            fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
+                .then(res => res.json())
+                .then(data => { 
+                    window.fetchedData = data;
+                    // بمجرد وصول البيانات، نغير النص
+                    setTimeout(() => {
+                        welcomeTextEl.style.opacity = "0";
+                        setTimeout(() => {
+                            welcomeTextEl.innerText = "تم العثور على البيانات!";
+                            welcomeTextEl.style.opacity = "1";
+                            welcomeTextEl.style.color = "#00f2ff";
+                            finishWelcome(1500); // ننهي شاشة الترحيب بعد ظهور "تم العثور"
+                        }, 500);
+                    }, 1000);
+                });
+        }
+    };
+
+    function finishWelcome(delay) {
         setTimeout(() => {
             const welcome = document.getElementById('welcome-screen');
             welcome.style.opacity = '0';
             setTimeout(() => {
                 welcome.style.display = 'none';
-                initSearch();
-            }, 1000);
-        }, 3500);
-    };
+                renderResult();
+            }, 800);
+        }, delay);
+    }
 
-    function initSearch() {
-        if (!code) {
+    function renderResult() {
+        if (!code) { showCard('regCard'); return; }
+        const data = window.fetchedData;
+        if (data && data.name && data.name !== "Not Found") {
+            document.getElementById('vName').innerText = data.name;
+            const phone = data.phone;
+            document.getElementById('callLink').onclick = () => { window.location.href = `tel:${phone}`; };
+            document.getElementById('waLink').onclick = () => { window.location.href = `https://wa.me/${phone}`; };
+            showCard('displayCard');
+        } else {
             showCard('regCard');
-            return;
+            document.getElementById('itemCode').value = code || '';
         }
-
-        document.getElementById('itemCode').value = code;
-        document.getElementById('itemCode').readOnly = true;
-
-        // جلب البيانات من قوقل شيت (البحث في العمود E)
-        fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.name && data.name !== "Not Found") {
-                    document.getElementById('vName').innerText = data.name;
-                    document.getElementById('vPhone').innerText = data.phone;
-                    if(data.email) {
-                        document.getElementById('vEmail').innerText = data.email;
-                        document.getElementById('vEmailBox').style.display = 'block';
-                    }
-                    if(data.account) {
-                        document.getElementById('vAccount').innerText = data.account;
-                        document.getElementById('vAccountBox').style.display = 'block';
-                    }
-                    showCard('displayCard');
-                } else {
-                    showCard('regCard');
-                }
-            })
-            .catch(() => showCard('regCard'));
     }
 
     function showCard(id) {
         const el = document.getElementById(id);
         el.style.display = 'block';
-        setTimeout(() => el.style.opacity = '1', 50);
+        setTimeout(() => { el.style.opacity = '1'; }, 50);
     }
 
     // أنيميشن الخلفية
@@ -168,18 +187,11 @@
     }
     init(); animate();
 
-    // إرسال نموذج التسجيل
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
         document.getElementById('subBtn').innerText = 'جاري الحفظ...';
-        fetch(webAppUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: new URLSearchParams(new FormData(this))
-        }).then(() => {
-            alert('تم تفعيل أثرك بنجاح!');
-            location.reload();
-        });
+        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(this)) })
+        .then(() => { alert('تم تفعيل أثرك بنجاح!'); location.reload(); });
     };
 </script>
 </body>
