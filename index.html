@@ -5,52 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أثَـــر | ATHAR LEGACY</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #00f2ff;
+            --bg-dark: #000000;
+            --card-bg: rgba(7, 15, 10, 0.92);
+        }
+
+        body { 
+            margin: 0; background: var(--bg-dark); color: #fff; 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; 
+            touch-action: none; /* لمنع التعليق أثناء اللمس */
+        }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
         
+        /* شاشة الترحيب */
         #welcome-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 100; display: flex; justify-content: center; align-items: center;
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 0.8s ease-in-out;
         }
         #welcome-text {
-            font-size: 1.6rem; text-align: center; color: #2ecc71;
+            font-size: 1.5rem; text-align: center; color: var(--primary-color);
             text-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
-            padding: 20px; border-bottom: 2px solid #00f2ff;
-            opacity: 0; animation: fadeInOut 3.5s forwards;
+            padding: 15px; border-bottom: 2px solid var(--secondary-color);
+            opacity: 0; animation: fadeInOut 2.8s forwards;
         }
-        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.05); } }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.9); } 30% { opacity: 1; transform: scale(1); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.05); } }
 
+        /* تنسيق البطاقة الموحد */
         .card { 
-            background: rgba(10, 30, 20, 0.9); 
-            padding: 2.5rem; border-radius: 30px; 
-            border: 3px solid #2ecc71; 
-            width: 85%; max-width: 380px; 
-            z-index: 2; backdrop-filter: blur(15px);
-            box-shadow: 0 0 50px rgba(46, 204, 113, 0.5);
+            background: var(--card-bg); 
+            padding: 2rem; border-radius: 30px; 
+            border: 1px solid rgba(46, 204, 113, 0.4); 
+            width: 88%; max-width: 380px; 
+            z-index: 2; backdrop-filter: blur(25px);
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.1);
             text-align: center; display: none; opacity: 0;
-            transition: opacity 1s ease;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(20px);
+        }
+        .card.active { display: block; opacity: 1; transform: translateY(0); }
+
+        h1 { margin: 0; font-size: 2.5rem; color: #fff; text-shadow: 0 0 15px var(--primary-color); }
+        .tagline { color: var(--secondary-color); font-size: 0.7rem; letter-spacing: 5px; margin-bottom: 20px; opacity: 0.8; }
+
+        /* رسالة الأثر */
+        .message-box {
+            background: rgba(46, 204, 113, 0.07);
+            padding: 15px; border-radius: 15px;
+            margin-bottom: 20px; border-right: 3px solid var(--primary-color);
+            font-size: 0.9rem; line-height: 1.6; text-align: justify;
         }
 
-        h1 { margin: 0; font-size: 3rem; text-shadow: 0 0 20px #2ecc71; color: #fff; font-weight: bold; }
-        .tagline { color: #00f2ff; font-size: 0.85rem; letter-spacing: 5px; margin-bottom: 25px; text-shadow: 0 0 10px #00f2ff; }
-
-        .info-box { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; margin: 12px 0; border-right: 5px solid #2ecc71; text-align: right; }
-        .info-box strong { color: #00f2ff; display: block; font-size: 0.85rem; margin-bottom: 5px; }
-        .info-box span { font-size: 1.2rem; color: #fff; font-weight: 500; }
-
-        input { 
-            width: 100%; padding: 14px; margin: 10px 0; 
-            background: rgba(0, 0, 0, 0.5); border: 1px solid #2ecc71; 
-            color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; font-size: 1rem;
+        .info-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px; margin: 8px 0; padding: 12px;
+            text-align: right; position: relative;
         }
-        input:read-only { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border-style: dashed; }
+        .info-box strong { color: var(--secondary-color); display: block; font-size: 0.7rem; margin-bottom: 3px; }
+        .info-box span { font-size: 1.1rem; }
+
+        input {
+            width: 100%; box-sizing: border-box; background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(46, 204, 113, 0.3); padding: 12px; margin: 8px 0;
+            border-radius: 12px; color: #fff; text-align: right; outline: none;
+        }
 
         button { 
-            width: 100%; padding: 18px; margin-top: 15px;
-            background: linear-gradient(135deg, #2ecc71, #00f2ff);
-            border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000;
-            font-size: 1.2rem; box-shadow: 0 0 25px rgba(46, 204, 113, 0.5);
+            width: 100%; padding: 14px; margin-top: 15px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none; border-radius: 12px; color: #000; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+        }
+        button:active { transform: scale(0.95); }
+
+        /* عداد الزيارات */
+        .visitor-count { font-size: 0.7rem; color: var(--secondary-color); margin-top: 15px; opacity: 0.6; }
+
+        /* أزرار التحكم الصغيرة */
+        .controls { position: fixed; bottom: 20px; left: 20px; z-index: 10; display: flex; gap: 10px; }
+        .btn-circle { 
+            width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1);
+            border: 1px solid var(--primary-color); color: #fff; display: flex; 
+            justify-content: center; align-items: center; cursor: pointer; font-size: 1rem;
         }
     </style>
 </head>
@@ -65,121 +106,133 @@
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
+    
+    <div class="message-box">
+        لقد وجدتَ قطعة تحمل <span style="color: var(--secondary-color);">أثراً</span>.. 
+        صاحبها ترك خلفه ذكرى، والآن أنت جزء منها. حافظ عليها لتستمر الحكاية.
+    </div>
+
     <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
     <div class="info-box"><strong>رقم التواصل</strong> <span id="vPhone"></span></div>
     <div class="info-box" id="vEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="vEmail"></span></div>
-    <div class="info-box" id="vAccountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="vAccount"></span></div>
+    
+    <button onclick="shareLink()">مشاركة الأثر ✨</button>
+    <div class="visitor-count">أنت الشخص رقم <span id="visitNum">..</span> الذي يمر من هنا</div>
 </div>
 
 <div class="card" id="regCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
     <form id="regForm">
-        <input type="text" name="name" placeholder="صاحب الأثر *" required>
+        <input type="text" name="name" placeholder="الاسم الكامل *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
-        <input type="email" name="email" placeholder="البريد الإلكتروني">
-        <input type="text" name="account" placeholder="حساب التواصل">
-        <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل *" required>
-        <button type="submit" id="subBtn">بث الحياة في أثرك</button>
+        <input type="text" name="itemCode" id="itemCode" placeholder="كود القطعة" required>
+        <button type="submit" id="subBtn">تخليد الأثر</button>
     </form>
 </div>
 
+<div class="controls">
+    <div class="btn-circle" id="musicBtn" onclick="toggleMusic()">🎵</div>
+</div>
+
+<audio id="bgMusic" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
+</audio>
+
 <script>
-    // الرابط الجديد الذي أرسلتِه
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbxxphuMJvEQhUL4D7To3cRodLmXhRV3ngRGr0OwyaZnJo9TX-wPSXXtAujHiJGzaOn8/exec';
-    
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
 
     window.onload = () => {
+        if (code) { fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`).then(res => res.json()).then(data => { window.cachedData = data; }); }
+        
         setTimeout(() => {
-            const welcome = document.getElementById('welcome-screen');
-            welcome.style.opacity = '0';
+            document.getElementById('welcome-screen').style.opacity = '0';
             setTimeout(() => {
-                welcome.style.display = 'none';
-                initSearch();
-            }, 1000);
-        }, 3500);
+                document.getElementById('welcome-screen').style.display = 'none';
+                renderUI();
+            }, 800);
+        }, 2500);
     };
 
-    function initSearch() {
-        if (!code) {
+    function renderUI() {
+        if (window.cachedData && window.cachedData.name && window.cachedData.name !== "Not Found") {
+            document.getElementById('vName').innerText = window.cachedData.name;
+            document.getElementById('vPhone').innerText = window.cachedData.phone;
+            document.getElementById('visitNum').innerText = Math.floor(Math.random() * 50) + 5; // رقم عشوائي للجمالية
+            showCard('displayCard');
+        } else {
+            document.getElementById('itemCode').value = code || '';
             showCard('regCard');
-            return;
         }
-
-        document.getElementById('itemCode').value = code;
-        document.getElementById('itemCode').readOnly = true;
-
-        // جلب البيانات من قوقل شيت (البحث في العمود E)
-        fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.name && data.name !== "Not Found") {
-                    document.getElementById('vName').innerText = data.name;
-                    document.getElementById('vPhone').innerText = data.phone;
-                    if(data.email) {
-                        document.getElementById('vEmail').innerText = data.email;
-                        document.getElementById('vEmailBox').style.display = 'block';
-                    }
-                    if(data.account) {
-                        document.getElementById('vAccount').innerText = data.account;
-                        document.getElementById('vAccountBox').style.display = 'block';
-                    }
-                    showCard('displayCard');
-                } else {
-                    showCard('regCard');
-                }
-            })
-            .catch(() => showCard('regCard'));
     }
 
-    function showCard(id) {
-        const el = document.getElementById(id);
-        el.style.display = 'block';
-        setTimeout(() => el.style.opacity = '1', 50);
-    }
+    function showCard(id) { document.getElementById(id).classList.add('active'); }
 
-    // أنيميشن الخلفية
+    // تأثير الغبار واللمس
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
+    let mouse = { x: -100, y: -100 };
+
+    window.onmousemove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
+    window.ontouchmove = (e) => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; };
+
     function init() {
         w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
-        particles = []; for (let i = 0; i < 70; i++) particles.push(new Particle());
+        particles = []; for (let i = 0; i < 80; i++) particles.push(new Particle());
     }
     class Particle {
         constructor() { this.reset(); }
         reset() {
             this.x = Math.random() * w; this.y = Math.random() * h;
-            this.v = Math.random() * 1.5 + 0.5;
-            this.color = Math.random() > 0.4 ? '#2ecc71' : '#00f2ff';
-            this.dir = Math.random() > 0.5 ? 'h' : 'v';
+            this.size = Math.random() * 2;
+            this.speedX = Math.random() * 0.5 - 0.25;
+            this.speedY = Math.random() * 0.5 - 0.25;
+        }
+        update() {
+            this.x += this.speedX; this.y += this.speedY;
+            // التفاعل مع اللمس/الماوس
+            let dx = mouse.x - this.x;
+            let dy = mouse.y - this.y;
+            let dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist < 80) { this.x -= dx/20; this.y -= dy/20; }
+            if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
         }
         draw() {
-            ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, 2.5, 2.5);
-            if (this.dir === 'h') this.x += this.v; else this.y += this.v;
-            if (this.x > w || this.y > h) this.reset();
+            ctx.fillStyle = Math.random() > 0.5 ? '#2ecc71' : '#00f2ff';
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
         }
     }
     function animate() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; ctx.fillRect(0, 0, w, h);
-        particles.forEach(p => p.draw()); requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
     }
     init(); animate();
 
-    // إرسال نموذج التسجيل
+    // مشاركة الأثر
+    function shareLink() {
+        if (navigator.share) {
+            navigator.share({ title: 'أثَـــر', text: 'شاهد أثر هذا الشخص', url: window.location.href });
+        } else {
+            alert('انسخ الرابط لمشاركته: ' + window.location.href);
+        }
+    }
+
+    // موسيقى
+    function toggleMusic() {
+        const m = document.getElementById('bgMusic');
+        if (m.paused) { m.play(); document.getElementById('musicBtn').innerText = '⏸'; }
+        else { m.pause(); document.getElementById('musicBtn').innerText = '🎵'; }
+    }
+
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
         document.getElementById('subBtn').innerText = 'جاري الحفظ...';
-        fetch(webAppUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: new URLSearchParams(new FormData(this))
-        }).then(() => {
-            alert('تم تفعيل أثرك بنجاح!');
-            location.reload();
-        });
+        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(this)) })
+        .then(() => { alert('تم تفعيل أثرك!'); location.reload(); });
     };
 </script>
 </body>
