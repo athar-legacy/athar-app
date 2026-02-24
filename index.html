@@ -17,54 +17,54 @@
             font-size: 1.6rem; text-align: center; color: #2ecc71;
             text-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
             padding: 20px; border-bottom: 2px solid #00f2ff;
-            min-width: 300px;
-            transition: all 0.5s ease; /* لإضافة نعومة عند تغير النص */
+            min-width: 300px; transition: all 0.5s ease;
         }
 
         .card { 
             background: rgba(10, 30, 20, 0.9); 
-            padding: 2.5rem; border-radius: 30px; 
+            padding: 2.2rem; border-radius: 30px; 
             border: 3px solid #2ecc71; 
             width: 85%; max-width: 380px; 
             z-index: 2; backdrop-filter: blur(15px);
             box-shadow: 0 0 50px rgba(46, 204, 113, 0.5);
             text-align: center; display: none; opacity: 0;
             transition: opacity 0.8s ease;
+            max-height: 90vh; overflow-y: auto; /* للسماح بالتمرير لو الخانات كثيرة */
         }
 
-        h1 { margin: 0; font-size: 3rem; text-shadow: 0 0 20px #2ecc71; color: #fff; font-weight: bold; }
-        .tagline { color: #00f2ff; font-size: 0.85rem; letter-spacing: 5px; margin-bottom: 25px; text-shadow: 0 0 10px #00f2ff; }
+        h1 { margin: 0; font-size: 2.8rem; text-shadow: 0 0 20px #2ecc71; color: #fff; }
+        .tagline { color: #00f2ff; font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 20px; }
 
         .message-box {
             background: rgba(46, 204, 113, 0.15);
-            padding: 15px; border-radius: 15px;
-            margin-bottom: 20px; border-right: 5px solid #2ecc71;
-            font-size: 1rem; line-height: 1.6; color: #fff; text-align: right;
+            padding: 12px; border-radius: 15px;
+            margin-bottom: 15px; border-right: 5px solid #2ecc71;
+            font-size: 0.9rem; line-height: 1.5; text-align: right;
         }
 
-        .info-box { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; margin: 12px 0; border-right: 5px solid #2ecc71; text-align: right; }
-        .info-box strong { color: #00f2ff; display: block; font-size: 0.85rem; margin-bottom: 5px; }
-        .info-box span { font-size: 1.2rem; color: #fff; font-weight: 500; }
+        .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 15px; margin: 8px 0; border-right: 5px solid #2ecc71; text-align: right; }
+        .info-box strong { color: #00f2ff; display: block; font-size: 0.75rem; margin-bottom: 3px; }
+        .info-box span { font-size: 1.1rem; color: #fff; word-break: break-all; }
 
-        .contact-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .contact-actions { display: flex; gap: 8px; margin-top: 15px; }
         .btn-contact { 
-            flex: 1; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; 
-            font-size: 1rem; border: none; transition: 0.3s; color: #000;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; 
+            font-size: 0.9rem; border: none; color: #000;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
         }
         .btn-call { background: #2ecc71; }
         .btn-wa { background: #25D366; }
 
-        input { width: 100%; padding: 14px; margin: 10px 0; background: rgba(0, 0, 0, 0.5); border: 1px solid #2ecc71; color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; font-size: 1rem; }
-        button#subBtn { width: 100%; padding: 18px; margin-top: 15px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; font-size: 1.2rem; }
+        input { width: 100%; padding: 12px; margin: 6px 0; background: rgba(0, 0, 0, 0.5); border: 1px solid #2ecc71; color: #fff; border-radius: 10px; box-sizing: border-box; text-align: right; font-size: 0.9rem; }
+        button#subBtn { width: 100%; padding: 16px; margin-top: 10px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; font-size: 1.1rem; }
+        
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #2ecc71; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<div id="welcome-screen">
-    <div id="welcome-text">أثَـــر</div>
-</div>
-
+<div id="welcome-screen"><div id="welcome-text">أثَـــر</div></div>
 <canvas id="chipCanvas"></canvas>
 
 <div class="card" id="displayCard">
@@ -72,9 +72,12 @@
     <div class="tagline">ATHAR LEGACY</div>
     <div class="message-box">
         لقد وجدتَ <span style="color: #00f2ff; font-weight: bold;">أثراً مفقوداً</span>.. 
-        بمسحك لهذا الكود، أنت الآن الخطوة الأولى لعودة هذا الأثر إلى صاحبه. فضلاً، تواصل عبر البيانات أدناه لإعادته.
+        بمسحك لهذا الكود، أنت الآن الخطوة الأولى لعودة هذا الأثر إلى صاحبه.
     </div>
     <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
+    <div class="info-box" id="vEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="vEmail"></span></div>
+    <div class="info-box" id="vAccountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="vAccount"></span></div>
+    
     <div class="contact-actions">
         <button id="callLink" class="btn-contact btn-call">📞 اتصال</button>
         <button id="waLink" class="btn-contact btn-wa">💬 واتساب</button>
@@ -87,6 +90,8 @@
     <form id="regForm">
         <input type="text" name="name" placeholder="صاحب الأثر *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
+        <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
+        <input type="text" name="account" placeholder="حساب التواصل الاجتماعي (اختياري)">
         <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل *" required>
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
@@ -99,30 +104,24 @@
 
     window.onload = () => {
         const welcomeTextEl = document.getElementById('welcome-text');
-
         if (!code) {
-            // حالة التسجيل
             welcomeTextEl.innerText = "اصنع أثراً.. يبقى أبد الدهر";
-            finishWelcome(3000);
+            finishWelcome(2500);
         } else {
-            // حالة البحث عن أثر (الأنيميشن المتغير)
             welcomeTextEl.innerText = "جاري البحث عن صاحب الأثر..";
-            
-            // جلب البيانات
             fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
                 .then(res => res.json())
                 .then(data => { 
                     window.fetchedData = data;
-                    // بمجرد وصول البيانات، نغير النص
                     setTimeout(() => {
                         welcomeTextEl.style.opacity = "0";
                         setTimeout(() => {
                             welcomeTextEl.innerText = "تم العثور على البيانات!";
                             welcomeTextEl.style.opacity = "1";
                             welcomeTextEl.style.color = "#00f2ff";
-                            finishWelcome(1500); // ننهي شاشة الترحيب بعد ظهور "تم العثور"
+                            finishWelcome(1200);
                         }, 500);
-                    }, 1000);
+                    }, 800);
                 });
         }
     };
@@ -146,10 +145,21 @@
             const phone = data.phone;
             document.getElementById('callLink').onclick = () => { window.location.href = `tel:${phone}`; };
             document.getElementById('waLink').onclick = () => { window.location.href = `https://wa.me/${phone}`; };
+            
+            // إظهار الإيميل والحساب لو توفروا
+            if(data.email && data.email !== "") {
+                document.getElementById('vEmail').innerText = data.email;
+                document.getElementById('vEmailBox').style.display = 'block';
+            }
+            if(data.account && data.account !== "") {
+                document.getElementById('vAccount').innerText = data.account;
+                document.getElementById('vAccountBox').style.display = 'block';
+            }
+            
             showCard('displayCard');
         } else {
-            showCard('regCard');
             document.getElementById('itemCode').value = code || '';
+            showCard('regCard');
         }
     }
 
@@ -159,7 +169,6 @@
         setTimeout(() => { el.style.opacity = '1'; }, 50);
     }
 
-    // أنيميشن الخلفية
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
