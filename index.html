@@ -4,58 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أثَـــر | ATHAR LEGACY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        #welcome-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 100; display: flex; justify-content: center; align-items: center;
-            transition: opacity 1.2s ease-in-out;
-        }
-        #welcome-text {
-            font-size: 1.6rem; text-align: center; color: #2ecc71;
-            text-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
-            padding: 20px; border-bottom: 2px solid #00f2ff;
-            min-width: 300px; transition: all 0.5s ease;
-        }
+        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 1.2s ease-in-out; }
+        #welcome-text { font-size: 1.6rem; text-align: center; color: #2ecc71; text-shadow: 0 0 20px rgba(46, 204, 113, 0.6); padding: 20px; border-bottom: 2px solid #00f2ff; min-width: 300px; transition: all 0.5s ease; }
 
         .card { 
-            background: rgba(10, 30, 20, 0.9); 
-            padding: 2.2rem; border-radius: 30px; 
+            background: rgba(10, 30, 20, 0.92); 
+            padding: 2rem; border-radius: 30px; 
             border: 3px solid #2ecc71; 
             width: 85%; max-width: 380px; 
             z-index: 2; backdrop-filter: blur(15px);
-            box-shadow: 0 0 50px rgba(46, 204, 113, 0.5);
+            box-shadow: 0 0 50px rgba(46, 204, 113, 0.4);
             text-align: center; display: none; opacity: 0;
             transition: opacity 0.8s ease;
-            max-height: 90vh; overflow-y: auto; /* للسماح بالتمرير لو الخانات كثيرة */
+            max-height: 90vh; overflow-y: auto;
         }
 
         h1 { margin: 0; font-size: 2.8rem; text-shadow: 0 0 20px #2ecc71; color: #fff; }
-        .tagline { color: #00f2ff; font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 20px; }
+        .tagline { color: #00f2ff; font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 15px; }
 
-        .message-box {
-            background: rgba(46, 204, 113, 0.15);
-            padding: 12px; border-radius: 15px;
-            margin-bottom: 15px; border-right: 5px solid #2ecc71;
-            font-size: 0.9rem; line-height: 1.5; text-align: right;
-        }
+        .message-box { background: rgba(46, 204, 113, 0.15); padding: 12px; border-radius: 15px; margin-bottom: 15px; border-right: 5px solid #2ecc71; font-size: 0.9rem; line-height: 1.5; text-align: right; }
 
-        .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 15px; margin: 8px 0; border-right: 5px solid #2ecc71; text-align: right; }
-        .info-box strong { color: #00f2ff; display: block; font-size: 0.75rem; margin-bottom: 3px; }
-        .info-box span { font-size: 1.1rem; color: #fff; word-break: break-all; }
+        .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 15px; margin: 8px 0; border-right: 5px solid #2ecc71; text-align: right; display: flex; flex-direction: column; }
+        .info-box strong { color: #00f2ff; font-size: 0.75rem; margin-bottom: 3px; display: flex; align-items: center; gap: 5px; }
+        .info-box span { font-size: 1.1rem; color: #fff; }
 
         .contact-actions { display: flex; gap: 8px; margin-top: 15px; }
-        .btn-contact { 
-            flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; 
-            font-size: 0.9rem; border: none; color: #000;
-            display: flex; align-items: center; justify-content: center; gap: 5px;
-        }
+        .btn-contact { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 0.9rem; border: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .btn-call { background: #2ecc71; }
         .btn-wa { background: #25D366; }
 
-        input { width: 100%; padding: 12px; margin: 6px 0; background: rgba(0, 0, 0, 0.5); border: 1px solid #2ecc71; color: #fff; border-radius: 10px; box-sizing: border-box; text-align: right; font-size: 0.9rem; }
+        input, select { width: 100%; padding: 12px; margin: 6px 0; background: rgba(0, 0, 0, 0.5); border: 1px solid #2ecc71; color: #fff; border-radius: 10px; box-sizing: border-box; text-align: right; font-size: 0.9rem; }
+        select option { background: #0a1e14; color: #fff; }
+        
         button#subBtn { width: 100%; padding: 16px; margin-top: 10px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; font-size: 1.1rem; }
         
         ::-webkit-scrollbar { width: 5px; }
@@ -70,17 +55,23 @@
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <div class="message-box">
-        لقد وجدتَ <span style="color: #00f2ff; font-weight: bold;">أثراً مفقوداً</span>.. 
-        بمسحك لهذا الكود، أنت الآن الخطوة الأولى لعودة هذا الأثر إلى صاحبه.
+    <div class="message-box">لقد وجدتَ <span style="color: #00f2ff; font-weight: bold;">أثراً مفقوداً</span>.. بمسحك لهذا الكود، أنت الخطوة الأولى لإعادته.</div>
+    
+    <div class="info-box"><strong><i class="fas fa-user"></i> صاحب الأثر</strong> <span id="vName"></span></div>
+    
+    <div class="info-box" id="vEmailBox" style="display:none;">
+        <strong><i class="fas fa-envelope"></i> البريد الإلكتروني</strong> 
+        <span id="vEmail"></span>
     </div>
-    <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
-    <div class="info-box" id="vEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="vEmail"></span></div>
-    <div class="info-box" id="vAccountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="vAccount"></span></div>
+    
+    <div class="info-box" id="vAccountBox" style="display:none;">
+        <strong id="vAccLabel"><i class="fas fa-share-alt"></i> حساب التواصل</strong> 
+        <span id="vAccount"></span>
+    </div>
     
     <div class="contact-actions">
-        <button id="callLink" class="btn-contact btn-call">📞 اتصال</button>
-        <button id="waLink" class="btn-contact btn-wa">💬 واتساب</button>
+        <button id="callLink" class="btn-contact btn-call"><i class="fas fa-phone"></i> اتصال</button>
+        <button id="waLink" class="btn-contact btn-wa"><i class="fab fa-whatsapp"></i> واتساب</button>
     </div>
 </div>
 
@@ -91,7 +82,17 @@
         <input type="text" name="name" placeholder="صاحب الأثر *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
         <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
-        <input type="text" name="account" placeholder="حساب التواصل الاجتماعي (اختياري)">
+        
+        <select name="platform" id="platformSelect">
+            <option value="">اختر نوع الحساب (اختياري)</option>
+            <option value="Instagram">إنستقرام</option>
+            <option value="X">X (تويتر سابقاً)</option>
+            <option value="Snapchat">سناب شات</option>
+            <option value="TikTok">تيك توك</option>
+            <option value="Other">حساب آخر</option>
+        </select>
+        <input type="text" name="account" placeholder="اسم المستخدم أو الرابط">
+        
         <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل *" required>
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
@@ -146,16 +147,26 @@
             document.getElementById('callLink').onclick = () => { window.location.href = `tel:${phone}`; };
             document.getElementById('waLink').onclick = () => { window.location.href = `https://wa.me/${phone}`; };
             
-            // إظهار الإيميل والحساب لو توفروا
-            if(data.email && data.email !== "") {
+            if(data.email) {
                 document.getElementById('vEmail').innerText = data.email;
                 document.getElementById('vEmailBox').style.display = 'block';
             }
-            if(data.account && data.account !== "") {
-                document.getElementById('vAccount').innerText = data.account;
+            
+            if(data.account) {
+                const acc = data.account;
+                let icon = '<i class="fas fa-share-alt"></i>';
+                let label = "حساب التواصل";
+
+                // فحص المنصة (نفترض أننا سنخزن المنصة مع الاسم أو نعتمد على محتوى النص)
+                if(acc.toLowerCase().includes('instagram') || acc.includes('انستقرام')) icon = '<i class="fab fa-instagram"></i>';
+                else if(acc.toLowerCase().includes('snapchat') || acc.includes('سناب')) icon = '<i class="fab fa-snapchat"></i>';
+                else if(acc.toLowerCase().includes('tiktok') || acc.includes('تيك')) icon = '<i class="fab fa-tiktok"></i>';
+                else if(acc.toLowerCase().includes('twitter') || acc.includes('تويتر') || acc.includes(' x ')) icon = '<i class="fab fa-x-twitter"></i>';
+
+                document.getElementById('vAccLabel').innerHTML = `${icon} ${label}`;
+                document.getElementById('vAccount').innerText = acc;
                 document.getElementById('vAccountBox').style.display = 'block';
             }
-            
             showCard('displayCard');
         } else {
             document.getElementById('itemCode').value = code || '';
@@ -169,6 +180,7 @@
         setTimeout(() => { el.style.opacity = '1'; }, 50);
     }
 
+    // أنيميشن الخلفية
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
@@ -198,8 +210,18 @@
 
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
-        document.getElementById('subBtn').innerText = 'جاري الحفظ...';
-        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(this)) })
+        const btn = document.getElementById('subBtn');
+        btn.innerText = 'جاري الحفظ...';
+        
+        // دمج المنصة مع اليوزرنيم في خانة واحدة قبل الإرسال
+        const formData = new FormData(this);
+        const platform = formData.get('platform');
+        const account = formData.get('account');
+        if(platform && account) {
+            formData.set('account', `${platform}: ${account}`);
+        }
+
+        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(formData) })
         .then(() => { alert('تم تفعيل أثرك بنجاح!'); location.reload(); });
     };
 </script>
