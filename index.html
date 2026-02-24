@@ -83,6 +83,28 @@
 <script>
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbzUBgwXxtTWy_Ddel7FAyVo_luVbPLmmr9a6kMcaMRpCZ0Vy906T70vQXH65Ocwdm_q/exec';
 
+    // أنيميشن الخلفية (تم إصلاح ترتيب التشغيل)
+    const canvas = document.getElementById('chipCanvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, particles = [];
+
+    function init() { 
+        w = canvas.width = window.innerWidth; 
+        h = canvas.height = window.innerHeight; 
+        particles = []; 
+        for(let i=0; i<60; i++) particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*2+1, d:Math.random()*0.5+0.2}); 
+    }
+
+    function draw() { 
+        ctx.clearRect(0,0,w,h); 
+        ctx.fillStyle='#2ecc71'; 
+        particles.forEach(p=>{ 
+            ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); 
+            p.y+=p.d; if(p.y>h)p.y=0; 
+        }); 
+        requestAnimationFrame(draw); 
+    }
+
     async function checkStatus() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
@@ -109,13 +131,10 @@
         }
     }
 
-    // أنيميشن الخلفية
-    const canvas = document.getElementById('chipCanvas');
-    const ctx = canvas.getContext('2d');
-    let w, h, particles = [];
-    function init() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; particles=[]; for(let i=0;i<60;i++) particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*2+1, d:Math.random()*0.5+0.2}); }
-    function draw() { ctx.clearRect(0,0,w,h); ctx.fillStyle='#2ecc71'; particles.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); p.y+=p.d; if(p.y>h)p.y=0; }); requestAnimationFrame(draw); }
-    init(); draw(); window.onload = checkStatus;
+    // تشغيل كل شيء بالترتيب الصحيح
+    init(); 
+    draw(); 
+    checkStatus();
 
     document.getElementById('activationForm').addEventListener('submit', function(e) {
         e.preventDefault();
