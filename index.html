@@ -43,21 +43,23 @@
     </div>
 
 <script>
-    // الرابط الجديد الذي أرسلتيه
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbz5FwiNePwccG7jy47Ypm27blSD8aKLwLnGXnnPF4tK1G0b9_KC3WkUWKRKib7mXuGI/exec';
+    // الرابط الذي استخرجتيه الآن
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxZ3L8fGEJFklyXWaJadySZXmooJXjBZx1Nh01j5oMDVG7fx_gOjXok3cnKU9hrXFA5/exec';
+    
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
 
     if (code) {
         document.getElementById('itemCode').value = code;
         
-        // البحث عن الكود في قوقل شيت
+        // محاولة جلب البيانات من قوقل شيت بناءً على الكود
         fetch(`${scriptUrl}?read=${code}`)
             .then(res => res.json())
             .then(data => {
                 document.getElementById('loading').style.display = 'none';
-                if (data && data.name) {
-                    // إذا وُجدت بيانات، نعرض البطاقة
+                
+                // التحقق هل البيانات موجودة في الشيت (الاسم مسجل)
+                if (data && data.name && data.name !== "Not Found") {
                     document.getElementById('displayName').innerText = data.name;
                     document.getElementById('displayPhone').innerText = data.phone;
                     if(data.account) {
@@ -66,18 +68,19 @@
                     }
                     document.getElementById('dataCard').style.display = 'block';
                 } else {
-                    // إذا لم توجد بيانات، نفتح فورم التسجيل
+                    // إذا لم تظهر بيانات، نظهر واجهة التسجيل
                     document.getElementById('regCard').style.display = 'block';
                 }
             })
-            .catch(() => {
-                document.getElementById('loading').innerText = "حدث خطأ في جلب البيانات";
+            .catch(err => {
+                document.getElementById('loading').innerText = "حدث خطأ في الاتصال بقاعدة البيانات";
+                console.error(err);
             });
     } else {
-        document.getElementById('loading').innerText = "يرجى مسح رمز الباركود الصحيح";
+        document.getElementById('loading').innerText = "فضلاً امسحي الباركود الخاص بالقطعة";
     }
 
-    // فورم التسجيل
+    // إرسال بيانات التسجيل الجديدة
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
         document.getElementById('subBtn').innerText = "جاري الحفظ...";
