@@ -8,7 +8,6 @@
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة الترحيب */
         #welcome-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 100; display: flex; justify-content: center; align-items: center;
@@ -22,7 +21,6 @@
         }
         @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.05); } }
 
-        /* توحيد التصميم لجميع الكروت */
         .card { 
             background: rgba(10, 30, 20, 0.9); 
             padding: 2.5rem; border-radius: 30px; 
@@ -37,27 +35,23 @@
         h1 { margin: 0; font-size: 3rem; text-shadow: 0 0 20px #2ecc71; color: #fff; font-weight: bold; }
         .tagline { color: #00f2ff; font-size: 0.85rem; letter-spacing: 5px; margin-bottom: 25px; text-shadow: 0 0 10px #00f2ff; }
 
-        /* ستايل البيانات (البطاقة) */
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; margin: 12px 0; border-right: 5px solid #2ecc71; text-align: right; }
         .info-box strong { color: #00f2ff; display: block; font-size: 0.85rem; margin-bottom: 5px; }
         .info-box span { font-size: 1.2rem; color: #fff; font-weight: 500; }
 
-        /* ستايل المدخلات (التسجيل) */
         input { 
             width: 100%; padding: 14px; margin: 10px 0; 
             background: rgba(0, 0, 0, 0.5); border: 1px solid #2ecc71; 
             color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; font-size: 1rem;
         }
         input:read-only { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border-style: dashed; }
-        input:focus { border-color: #00f2ff; outline: none; box-shadow: 0 0 10px #00f2ff55; }
 
         button { 
             width: 100%; padding: 18px; margin-top: 15px;
             background: linear-gradient(135deg, #2ecc71, #00f2ff);
             border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000;
-            font-size: 1.2rem; box-shadow: 0 0 25px rgba(46, 204, 113, 0.5); transition: 0.3s;
+            font-size: 1.2rem; box-shadow: 0 0 25px rgba(46, 204, 113, 0.5);
         }
-        button:hover { transform: scale(1.02); filter: brightness(1.1); }
     </style>
 </head>
 <body>
@@ -91,13 +85,11 @@
 </div>
 
 <script>
-    // رابط السكربت المحدث الخاص بك
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbzfMZe9IOr976vpocL2J61VI-mlZRigp7XzMrJs9vWoFAMCYVqt_-Mn8WN-SXqXlmoj/exec';
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
 
     window.onload = () => {
-        // شاشة الترحيب 3.5 ثانية
         setTimeout(() => {
             const welcome = document.getElementById('welcome-screen');
             welcome.style.opacity = '0';
@@ -108,33 +100,35 @@
         }, 3500);
     };
 
-    async function processLogic() {
+    function processLogic() {
         if (code) {
             document.getElementById('itemCode').value = code;
             document.getElementById('itemCode').readOnly = true;
 
-            try {
-                const response = await fetch(`${webAppUrl}?read=${code.trim().toLowerCase()}`);
-                const data = await response.json();
-
-                if (data && data.name && data.name !== "Not Found") {
-                    document.getElementById('resName').innerText = data.name;
-                    document.getElementById('resPhone').innerText = data.phone;
-                    if(data.email) {
-                        document.getElementById('resEmail').innerText = data.email;
-                        document.getElementById('resEmailBox').style.display = 'block';
+            // استخدام JSONP أو Fetch مع إضافة مِحلي لتجاوز مشاكل القراءة
+            fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.name && data.name !== "Not Found") {
+                        document.getElementById('resName').innerText = data.name;
+                        document.getElementById('resPhone').innerText = data.phone;
+                        if(data.email && data.email !== "") {
+                            document.getElementById('resEmail').innerText = data.email;
+                            document.getElementById('resEmailBox').style.display = 'block';
+                        }
+                        if(data.account && data.account !== "") {
+                            document.getElementById('resAccount').innerText = data.account;
+                            document.getElementById('resAccountBox').style.display = 'block';
+                        }
+                        showFinalCard('displayCard');
+                    } else {
+                        showFinalCard('regCard');
                     }
-                    if(data.account) {
-                        document.getElementById('resAccount').innerText = data.account;
-                        document.getElementById('resAccountBox').style.display = 'block';
-                    }
-                    showFinalCard('displayCard');
-                } else {
+                })
+                .catch(err => {
+                    console.error("Error fetching data:", err);
                     showFinalCard('regCard');
-                }
-            } catch (e) {
-                showFinalCard('regCard');
-            }
+                });
         } else {
             showFinalCard('regCard');
         }
