@@ -65,29 +65,31 @@
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <div class="info-box"><strong>صاحب الأثر</strong> <span id="resName"></span></div>
-    <div class="info-box"><strong>رقم التواصل</strong> <span id="resPhone"></span></div>
-    <div class="info-box" id="resEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="resEmail"></span></div>
-    <div class="info-box" id="resAccountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="resAccount"></span></div>
+    <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
+    <div class="info-box"><strong>رقم التواصل</strong> <span id="vPhone"></span></div>
+    <div class="info-box" id="vEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="vEmail"></span></div>
+    <div class="info-box" id="vAccountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="vAccount"></span></div>
 </div>
 
 <div class="card" id="regCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <form id="activationForm">
+    <form id="regForm">
         <input type="text" name="name" placeholder="صاحب الأثر *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
         <input type="email" name="email" placeholder="البريد الإلكتروني">
-        <input type="text" name="account" placeholder="حساب التواصل (إن وجد)">
+        <input type="text" name="account" placeholder="حساب التواصل">
         <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل *" required>
-        <button type="submit" id="submitBtn">بث الحياة في أثرك</button>
+        <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
 </div>
 
 <script>
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbzfMZe9IOr976vpocL2J61VI-mlZRigp7XzMrJs9vWoFAMCYVqt_-Mn8WN-SXqXlmoj/exec';
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+    // الرابط الجديد الذي أرسلتِه
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxxphuMJvEQhUL4D7To3cRodLmXhRV3ngRGr0OwyaZnJo9TX-wPSXXtAujHiJGzaOn8/exec';
+    
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
 
     window.onload = () => {
         setTimeout(() => {
@@ -95,46 +97,44 @@
             welcome.style.opacity = '0';
             setTimeout(() => {
                 welcome.style.display = 'none';
-                processLogic();
+                initSearch();
             }, 1000);
         }, 3500);
     };
 
-    function processLogic() {
-        if (code) {
-            document.getElementById('itemCode').value = code;
-            document.getElementById('itemCode').readOnly = true;
-
-            // استخدام JSONP أو Fetch مع إضافة مِحلي لتجاوز مشاكل القراءة
-            fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.name && data.name !== "Not Found") {
-                        document.getElementById('resName').innerText = data.name;
-                        document.getElementById('resPhone').innerText = data.phone;
-                        if(data.email && data.email !== "") {
-                            document.getElementById('resEmail').innerText = data.email;
-                            document.getElementById('resEmailBox').style.display = 'block';
-                        }
-                        if(data.account && data.account !== "") {
-                            document.getElementById('resAccount').innerText = data.account;
-                            document.getElementById('resAccountBox').style.display = 'block';
-                        }
-                        showFinalCard('displayCard');
-                    } else {
-                        showFinalCard('regCard');
-                    }
-                })
-                .catch(err => {
-                    console.error("Error fetching data:", err);
-                    showFinalCard('regCard');
-                });
-        } else {
-            showFinalCard('regCard');
+    function initSearch() {
+        if (!code) {
+            showCard('regCard');
+            return;
         }
+
+        document.getElementById('itemCode').value = code;
+        document.getElementById('itemCode').readOnly = true;
+
+        // جلب البيانات من قوقل شيت (البحث في العمود E)
+        fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.name && data.name !== "Not Found") {
+                    document.getElementById('vName').innerText = data.name;
+                    document.getElementById('vPhone').innerText = data.phone;
+                    if(data.email) {
+                        document.getElementById('vEmail').innerText = data.email;
+                        document.getElementById('vEmailBox').style.display = 'block';
+                    }
+                    if(data.account) {
+                        document.getElementById('vAccount').innerText = data.account;
+                        document.getElementById('vAccountBox').style.display = 'block';
+                    }
+                    showCard('displayCard');
+                } else {
+                    showCard('regCard');
+                }
+            })
+            .catch(() => showCard('regCard'));
     }
 
-    function showFinalCard(id) {
+    function showCard(id) {
         const el = document.getElementById(id);
         el.style.display = 'block';
         setTimeout(() => el.style.opacity = '1', 50);
@@ -157,8 +157,7 @@
             this.dir = Math.random() > 0.5 ? 'h' : 'v';
         }
         draw() {
-            ctx.fillStyle = this.color; ctx.shadowBlur = 6; ctx.shadowColor = this.color;
-            ctx.fillRect(this.x, this.y, 2.5, 2.5);
+            ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, 2.5, 2.5);
             if (this.dir === 'h') this.x += this.v; else this.y += this.v;
             if (this.x > w || this.y > h) this.reset();
         }
@@ -169,10 +168,10 @@
     }
     init(); animate();
 
-    document.getElementById('activationForm').onsubmit = function(e) {
+    // إرسال نموذج التسجيل
+    document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.innerText = 'جاري الحفظ...';
+        document.getElementById('subBtn').innerText = 'جاري الحفظ...';
         fetch(webAppUrl, {
             method: 'POST',
             mode: 'no-cors',
