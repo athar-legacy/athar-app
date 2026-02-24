@@ -5,112 +5,185 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أثَـــر | ATHAR</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة الأنيميشن الترحيبية */
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.8s ease; }
-        .splash-text { font-size: 1.5rem; color: #2ecc71; text-shadow: 0 0 20px #2ecc71; animation: fadeInOut 3.5s infinite; text-align: center; font-weight: bold; }
-        @keyframes fadeInOut { 0%, 100% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
+        /* شاشة الترحيب */
+        #welcome-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 100; display: flex; justify-content: center; align-items: center;
+            transition: opacity 1.5s ease-in-out;
+        }
+        #welcome-text {
+            font-size: 1.6rem; text-align: center; color: #2ecc71;
+            text-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
+            padding: 20px; border-bottom: 1px solid #00f2ff;
+            opacity: 0; animation: fadeInOut 3.5s forwards;
+        }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.05); } }
 
-        /* التصميم الأخضر الأساسي (Neon Green) */
-        .card { background: rgba(10, 30, 20, 0.95); padding: 2.5rem; border-radius: 30px; border: 2px solid #2ecc71; width: 85%; max-width: 380px; text-align: center; box-shadow: 0 0 50px rgba(46, 204, 113, 0.4); display: none; z-index: 10; }
-        h1 { font-size: 3rem; text-shadow: 0 0 25px #2ecc71; margin: 0; color: #2ecc71; font-weight: bold; }
+        /* التصميم الموحد للكروت */
+        .card { 
+            background: rgba(10, 30, 20, 0.9); 
+            padding: 2.5rem; border-radius: 30px; 
+            border: 2px solid #2ecc71; 
+            width: 85%; max-width: 380px; 
+            z-index: 2; backdrop-filter: blur(15px);
+            box-shadow: 0 0 50px rgba(46, 204, 113, 0.4);
+            text-align: center; display: none; opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        h1 { margin: 0; font-size: 2.8rem; text-shadow: 0 0 20px #2ecc71; color: #fff; }
         .tagline { color: #00f2ff; font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 25px; text-shadow: 0 0 10px #00f2ff; }
-        
-        /* صناديق البيانات */
-        .info-box { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; margin: 12px 0; border-right: 5px solid #2ecc71; text-align: right; box-shadow: inset 0 0 15px rgba(46, 204, 113, 0.1); }
+
+        /* صناديق البيانات المسجلة */
+        .info-box { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; margin: 12px 0; border-right: 5px solid #2ecc71; text-align: right; }
         .info-box strong { color: #00f2ff; display: block; font-size: 0.85rem; margin-bottom: 5px; }
-        .info-box span { font-size: 1.1rem; color: #fff; }
-        
-        /* الحقول والأزرار */
-        input { width: 100%; padding: 14px; margin: 10px 0; background: rgba(0, 50, 0, 0.4); border: 1px solid #2ecc71; color: #fff; border-radius: 15px; box-sizing: border-box; text-align: right; outline: none; }
-        button { width: 100%; padding: 18px; margin-top: 15px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 15px; font-weight: bold; cursor: pointer; color: #000; font-size: 1.2rem; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4); }
+
+        /* الحقول */
+        input { 
+            width: 100%; padding: 13px; margin: 10px 0; 
+            background: rgba(0, 50, 0, 0.3); border: 1px solid #2ecc71; 
+            color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right;
+        }
+        input:read-only { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border-style: dashed; }
+
+        button { 
+            width: 100%; padding: 16px; margin-top: 15px;
+            background: linear-gradient(135deg, #2ecc71, #00f2ff);
+            border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000;
+            font-size: 1.1rem; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
+        }
     </style>
 </head>
 <body>
 
-    <div id="splash">
-        <div class="splash-text">كُل ما نتركهُ خلفنا.. يُحيينا</div>
-    </div>
+<div id="welcome-screen">
+    <div id="welcome-text">كُل ما نتركهُ خلفنا.. يُحيينا</div>
+</div>
 
-    <div id="dataCard" class="card">
-        <h1>أثَـــر</h1>
-        <div class="tagline">ATHAR LEGACY</div>
-        <div class="info-box"><strong>صاحب الأثر</strong> <span id="displayName"></span></div>
-        <div class="info-box"><strong>رقم التواصل</strong> <span id="displayPhone"></span></div>
-        <div class="info-box" id="emailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="displayEmail"></span></div>
-        <div class="info-box" id="accountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="displayAccount"></span></div>
-    </div>
+<canvas id="chipCanvas"></canvas>
 
-    <div id="regCard" class="card">
-        <h1>أثَـــر</h1>
-        <div class="tagline">ATHAR LEGACY</div>
-        <form id="regForm">
-            <input type="text" name="name" placeholder="صاحب الأثر *" required>
-            <input type="tel" name="phone" placeholder="رقم الجوال *" required>
-            <input type="email" name="email" placeholder="البريد الإلكتروني">
-            <input type="text" name="account" placeholder="حساب التواصل (إن وجد)">
-            <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل *">
-            <button type="submit" id="subBtn">بث الحياة في أثرك</button>
-        </form>
-    </div>
+<div class="card" id="displayCard">
+    <h1>أثَـــر</h1>
+    <div class="tagline">ATHAR LEGACY</div>
+    <div class="info-box"><strong>صاحب الأثر</strong> <span id="viewName"></span></div>
+    <div class="info-box"><strong>رقم التواصل</strong> <span id="viewPhone"></span></div>
+    <div class="info-box" id="viewEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="viewEmail"></span></div>
+    <div class="info-box" id="viewAccountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="viewAccount"></span></div>
+</div>
+
+<div class="card" id="regCard">
+    <h1>أثَـــر</h1>
+    <div class="tagline">ATHAR LEGACY</div>
+    <form id="activationForm">
+        <input type="text" name="name" placeholder="الاسم الكامل *" required>
+        <input type="tel" name="phone" placeholder="رقم الجوال *" required>
+        <input type="email" name="email" placeholder="البريد الإلكتروني">
+        <input type="text" name="account" placeholder="حساب التواصل">
+        <input type="text" name="itemCode" id="itemCode" placeholder="كود القطعة *" required>
+        <button type="submit" id="submitBtn">بث الحياة في أثرك</button>
+    </form>
+</div>
 
 <script>
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbzZ3L8fGEJFklyXWaJadySZXmooJXjBZx1Nh01j5oMDVG7fx_gOjXok3cnKU9hrXFA5/exec';
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZ3L8fGEJFklyXWaJadySZXmooJXjBZx1Nh01j5oMDVG7fx_gOjXok3cnKU9hrXFA5/exec';
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
 
-    // تشغيل الشاشة الترحيبية 3.5 ثانية
-    setTimeout(() => {
-        document.getElementById('splash').style.opacity = '0';
-        setTimeout(() => { 
-            document.getElementById('splash').style.display = 'none'; 
-            checkData();
-        }, 800);
-    }, 3500);
+    window.onload = () => {
+        // إنهاء الشاشة الترحيبية بعد 3.5 ثانية
+        setTimeout(() => {
+            const welcome = document.getElementById('welcome-screen');
+            welcome.style.opacity = '0';
+            setTimeout(() => {
+                welcome.style.display = 'none';
+                checkStatus();
+            }, 1500);
+        }, 3500);
+    };
 
-    function checkData() {
+    function checkStatus() {
         if (code) {
             document.getElementById('itemCode').value = code;
             document.getElementById('itemCode').readOnly = true;
-            
-            fetch(`${scriptUrl}?read=${code}`)
+
+            // البحث في قوقل شيت
+            fetch(`${webAppUrl}?read=${code}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.name && data.name !== "Not Found") {
-                        document.getElementById('displayName').innerText = data.name;
-                        document.getElementById('displayPhone').innerText = data.phone;
+                        document.getElementById('viewName').innerText = data.name;
+                        document.getElementById('viewPhone').innerText = data.phone;
                         if(data.email) {
-                            document.getElementById('displayEmail').innerText = data.email;
-                            document.getElementById('emailBox').style.display = 'block';
+                            document.getElementById('viewEmail').innerText = data.email;
+                            document.getElementById('viewEmailBox').style.display = 'block';
                         }
                         if(data.account) {
-                            document.getElementById('displayAccount').innerText = data.account;
-                            document.getElementById('accountBox').style.display = 'block';
+                            document.getElementById('viewAccount').innerText = data.account;
+                            document.getElementById('viewAccountBox').style.display = 'block';
                         }
-                        document.getElementById('dataCard').style.display = 'block';
+                        showCard('displayCard');
                     } else {
-                        document.getElementById('regCard').style.display = 'block';
+                        showCard('regCard');
                     }
-                }).catch(() => { document.getElementById('regCard').style.display = 'block'; });
+                }).catch(() => showCard('regCard'));
         } else {
-            // الرابط الأساسي يفتح التسجيل فوراً
-            document.getElementById('regCard').style.display = 'block';
+            showCard('regCard');
         }
     }
 
-    document.getElementById('regForm').onsubmit = function(e) {
+    function showCard(id) {
+        const el = document.getElementById(id);
+        el.style.display = 'block';
+        setTimeout(() => el.style.opacity = '1', 50);
+    }
+
+    // أنيميشن الخلفية
+    const canvas = document.getElementById('chipCanvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, particles = [];
+    function init() {
+        w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
+        particles = []; for (let i = 0; i < 60; i++) particles.push(new Particle());
+    }
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * w; this.y = Math.random() * h;
+            this.v = Math.random() * 1.5 + 0.5;
+            this.color = Math.random() > 0.5 ? '#2ecc71' : '#00f2ff';
+            this.dir = Math.random() > 0.5 ? 'h' : 'v';
+        }
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 5; ctx.shadowColor = this.color;
+            ctx.fillRect(this.x, this.y, 2, 2);
+            if (this.dir === 'h') this.x += this.v; else this.y += this.v;
+            if (this.x > w || this.y > h) this.reset();
+        }
+    }
+    function animate() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; ctx.fillRect(0, 0, w, h);
+        particles.forEach(p => p.draw()); requestAnimationFrame(animate);
+    }
+    init(); animate();
+
+    // إرسال البيانات
+    document.getElementById('activationForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        document.getElementById('subBtn').innerText = "جاري الحفظ...";
-        fetch(scriptUrl, {
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = 'جاري التفعيل...';
+        fetch(webAppUrl, {
             method: 'POST',
             mode: 'no-cors',
             body: new URLSearchParams(new FormData(this))
         }).then(() => {
-            alert('تم تفعيل أثرك بنجاح!');
+            alert('تم التفعيل بنجاح!');
             location.reload();
         });
-    };
+    });
 </script>
 </body>
 </html>
