@@ -5,82 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أثَـــر | ATHAR</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .card { background: rgba(10, 30, 20, 0.9); padding: 2.5rem; border-radius: 30px; border: 2px solid #2ecc71; width: 85%; max-width: 380px; text-align: center; box-shadow: 0 0 50px rgba(46, 204, 113, 0.3); display: none; }
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+        
+        /* شاشة الأنيميشن الترحيبية */
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.8s ease; }
+        .splash-text { font-size: 1.5rem; color: #2ecc71; text-shadow: 0 0 20px #2ecc71; animation: fadeInOut 3.5s infinite; text-align: center; }
+        @keyframes fadeInOut { 0%, 100% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
+
+        /* التصميم الأخضر (Neon Style) */
+        .card { background: rgba(10, 30, 20, 0.9); padding: 2.5rem; border-radius: 30px; border: 2px solid #2ecc71; width: 85%; max-width: 380px; text-align: center; box-shadow: 0 0 50px rgba(46, 204, 113, 0.3); display: none; z-index: 10; }
         h1 { font-size: 2.8rem; text-shadow: 0 0 20px #2ecc71; margin: 0; color: #2ecc71; }
         .tagline { color: #00f2ff; font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 25px; }
-        .info-box { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 12px; margin: 12px 0; border-right: 4px solid #00f2ff; text-align: right; }
-        .info-box strong { color: #2ecc71; display: block; font-size: 0.9rem; margin-bottom: 5px; }
-        input { width: 100%; padding: 13px; margin: 10px 0; background: rgba(0, 50, 0, 0.2); border: 1px solid rgba(46, 204, 113, 0.3); color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; }
-        button { width: 100%; padding: 16px; margin-top: 15px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; font-size: 1.1rem; }
-        #loading { color: #2ecc71; font-weight: bold; font-size: 1.2rem; text-align: center; }
+        
+        .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 12px; margin: 10px 0; border-right: 4px solid #2ecc71; text-align: right; box-shadow: inset 0 0 10px rgba(46, 204, 113, 0.1); }
+        .info-box strong { color: #00f2ff; display: block; font-size: 0.8rem; margin-bottom: 3px; }
+        
+        input { width: 100%; padding: 13px; margin: 8px 0; background: rgba(0, 50, 0, 0.3); border: 1px solid rgba(46, 204, 113, 0.3); color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; outline: none; }
+        input:focus { border-color: #00f2ff; box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
+        
+        button { width: 100%; padding: 16px; margin-top: 15px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; font-size: 1.1rem; transition: transform 0.3s; }
+        button:hover { transform: scale(1.03); box-shadow: 0 0 20px #2ecc71; }
     </style>
 </head>
 <body>
 
-    <div id="loading">جاري قراءة أثرك...</div>
+    <div id="splash">
+        <div class="splash-text">كُل ما نتركهُ خلفنا.. يُحيينا</div>
+    </div>
 
     <div id="dataCard" class="card">
         <h1>أثَـــر</h1>
         <div class="tagline">ATHAR LEGACY</div>
         <div class="info-box"><strong>صاحب الأثر</strong> <span id="displayName"></span></div>
         <div class="info-box"><strong>رقم التواصل</strong> <span id="displayPhone"></span></div>
-        <div id="accountBox" class="info-box" style="display:none;"><strong>حساب التواصل</strong> <span id="displayAccount"></span></div>
-        <button onclick="location.reload()">تحديث البيانات</button>
+        <div class="info-box" id="emailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="displayEmail"></span></div>
+        <div class="info-box" id="accountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="displayAccount"></span></div>
     </div>
 
     <div id="regCard" class="card">
         <h1>أثَـــر</h1>
         <div class="tagline">ATHAR LEGACY</div>
-        <p style="font-size: 0.9rem; color: #ccc;">هذه القطعة غير مفعلة، ابدأ ببث الحياة فيها</p>
         <form id="regForm">
-            <input type="text" name="name" placeholder="الاسم الكامل *" required>
+            <input type="text" name="name" placeholder="صاحب الأثر *" required>
             <input type="tel" name="phone" placeholder="رقم الجوال *" required>
+            <input type="email" name="email" placeholder="البريد الإلكتروني">
             <input type="text" name="account" placeholder="حساب التواصل (إن وجد)">
-            <input type="text" name="itemCode" id="itemCode" readonly style="background: rgba(46, 204, 113, 0.1); color: #2ecc71;">
-            <button type="submit" id="subBtn">تفعيل الأثر الآن</button>
+            <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل *">
+            <button type="submit" id="subBtn">بث الحياة في أثرك</button>
         </form>
     </div>
 
 <script>
-    // الرابط الذي استخرجتيه الآن
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbxZ3L8fGEJFklyXWaJadySZXmooJXjBZx1Nh01j5oMDVG7fx_gOjXok3cnKU9hrXFA5/exec';
-    
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
 
-    if (code) {
-        document.getElementById('itemCode').value = code;
-        
-        // محاولة جلب البيانات من قوقل شيت بناءً على الكود
-        fetch(`${scriptUrl}?read=${code}`)
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('loading').style.display = 'none';
-                
-                // التحقق هل البيانات موجودة في الشيت (الاسم مسجل)
-                if (data && data.name && data.name !== "Not Found") {
-                    document.getElementById('displayName').innerText = data.name;
-                    document.getElementById('displayPhone').innerText = data.phone;
-                    if(data.account) {
-                        document.getElementById('displayAccount').innerText = data.account;
-                        document.getElementById('accountBox').style.display = 'block';
+    // إخفاء شاشة الترحيب بعد 3.5 ثانية
+    setTimeout(() => {
+        document.getElementById('splash').style.opacity = '0';
+        setTimeout(() => { 
+            document.getElementById('splash').style.display = 'none'; 
+            checkData();
+        }, 800); // وقت التلاشي
+    }, 3500);
+
+    function checkData() {
+        if (code) {
+            document.getElementById('itemCode').value = code;
+            document.getElementById('itemCode').readOnly = true;
+            
+            fetch(`${scriptUrl}?read=${code}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.name && data.name !== "Not Found") {
+                        document.getElementById('displayName').innerText = data.name;
+                        document.getElementById('displayPhone').innerText = data.phone;
+                        if(data.email) {
+                            document.getElementById('displayEmail').innerText = data.email;
+                            document.getElementById('emailBox').style.display = 'block';
+                        }
+                        if(data.account) {
+                            document.getElementById('displayAccount').innerText = data.account;
+                            document.getElementById('accountBox').style.display = 'block';
+                        }
+                        document.getElementById('dataCard').style.display = 'block';
+                    } else {
+                        document.getElementById('regCard').style.display = 'block';
                     }
-                    document.getElementById('dataCard').style.display = 'block';
-                } else {
-                    // إذا لم تظهر بيانات، نظهر واجهة التسجيل
+                })
+                .catch(() => {
                     document.getElementById('regCard').style.display = 'block';
-                }
-            })
-            .catch(err => {
-                document.getElementById('loading').innerText = "حدث خطأ في الاتصال بقاعدة البيانات";
-                console.error(err);
-            });
-    } else {
-        document.getElementById('loading').innerText = "فضلاً امسحي الباركود الخاص بالقطعة";
+                });
+        } else {
+            document.getElementById('regCard').style.display = 'block';
+        }
     }
 
-    // إرسال بيانات التسجيل الجديدة
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
         document.getElementById('subBtn').innerText = "جاري الحفظ...";
