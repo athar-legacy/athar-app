@@ -5,77 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أثَر - إرثك الرقمي</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
+        /* شاشة التمهيد (Intro) */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 10; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; transition: opacity 1.5s ease;
+        }
+        .intro-title { font-size: 4rem; color: #2ecc71; text-shadow: 0 0 30px #2ecc71; letter-spacing: 15px; animation: glow 2s infinite alternate; }
+        .intro-text { font-size: 1.2rem; color: #fff; margin-top: 20px; opacity: 0; animation: fadeInText 2s forwards 0.5s; }
+
+        @keyframes glow { from { text-shadow: 0 0 20px #2ecc71; } to { text-shadow: 0 0 40px #2ecc71, 0 0 10px #fff; } }
+        @keyframes fadeInText { to { opacity: 1; } }
+
+        /* الكرت الرئيسي */
         .card { 
-            background: rgba(10, 30, 20, 0.85); 
-            padding: 2.5rem; border-radius: 30px; 
+            background: rgba(5, 20, 10, 0.9); 
+            padding: 2.5rem; border-radius: 40px; 
             border: 2px solid #2ecc71; 
             width: 85%; max-width: 380px; 
             z-index: 2; backdrop-filter: blur(15px);
-            box-shadow: 0 0 50px rgba(46, 204, 113, 0.2);
-            text-align: center; display: none;
-            animation: fadeIn 0.8s ease-in;
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.3);
+            text-align: center; display: none; opacity: 0; transform: translateY(20px);
+            transition: all 1s ease;
         }
+        .show-card { display: block !important; opacity: 1 !important; transform: translateY(0) !important; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        h1 { margin: 0; font-size: 3rem; color: #2ecc71; text-shadow: 0 0 20px #2ecc71; letter-spacing: 5px; }
-        .welcome-msg { color: #00f2ff; font-size: 1.1rem; margin: 15px 0 25px 0; line-height: 1.6; font-weight: 300; }
-        .tagline { color: #00f2ff; font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 25px; text-transform: uppercase; opacity: 0.7; }
+        h1 { margin: 0; font-size: 3rem; color: #2ecc71; text-shadow: 0 0 20px #2ecc71; letter-spacing: 8px; }
+        .welcome-msg { color: #fff; font-size: 1.1rem; margin: 20px 0; line-height: 1.6; }
+        .highlight { color: #2ecc71; font-weight: bold; }
 
         input { 
-            width: 100%; padding: 15px; margin: 10px 0; 
-            background: rgba(255,255,255,0.05); border: 1px dashed #2ecc71; 
-            color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; font-size: 1rem;
+            width: 100%; padding: 14px; margin: 8px 0; 
+            background: rgba(46, 204, 113, 0.05); border: 1px solid rgba(46, 204, 113, 0.4); 
+            color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; 
         }
         .submit-btn { 
             width: 100%; padding: 18px; background: #2ecc71; border: none; 
-            border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; 
-            margin-top: 15px; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+            border-radius: 15px; font-weight: bold; cursor: pointer; color: #000; 
+            margin-top: 15px; font-size: 1.1rem; transition: 0.3s;
         }
 
-        .owner-name { font-size: 2rem; color: #fff; margin-bottom: 30px; border-bottom: 1px solid #2ecc71; padding-bottom: 10px; }
-        
-        .contact-btn { 
-            display: flex; align-items: center; justify-content: center; 
-            text-decoration: none; padding: 18px; border-radius: 15px; 
-            margin: 15px 0; font-weight: bold; font-size: 1.2rem; transition: 0.3s;
-        }
+        .owner-name { font-size: 2.2rem; color: #fff; margin-bottom: 25px; }
+        .contact-btn { display: flex; align-items: center; justify-content: center; text-decoration: none; padding: 16px; border-radius: 15px; margin: 12px 0; font-weight: bold; }
         .btn-call { background: #2ecc71; color: #000; }
         .btn-wa { background: #25D366; color: #fff; }
-
-        .fixed-msg { margin-top: 30px; color: #00f2ff; font-style: italic; font-size: 0.95rem; opacity: 0.8; line-height: 1.5; }
+        .fixed-msg { margin-top: 30px; color: #2ecc71; font-style: italic; font-size: 0.9rem; border-top: 1px solid rgba(46, 204, 113, 0.2); padding-top: 15px; }
     </style>
 </head>
 <body>
+
+<div id="intro-screen">
+    <div class="intro-title">أثَـــر</div>
+    <div class="intro-text">حيث ينبض الإرث بالحياة...</div>
+</div>
 
 <canvas id="chipCanvas"></canvas>
 
 <div class="card" id="homeCard">
     <h1>أثَـــر</h1>
-    <p class="welcome-msg">أهلاً بك في عالم أثَر الرقمي..<br>امسح قطعة الأثر الخاصة بك لتجربة فريدة.</p>
-    <div class="tagline">COMING SOON</div>
+    <p class="welcome-msg">أهلاً بك في <span class="highlight">عالم أثَر الرقمي</span><br>حيث تبدأ حكاية أثرك الخاص..</p>
+    <p style="color: #888; font-size: 0.8rem; letter-spacing: 2px;">قريباً | COMING SOON</p>
 </div>
 
 <div class="card" id="registerCard">
     <h1>أثَـــر</h1>
-    <p class="welcome-msg">مرحباً بك في عالم أثَر.. <br> ابدأ الآن ببث الحياة في قطعة الإرث الخاصة بك</p>
+    <p class="welcome-msg">مرحباً بك.. ابدأ الآن بـ <span class="highlight">بث الحياة</span> في قطعة أثرك الخاصة</p>
     <form id="activationForm">
-        <input type="text" name="name" placeholder="الاسم الكامل *" required>
-        <input type="tel" name="phone" placeholder="رقم الجوال *" required>
-        <input type="text" name="account" placeholder="رابط حسابك (اختياري)">
-        <input type="text" id="displayCode" style="opacity: 0.5; pointer-events: none;" readonly>
-        <button type="submit" class="submit-btn" id="submitBtn">تفعيل الأثر الرقمي</button>
+        <input type="text" name="name" placeholder="اسم صاحب الأثَر *" required>
+        <input type="tel" name="phone" placeholder="رقم الجوال لتسهيل الوصول إليك *" required>
+        <input type="email" name="email" placeholder="البريد الإلكتروني *" required>
+        <input type="text" name="account" placeholder="حساب التواصل الاجتماعي (X, Instagram)">
+        <input type="text" id="displayCode" style="opacity: 0.5; font-size: 0.8rem;" readonly>
+        <button type="submit" class="submit-btn" id="submitBtn">ربط الهوية بالأثَر</button>
     </form>
 </div>
 
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
-    <p class="welcome-msg" style="color: #888;">تم العثور على هذا الأثر</p>
+    <p class="welcome-msg" style="color: #888;">تم العثور على أثر يخص:</p>
     <div class="owner-name" id="displayOwner">...</div>
-    <a href="#" id="callLink" class="contact-btn btn-call">اتصال بصاحب الأثر</a>
+    <a href="#" id="callLink" class="contact-btn btn-call">اتصال هاتفي بالمالك</a>
     <a href="#" id="waLink" class="contact-btn btn-wa">مراسلة عبر واتساب</a>
     <div class="fixed-msg">"لطفاً، في حال العثور على هذا الأثر تواصل مع صاحبه"</div>
 </div>
@@ -83,37 +95,31 @@
 <script>
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbzUBgwXxtTWy_Ddel7FAyVo_luVbPLmmr9a6kMcaMRpCZ0Vy906T70vQXH65Ocwdm_q/exec';
 
-    // أنيميشن الخلفية (تم إصلاح ترتيب التشغيل)
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
-
-    function init() { 
-        w = canvas.width = window.innerWidth; 
-        h = canvas.height = window.innerHeight; 
-        particles = []; 
-        for(let i=0; i<60; i++) particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*2+1, d:Math.random()*0.5+0.2}); 
-    }
-
-    function draw() { 
-        ctx.clearRect(0,0,w,h); 
-        ctx.fillStyle='#2ecc71'; 
-        particles.forEach(p=>{ 
-            ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); 
-            p.y+=p.d; if(p.y>h)p.y=0; 
-        }); 
-        requestAnimationFrame(draw); 
-    }
-
+    function init() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; particles=[]; for(let i=0;i<60;i++) particles.push({x:Math.random()*w, y:Math.random()*h, r:Math.random()*2+1, d:Math.random()*0.5+0.2}); }
+    function draw() { ctx.clearRect(0,0,w,h); ctx.fillStyle='#2ecc71'; particles.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); p.y+=p.d; if(p.y>h)p.y=0; }); requestAnimationFrame(draw); }
+    
     async function checkStatus() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
+        
+        // تشغيل شاشة التمهيد لمدة 3 ثواني
+        setTimeout(() => {
+            document.getElementById('intro-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('intro-screen').style.display = 'none';
+                if (!code) {
+                    document.getElementById('homeCard').classList.add('show-card');
+                } else {
+                    fetchData(code);
+                }
+            }, 1500);
+        }, 3000);
+    }
 
-        if (!code) {
-            document.getElementById('homeCard').style.display = 'block';
-            return;
-        }
-
+    async function fetchData(code) {
         try {
             const response = await fetch(`${webAppUrl}?code=${code}`);
             const data = await response.json();
@@ -121,31 +127,26 @@
                 document.getElementById('displayOwner').innerText = data.name;
                 document.getElementById('callLink').href = `tel:${data.phone}`;
                 document.getElementById('waLink').href = `https://wa.me/${data.phone.replace(/[^0-9]/g, '')}`;
-                document.getElementById('displayCard').style.display = 'block';
+                document.getElementById('displayCard').classList.add('show-card');
             } else {
-                document.getElementById('displayCode').value = "كود القطعة: " + code;
-                document.getElementById('registerCard').style.display = 'block';
+                document.getElementById('displayCode').value = "كود المنتج: " + code;
+                document.getElementById('registerCard').classList.add('show-card');
             }
-        } catch (e) {
-            document.getElementById('registerCard').style.display = 'block';
-        }
+        } catch (e) { document.getElementById('registerCard').classList.add('show-card'); }
     }
 
-    // تشغيل كل شيء بالترتيب الصحيح
-    init(); 
-    draw(); 
-    checkStatus();
+    init(); draw(); checkStatus();
 
     document.getElementById('activationForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
-        btn.innerText = 'جاري تفعيل إرثك...';
+        btn.innerText = 'جاري ربط الأثر...';
         btn.disabled = true;
         const urlParams = new URLSearchParams(window.location.search);
         const formData = new FormData(this);
         formData.append('itemCode', urlParams.get('code'));
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(formData) })
-        .then(() => { alert('تم بث الحياة في أثرك بنجاح!'); location.reload(); });
+        .then(() => { alert('تم التفعيل بنجاح!'); location.reload(); });
     });
 </script>
 </body>
