@@ -9,17 +9,18 @@
             --primary-color: #2ecc71;
             --secondary-color: #00f2ff;
             --bg-dark: #000000;
+            --card-bg: rgba(10, 20, 15, 0.95);
         }
 
         body { 
             margin: 0; background: var(--bg-dark); color: #fff; 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; 
         }
 
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة الترحيب */
+        /* شاشة الترحيب - أصبحت أسرع */
         #welcome-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 100; display: flex; justify-content: center; align-items: center;
@@ -29,51 +30,66 @@
             font-size: 1.5rem; text-align: center; color: var(--primary-color);
             text-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
             padding: 15px; border-bottom: 2px solid var(--secondary-color);
-            opacity: 0; animation: fadeInOut 2.8s forwards;
+            opacity: 0; animation: fadeInOut 2.5s forwards;
         }
-        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.9); } 30% { opacity: 1; transform: scale(1); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.05); } }
+        @keyframes fadeInOut { 
+            0% { opacity: 0; transform: scale(0.9); } 
+            30% { opacity: 1; transform: scale(1); }
+            70% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.02); } 
+        }
 
-        /* البطاقة */
+        /* توحيد شكل البطاقة */
         .card { 
-            background: rgba(10, 25, 15, 0.95); 
-            padding: 2rem; border-radius: 25px; 
+            background: var(--card-bg); 
+            padding: 2.5rem; border-radius: 25px; 
             border: 2px solid var(--primary-color); 
             width: 85%; max-width: 360px; 
-            z-index: 2; backdrop-filter: blur(15px);
+            z-index: 2; backdrop-filter: blur(20px);
+            box-shadow: 0 0 40px rgba(46, 204, 113, 0.3);
             text-align: center; display: none; opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        .card.active { display: block; opacity: 1; }
-
-        h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 10px var(--primary-color); }
-        .tagline { color: var(--secondary-color); font-size: 0.7rem; letter-spacing: 4px; margin-bottom: 20px; }
-
-        /* رسالة الأثر */
-        .message-box {
-            background: rgba(46, 204, 113, 0.1);
-            padding: 12px; border-radius: 12px;
-            margin-bottom: 15px; border-right: 4px solid var(--primary-color);
-            font-size: 0.9rem; line-height: 1.5; color: #ddd;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-out;
+            transform: translateY(10px);
         }
 
-        .info-box {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px; margin: 10px 0; padding: 12px; text-align: right;
+        .card.active { display: block; opacity: 1; transform: translateY(0); }
+
+        h1 { margin: 0; font-size: 2.8rem; color: #fff; font-weight: bold; letter-spacing: 2px; }
+        .tagline { color: var(--secondary-color); font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 30px; text-transform: uppercase; }
+
+        /* توحيد شكل صناديق المعلومات والمدخلات */
+        .info-box, input {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 12px;
+            margin: 10px 0;
+            padding: 15px;
+            text-align: right;
+            transition: all 0.3s ease;
         }
-        .info-box strong { color: var(--secondary-color); display: block; font-size: 0.75rem; }
-        .info-box span { font-size: 1.1rem; }
+
+        .info-box { border-right: 4px solid var(--primary-color); }
+        .info-box strong { color: var(--secondary-color); display: block; font-size: 0.75rem; margin-bottom: 4px; }
+        .info-box span { font-size: 1.1rem; color: #fff; }
 
         input {
-            width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.3);
-            border: 1px solid var(--primary-color); padding: 12px; margin: 8px 0;
-            border-radius: 10px; color: #fff; text-align: right;
+            width: 100%; box-sizing: border-box; color: #fff; font-size: 1rem; outline: none;
         }
+        input:focus { border-color: var(--secondary-color); background: rgba(0, 242, 255, 0.05); }
+        input:read-only { opacity: 0.7; cursor: not-allowed; border-style: dashed; }
 
         button { 
-            width: 100%; padding: 14px; margin-top: 10px;
-            background: var(--primary-color); border: none; border-radius: 10px;
-            color: #000; font-weight: bold; cursor: pointer;
+            width: 100%; padding: 16px; margin-top: 15px;
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            border-radius: 12px; color: var(--primary-color);
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            transition: all 0.3s ease;
         }
+        button:hover { background: var(--primary-color); color: #000; box-shadow: 0 0 20px var(--primary-color); }
+
+        .loading-dots:after { content: ' .'; animation: dots 1.5s steps(5, end) infinite; }
+        @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 40% { color: var(--primary-color); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 60% { text-shadow: .5em 0 0 var(--primary-color), 1em 0 0 rgba(0,0,0,0); } 80%, 100% { text-shadow: .5em 0 0 var(--primary-color), 1em 0 0 var(--primary-color); } }
     </style>
 </head>
 <body>
@@ -87,16 +103,10 @@
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    
-    <div class="message-box">
-        لقد وجدتَ قطعة تحمل <span style="color: var(--secondary-color);">أثراً</span>.. 
-        صاحبها ترك خلفه ذكرى، والآن أنت جزء منها.
-    </div>
-
     <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
     <div class="info-box"><strong>رقم التواصل</strong> <span id="vPhone"></span></div>
-    
-    <button onclick="location.reload()">تحديث 🔄</button>
+    <div class="info-box" id="vEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="vEmail"></span></div>
+    <div class="info-box" id="vAccountBox" style="display:none;"><strong>حساب التواصل</strong> <span id="vAccount"></span></div>
 </div>
 
 <div class="card" id="regCard">
@@ -105,6 +115,8 @@
     <form id="regForm">
         <input type="text" name="name" placeholder="الاسم الكامل *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
+        <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
+        <input type="text" name="account" placeholder="حساب التواصل (اختياري)">
         <input type="text" name="itemCode" id="itemCode" placeholder="كود القطعة" required>
         <button type="submit" id="subBtn">تخليد الأثر</button>
     </form>
@@ -115,54 +127,110 @@
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
 
+    // تسريع الدخول
     window.onload = () => {
-        // البحث عن البيانات
-        if (code) {
-            fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
-                .then(res => res.json())
-                .then(data => { window.userData = data; });
-        }
+        // نبدأ البحث فوراً في الخلفية قبل انتهاء الأنيميشن
+        if (code) { preFetchData(); }
 
         setTimeout(() => {
-            document.getElementById('welcome-screen').style.opacity = '0';
+            const welcome = document.getElementById('welcome-screen');
+            welcome.style.opacity = '0';
             setTimeout(() => {
-                document.getElementById('welcome-screen').style.display = 'none';
-                if (window.userData && window.userData.name && window.userData.name !== "Not Found") {
-                    document.getElementById('vName').innerText = window.userData.name;
-                    document.getElementById('vPhone').innerText = window.userData.phone;
-                    document.getElementById('displayCard').classList.add('active');
-                } else {
-                    document.getElementById('itemCode').value = code || '';
-                    document.getElementById('regCard').classList.add('active');
-                }
+                welcome.style.display = 'none';
+                if (!code) showCard('regCard');
             }, 800);
-        }, 2800);
+        }, 2800); // تقليل وقت شاشة الترحيب
     };
 
-    // أنيميشن بسيط للخلفية (مستقر)
+    let cachedData = null;
+    function preFetchData() {
+        fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
+            .then(res => res.json())
+            .then(data => {
+                cachedData = data;
+                if (document.getElementById('welcome-screen').style.display === 'none') {
+                    renderData();
+                }
+            });
+    }
+
+    // انتظر انتهاء الترحيب ثم اعرض البيانات
+    const checkInterval = setInterval(() => {
+        if (document.getElementById('welcome-screen').style.display === 'none' && code) {
+            if (cachedData) {
+                renderData();
+                clearInterval(checkInterval);
+            }
+        }
+    }, 100);
+
+    function renderData() {
+        if (cachedData && cachedData.name && cachedData.name !== "Not Found") {
+            document.getElementById('vName').innerText = cachedData.name;
+            document.getElementById('vPhone').innerText = cachedData.phone;
+            if(cachedData.email) {
+                document.getElementById('vEmail').innerText = cachedData.email;
+                document.getElementById('vEmailBox').style.display = 'block';
+            }
+            if(cachedData.account) {
+                document.getElementById('vAccount').innerText = cachedData.account;
+                document.getElementById('vAccountBox').style.display = 'block';
+            }
+            showCard('displayCard');
+        } else {
+            document.getElementById('itemCode').value = code || '';
+            document.getElementById('itemCode').readOnly = !!code;
+            showCard('regCard');
+        }
+    }
+
+    function showCard(id) {
+        document.getElementById(id).classList.add('active');
+    }
+
+    // أنيميشن الخلفية
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
     function init() {
         w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
-        particles = []; for (let i = 0; i < 50; i++) particles.push({x:Math.random()*w, y:Math.random()*h, s:Math.random()*2});
+        particles = []; for (let i = 0; i < 60; i++) particles.push(new Particle());
+    }
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * w; this.y = Math.random() * h;
+            this.v = Math.random() * 1 + 0.5;
+            this.color = Math.random() > 0.5 ? '#2ecc71' : '#00f2ff';
+            this.dir = Math.random() > 0.5 ? 'h' : 'v';
+        }
+        draw() {
+            ctx.fillStyle = this.color; ctx.globalAlpha = 0.4;
+            ctx.fillRect(this.x, this.y, 2, 2);
+            if (this.dir === 'h') this.x += this.v; else this.y += this.v;
+            if (this.x > w || this.y > h) this.reset();
+        }
     }
     function animate() {
-        ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h);
-        ctx.fillStyle = '#2ecc71';
-        particles.forEach(p => {
-            ctx.fillRect(p.x, p.y, p.s, p.s);
-            p.y += 0.5; if(p.y > h) p.y = 0;
-        });
-        requestAnimationFrame(animate);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; ctx.fillRect(0, 0, w, h);
+        particles.forEach(p => p.draw()); requestAnimationFrame(animate);
     }
     init(); animate();
 
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
-        document.getElementById('subBtn').innerText = 'جاري الحفظ...';
-        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(this)) })
-        .then(() => { alert('تم تفعيل أثرك!'); location.reload(); });
+        const btn = document.getElementById('subBtn');
+        btn.innerText = 'جاري تخليد الأثر';
+        btn.classList.add('loading-dots');
+        
+        fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: new URLSearchParams(new FormData(this))
+        }).then(() => {
+            alert('تم تسجيل أثرك بنجاح');
+            location.reload();
+        });
     };
 </script>
 </body>
