@@ -8,11 +8,11 @@
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة التحميل النصية المحدثة */
-        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 1.5s ease-in-out; }
-        #welcome-text { color: #2ecc71; font-size: 1.4rem; text-align: center; text-shadow: 0 0 15px #2ecc71; padding: 25px; opacity: 0; transform: scale(0.95); transition: 1.2s ease-in-out; max-width: 85%; line-height: 1.6; }
+        /* شاشة التحميل النصية المحدثة بكل الصفحات */
+        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 2s ease-in-out; }
+        #welcome-text { color: #2ecc71; font-size: 1.4rem; text-align: center; text-shadow: 0 0 15px #2ecc71; padding: 25px; opacity: 0; transform: scale(0.95); transition: 1.5s ease-in-out; max-width: 85%; line-height: 1.6; }
 
-        .card { background: rgba(10, 30, 20, 0.95); padding: 2.2rem; border-radius: 35px; border: 2px solid #2ecc71; width: 88%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; box-shadow: 0 0 50px rgba(46, 204, 113, 0.4); animation: slideUp 1s ease-out; max-height: 90vh; overflow-y: auto; }
+        .card { background: rgba(10, 30, 20, 0.95); padding: 2.2rem; border-radius: 35px; border: 2px solid #2ecc71; width: 88%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; box-shadow: 0 0 50px rgba(46, 204, 113, 0.4); animation: slideUp 1.2s ease-out; max-height: 90vh; overflow-y: auto; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { margin: 0; font-size: 2.8rem; text-shadow: 0 0 20px #2ecc71; }
@@ -56,7 +56,15 @@
         <input type="text" name="name" placeholder="الاسم الكامل *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
         <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
-        <input type="text" name="account" placeholder="حساب التواصل X / إنستقرام">
+        <div style="display: flex; gap: 5px;">
+            <select name="appPlatform" style="width: 40%;">
+                <option value="Snapchat">سناب</option>
+                <option value="Instagram">إنستا</option>
+                <option value="X">X</option>
+                <option value="TikTok">تيك توك</option>
+            </select>
+            <input type="text" name="account" placeholder="اسم المستخدم (اليوزر)" style="width: 60%;">
+        </div>
         <select name="bloodType">
             <option value="">فصيلة الدم (اختياري)</option>
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
@@ -94,18 +102,18 @@
         const code = urlParams.get('code');
         const welcomeText = document.getElementById('welcome-text');
 
-        // ظهور تدريجي للنص
+        // ظهور النص الأول بهدوء
         setTimeout(() => { welcomeText.style.opacity = '1'; welcomeText.style.transform = 'scale(1)'; }, 500);
 
         if (code) {
-            // انتظار أطول قليلاً ليعطي شعور بالفخامة
+            // رحلة المنقذ - مدة أطول بـ 3.5 ثانية لكل نص
             setTimeout(() => { 
-                welcomeText.style.opacity = '0';
+                welcomeText.style.opacity = '0'; 
                 setTimeout(() => {
                     welcomeText.innerText = "جاري البحث عن صاحب الأثر...";
                     welcomeText.style.opacity = '1';
-                }, 1000);
-            }, 2500);
+                }, 1500);
+            }, 3500);
 
             fetch(webAppUrl + "?itemCode=" + code)
             .then(res => res.json())
@@ -117,16 +125,17 @@
                             welcomeText.innerText = "تم العثور على المعلومات!";
                             welcomeText.style.opacity = '1';
                             document.getElementById('valName').innerText = data.name;
-                            document.getElementById('valPhone').innerText = data.phone; // إظهار الرقم كبيانات
+                            document.getElementById('valPhone').innerText = data.phone;
                             document.getElementById('valEmail').innerText = data.email || "غير متوفر";
-                            document.getElementById('valAccount').innerText = data.account || "غير متوفر";
+                            // دمج المنصة مع اليوزر ليظهر بشكل واضح
+                            document.getElementById('valAccount').innerText = (data.appPlatform || "حساب") + ": " + (data.account || "-");
                             document.getElementById('valBlood').innerText = data.bloodType || "غير محدد";
                             document.getElementById('valMedical').innerText = data.medical || "لا يوجد";
                             document.getElementById('linkCall').href = "tel:" + data.phone;
                             document.getElementById('linkWA').href = "https://wa.me/" + data.phone;
                             transitionTo('displayCard');
-                        }, 1000);
-                    }, 4000);
+                        }, 1500);
+                    }, 7000); // إجمالي وقت كافي للنصوص
                 } else {
                     setTimeout(() => {
                         welcomeText.style.opacity = '0';
@@ -136,13 +145,13 @@
                             document.getElementById('itemCodeInput').value = code;
                             document.getElementById('itemCodeInput').readOnly = true;
                             transitionTo('activateCard');
-                        }, 1000);
-                    }, 4000);
+                        }, 1500);
+                    }, 7000);
                 }
             });
         } else {
             // الموقع الأساسي
-            setTimeout(() => { transitionTo('introCard'); }, 3500);
+            setTimeout(() => { transitionTo('introCard'); }, 4000);
         }
     }
 
@@ -153,8 +162,8 @@
             setTimeout(() => {
                 welcome.style.display = 'none';
                 document.getElementById(id).style.display = 'block';
-            }, 1500); // تلاشي الشاشة السوداء ببطء
-        }, 3500); // بقاء النص لمدة كافية
+            }, 2000); // تلاشي أبطأ للشاشة السوداء
+        }, 3500);
     }
 
     function showActivationForm() {
@@ -169,7 +178,7 @@
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
     function initC() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; particles=[]; for(let i=0;i<60;i++) particles.push(new P()); }
-    class P { constructor(){this.reset();} reset(){this.x=Math.random()*w; this.y=Math.random()*h; this.v=Math.random()*0.8; this.c=Math.random()>0.5?'#2ecc71':'#00f2ff';} draw(){ctx.fillStyle=this.c; ctx.fillRect(this.x,this.y,2,2); this.y+=this.v; if(this.y>h)this.reset();} }
+    class P { constructor(){this.reset();} reset(){this.x=Math.random()*w; this.y=Math.random()*h; this.v=Math.random()*0.7; this.c=Math.random()>0.5?'#2ecc71':'#00f2ff';} draw(){ctx.fillStyle=this.c; ctx.fillRect(this.x,this.y,2,2); this.y+=this.v; if(this.y>h)this.reset();} }
     function anim() { ctx.fillStyle='rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h); particles.forEach(p=>p.draw()); requestAnimationFrame(anim); }
     initC(); anim();
 
