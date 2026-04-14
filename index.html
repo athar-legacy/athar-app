@@ -8,17 +8,16 @@
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة التحميل النصية الفخمة */
-        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 1s; }
-        #welcome-text { color: #2ecc71; font-size: 1.4rem; text-align: center; text-shadow: 0 0 15px #2ecc71; padding: 20px; opacity: 0; transform: scale(0.9); transition: 0.8s; max-width: 85%; }
+        /* شاشة التحميل النصية المحدثة */
+        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 1.5s ease-in-out; }
+        #welcome-text { color: #2ecc71; font-size: 1.4rem; text-align: center; text-shadow: 0 0 15px #2ecc71; padding: 25px; opacity: 0; transform: scale(0.95); transition: 1.2s ease-in-out; max-width: 85%; line-height: 1.6; }
 
-        .card { background: rgba(10, 30, 20, 0.95); padding: 2.2rem; border-radius: 35px; border: 2px solid #2ecc71; width: 88%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; box-shadow: 0 0 50px rgba(46, 204, 113, 0.4); animation: slideUp 0.8s ease-out; max-height: 90vh; overflow-y: auto; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: rgba(10, 30, 20, 0.95); padding: 2.2rem; border-radius: 35px; border: 2px solid #2ecc71; width: 88%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; box-shadow: 0 0 50px rgba(46, 204, 113, 0.4); animation: slideUp 1s ease-out; max-height: 90vh; overflow-y: auto; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
         h1 { margin: 0; font-size: 2.8rem; text-shadow: 0 0 20px #2ecc71; }
         .tagline { color: #00f2ff; font-size: 0.75rem; letter-spacing: 5px; margin-bottom: 20px; }
 
-        /* ستايل العرض والبوكسات */
         .info-header { background: rgba(46, 204, 113, 0.1); padding: 15px; border-radius: 15px; border: 1px solid #2ecc71; color: #fff; font-size: 0.85rem; margin-bottom: 15px; line-height: 1.6; }
         .info-box { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(46, 204, 113, 0.2); border-radius: 12px; padding: 12px; margin-bottom: 10px; text-align: right; }
         .info-label { color: #00f2ff; font-size: 0.7rem; display: block; margin-bottom: 2px; }
@@ -29,10 +28,8 @@
         .btn-call { background: #2ecc71; color: #000; }
         .btn-wa { background: #25D366; color: #fff; }
 
-        /* مدخلات الفورم */
         input, select { width: 100%; padding: 12px; margin: 7px 0; background: rgba(0,0,0,0.5); border: 1px solid rgba(46, 204, 113, 0.5); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; font-size: 0.9rem; }
         .next-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, #2ecc71, #00f2ff); border: none; border-radius: 10px; font-weight: bold; color: #000; margin-top: 10px; cursor: pointer; font-size: 1rem; }
-        .pass-hint { font-size: 0.65rem; color: #00f2ff; text-align: right; display: block; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -66,7 +63,6 @@
         </select>
         <input type="text" name="medical" placeholder="أي حالة طبية أو حساسية؟">
         <input type="tel" name="password" placeholder="كلمة السر (4 أرقام) *" pattern="[0-9]{4}" maxlength="4" required inputmode="numeric">
-        <span class="pass-hint">⚠️ احفظها لتتمكن من تحديث بياناتك مستقبلاً.</span>
         <input type="text" name="itemCode" id="itemCodeInput" placeholder="كود التفعيل الذهبي *" required>
         <button type="submit" class="next-btn" id="subBtn">بث الحياة في أثرك</button>
     </form>
@@ -78,6 +74,7 @@
     <div class="info-header">لقد وجدت <span style="color:#00f2ff">أثراً مفقوداً</span>.. بمسحك لهذا الكود، أنت الخطوة الأولى لإعادته لصاحبه.</div>
     
     <div class="info-box"><span class="info-label">👤 صاحب الأثر</span><div class="info-value" id="valName">-</div></div>
+    <div class="info-box"><span class="info-label">📞 رقم التواصل</span><div class="info-value" id="valPhone">-</div></div>
     <div class="info-box"><span class="info-label">📧 البريد الإلكتروني</span><div class="info-value" id="valEmail">-</div></div>
     <div class="info-box"><span class="info-label">📱 حساب التواصل</span><div class="info-value" id="valAccount">-</div></div>
     <div class="info-box"><span class="info-label">🩸 فصيلة الدم</span><div class="info-value" id="valBlood">-</div></div>
@@ -97,32 +94,55 @@
         const code = urlParams.get('code');
         const welcomeText = document.getElementById('welcome-text');
 
-        setTimeout(() => { welcomeText.style.opacity = '1'; welcomeText.style.transform = 'scale(1)'; }, 400);
+        // ظهور تدريجي للنص
+        setTimeout(() => { welcomeText.style.opacity = '1'; welcomeText.style.transform = 'scale(1)'; }, 500);
 
         if (code) {
-            setTimeout(() => { welcomeText.innerText = "جاري البحث عن صاحب الأثر..."; }, 1200);
+            // انتظار أطول قليلاً ليعطي شعور بالفخامة
+            setTimeout(() => { 
+                welcomeText.style.opacity = '0';
+                setTimeout(() => {
+                    welcomeText.innerText = "جاري البحث عن صاحب الأثر...";
+                    welcomeText.style.opacity = '1';
+                }, 1000);
+            }, 2500);
+
             fetch(webAppUrl + "?itemCode=" + code)
             .then(res => res.json())
             .then(data => {
                 if (data.status === "تم التفعيل") {
-                    welcomeText.innerText = "تم العثور على المعلومات!";
-                    document.getElementById('valName').innerText = data.name;
-                    document.getElementById('valEmail').innerText = data.email || "غير متوفر";
-                    document.getElementById('valAccount').innerText = data.account || "غير متوفر";
-                    document.getElementById('valBlood').innerText = data.bloodType || "غير محدد";
-                    document.getElementById('valMedical').innerText = data.medical || "لا يوجد";
-                    document.getElementById('linkCall').href = "tel:" + data.phone;
-                    document.getElementById('linkWA').href = "https://wa.me/" + data.phone;
-                    transitionTo('displayCard');
+                    setTimeout(() => {
+                        welcomeText.style.opacity = '0';
+                        setTimeout(() => {
+                            welcomeText.innerText = "تم العثور على المعلومات!";
+                            welcomeText.style.opacity = '1';
+                            document.getElementById('valName').innerText = data.name;
+                            document.getElementById('valPhone').innerText = data.phone; // إظهار الرقم كبيانات
+                            document.getElementById('valEmail').innerText = data.email || "غير متوفر";
+                            document.getElementById('valAccount').innerText = data.account || "غير متوفر";
+                            document.getElementById('valBlood').innerText = data.bloodType || "غير محدد";
+                            document.getElementById('valMedical').innerText = data.medical || "لا يوجد";
+                            document.getElementById('linkCall').href = "tel:" + data.phone;
+                            document.getElementById('linkWA').href = "https://wa.me/" + data.phone;
+                            transitionTo('displayCard');
+                        }, 1000);
+                    }, 4000);
                 } else {
-                    welcomeText.innerText = "كود جديد.. أهلاً بك في عالم أثر";
-                    document.getElementById('itemCodeInput').value = code;
-                    document.getElementById('itemCodeInput').readOnly = true;
-                    transitionTo('activateCard');
+                    setTimeout(() => {
+                        welcomeText.style.opacity = '0';
+                        setTimeout(() => {
+                            welcomeText.innerText = "كود جديد.. أهلاً بك في عالم أثر";
+                            welcomeText.style.opacity = '1';
+                            document.getElementById('itemCodeInput').value = code;
+                            document.getElementById('itemCodeInput').readOnly = true;
+                            transitionTo('activateCard');
+                        }, 1000);
+                    }, 4000);
                 }
             });
         } else {
-            setTimeout(() => { transitionTo('introCard'); }, 2200);
+            // الموقع الأساسي
+            setTimeout(() => { transitionTo('introCard'); }, 3500);
         }
     }
 
@@ -133,8 +153,8 @@
             setTimeout(() => {
                 welcome.style.display = 'none';
                 document.getElementById(id).style.display = 'block';
-            }, 600);
-        }, 1200);
+            }, 1500); // تلاشي الشاشة السوداء ببطء
+        }, 3500); // بقاء النص لمدة كافية
     }
 
     function showActivationForm() {
@@ -149,7 +169,7 @@
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
     function initC() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; particles=[]; for(let i=0;i<60;i++) particles.push(new P()); }
-    class P { constructor(){this.reset();} reset(){this.x=Math.random()*w; this.y=Math.random()*h; this.v=Math.random()*1; this.c=Math.random()>0.5?'#2ecc71':'#00f2ff';} draw(){ctx.fillStyle=this.c; ctx.fillRect(this.x,this.y,2,2); this.y+=this.v; if(this.y>h)this.reset();} }
+    class P { constructor(){this.reset();} reset(){this.x=Math.random()*w; this.y=Math.random()*h; this.v=Math.random()*0.8; this.c=Math.random()>0.5?'#2ecc71':'#00f2ff';} draw(){ctx.fillStyle=this.c; ctx.fillRect(this.x,this.y,2,2); this.y+=this.v; if(this.y>h)this.reset();} }
     function anim() { ctx.fillStyle='rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h); particles.forEach(p=>p.draw()); requestAnimationFrame(anim); }
     initC(); anim();
 
