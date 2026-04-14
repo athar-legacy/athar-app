@@ -20,7 +20,11 @@
             opacity: 0; animation: fadeInOut 4s forwards;
         }
 
-        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 1; } }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
 
         .card { 
             background: rgba(10, 30, 20, 0.85); 
@@ -30,8 +34,11 @@
             z-index: 2; backdrop-filter: blur(15px);
             box-shadow: 0 0 50px rgba(46, 204, 113, 0.3);
             text-align: center; display: none;
+            animation: cardAppear 1.5s ease-out;
             max-height: 90vh; overflow-y: auto;
         }
+
+        @keyframes cardAppear { from { opacity: 0; } to { opacity: 1; } }
 
         h1 { margin: 0; font-size: 2.8rem; text-shadow: 0 0 20px #2ecc71; color: #fff; }
         .tagline { color: #00f2ff; font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 25px; text-shadow: 0 0 10px #00f2ff; }
@@ -42,8 +49,16 @@
             color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right;
             transition: 0.3s;
         }
-        
-        input:read-only { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border-style: dashed; }
+
+        input:read-only {
+            background: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+            border-style: dashed;
+            cursor: not-allowed;
+        }
+        input:focus, select:focus { border-color: #00f2ff; outline: none; background: rgba(0, 242, 255, 0.1); }
+
+        .password-hint { font-size: 0.7rem; color: #00f2ff; text-align: right; margin-top: -5px; margin-bottom: 10px; }
 
         button { 
             width: 100%; padding: 16px; margin-top: 15px;
@@ -52,9 +67,6 @@
             font-size: 1.1rem; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
         }
         button:hover { filter: brightness(1.2); transform: translateY(-2px); }
-
-        .info-item { text-align: right; margin-bottom: 15px; border-bottom: 1px solid rgba(46, 204, 113, 0.2); padding-bottom: 5px; }
-        .label { color: #00f2ff; font-size: 0.8rem; display: block; }
     </style>
 </head>
 <body>
@@ -81,23 +93,25 @@
             <option value="O+">O+</option><option value="O-">O-</option>
             <option value="AB+">AB+</option><option value="AB-">AB-</option>
         </select>
-        <input type="text" name="medical" placeholder="تنبيه طبي (اختياري)">
-        <input type="password" name="password" placeholder="كلمة سر للأثر *" required>
-        
+        <input type="text" name="medical" placeholder="حالة طبية مزمنة (اختياري)">
+
+        <input type="password" name="password" placeholder="كلمة السر (4 أرقام) *" pattern="\d{4}" maxlength="4" required>
+        <div class="password-hint">⚠️ يرجى حفظ كلمة السر لتتمكن من تحديث بياناتك مستقبلاً.</div>
+
         <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل الذهبي *" required>
-        
         <button type="submit" id="submitBtn">بث الحياة في أثرك</button>
     </form>
 </div>
 
 <script>
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwe5r_PdrN-5YbyChN24I1BeP4hYyA8_DhQqX5E6l8fAeWzohlg41WV5cnMIKwBidRd/exec';
-
     function autoFillCode() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         const codeInput = document.getElementById('itemCode');
-        if (code) { codeInput.value = code; codeInput.readOnly = true; }
+        if (code) {
+            codeInput.value = code;
+            codeInput.readOnly = true;
+        }
     }
 
     window.onload = () => {
@@ -112,20 +126,43 @@
         }, 3500);
     };
 
-    // أنيميشن الخلفية
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
-    function init() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; particles = []; for(let i=0; i<80; i++) particles.push(new P()); }
-    class P { constructor() { this.reset(); } reset() { this.x = Math.random()*w; this.y = Math.random()*h; this.v = Math.random()*1.8+0.5; this.c = Math.random()>0.4?'#2ecc71':'#00f2ff'; this.d = Math.random()>0.5?'h':'v'; } draw() { ctx.fillStyle=this.c; ctx.fillRect(this.x,this.y,2.5,2.5); if(this.d==='h') this.x+=this.v; else this.y+=this.v; if(this.x>w || this.y>h) this.reset(); } }
-    function animate() { ctx.fillStyle='rgba(0,0,0,0.12)'; ctx.fillRect(0,0,w,h); particles.forEach(p=>p.draw()); requestAnimationFrame(animate); }
+    function init() {
+        w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
+        particles = []; for (let i = 0; i < 80; i++) particles.push(new Particle());
+    }
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * w; this.y = Math.random() * h;
+            this.v = Math.random() * 1.8 + 0.5;
+            this.color = Math.random() > 0.4 ? '#2ecc71' : '#00f2ff';
+            this.dir = Math.random() > 0.5 ? 'h' : 'v';
+        }
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 8; ctx.shadowColor = this.color;
+            ctx.fillRect(this.x, this.y, 2.5, 2.5);
+            if (this.dir === 'h') this.x += this.v; else this.y += this.v;
+            if (this.x > w || this.y > h) this.reset();
+        }
+    }
+    function animate() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.12)'; 
+        ctx.fillRect(0, 0, w, h);
+        particles.forEach(p => p.draw()); requestAnimationFrame(animate);
+    }
     init(); animate();
 
-    // إرسال البيانات
+    // الرابط الجديد الذي أرسلتيه
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbx6jszdc2ohZtsynPn6XEwusJ9XiJi3VCyHZnVSaDN0TDXRGVuKTYI2NZVFs0yY5SDm/exec';
+
     document.getElementById('activationForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
-        btn.disabled = true; btn.innerText = 'جاري الحفظ...';
+        btn.disabled = true; btn.innerText = 'جاري بث الحياة...';
 
         fetch(webAppUrl, {
             method: 'POST',
@@ -133,11 +170,12 @@
             body: new URLSearchParams(new FormData(this))
         })
         .then(() => {
-            alert('تم التفعيل بنجاح!');
+            alert('تم التفعيل بنجاح! إرثك الرقمي الآن متصل بالخلود.');
             this.reset();
-            btn.disabled = false; btn.innerText = 'بث الحياة في أثرك';
+            autoFillCode(); // لإعادة وضع الكود إذا كان موجوداً في الرابط
         })
-        .catch(() => { alert('حدث خطأ'); btn.disabled = false; });
+        .catch(err => alert('حدث خطأ، يرجى المحاولة لاحقاً'))
+        .finally(() => { btn.disabled = false; btn.innerText = 'بث الحياة في أثرك'; });
     });
 </script>
 </body>
