@@ -3,94 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أثر - تفعيل الإرث الرقمي</title>
+    <title>أثر -ATHAR LEGACY</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
-        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 2.5s ease-in-out; }
-        #welcome-text { font-size: 1.6rem; text-align: center; color: #2ecc71; text-shadow: 0 0 20px rgba(46, 204, 113, 0.6); padding: 20px; border-bottom: 1px solid #00f2ff; opacity: 0; animation: fadeInOut 4s forwards; }
-        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 1; transform: scale(1); } }
-        .card { background: rgba(10, 30, 20, 0.85); padding: 2.5rem; border-radius: 30px; border: 2px solid rgba(46, 204, 113, 0.5); width: 85%; max-width: 380px; z-index: 2; backdrop-filter: blur(15px); box-shadow: 0 0 50px rgba(46, 204, 113, 0.3); text-align: center; display: none; animation: cardAppear 1.5s ease-out; max-height: 90vh; overflow-y: auto; }
-        @keyframes cardAppear { from { opacity: 0; } to { opacity: 1; } }
-        h1 { margin: 0; font-size: 2.8rem; text-shadow: 0 0 20px #2ecc71; color: #fff; }
-        .tagline { color: #00f2ff; font-size: 0.8rem; letter-spacing: 5px; margin-bottom: 25px; text-shadow: 0 0 10px #00f2ff; }
-        input, select { width: 100%; padding: 13px; margin: 10px 0; background: rgba(0, 50, 0, 0.2); border: 1px solid rgba(46, 204, 113, 0.3); color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; transition: 0.3s; }
-        input:read-only { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border-style: dashed; cursor: not-allowed; }
-        .password-hint { font-size: 0.7rem; color: #00f2ff; text-align: right; margin-top: -5px; margin-bottom: 10px; }
-        button { width: 100%; padding: 16px; margin-top: 15px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; font-size: 1.1rem; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4); }
+        
+        /* شاشة التحميل الدائرية الجديدة */
+        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease-in-out; }
+        .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #2ecc71; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #welcome-text { font-size: 1.2rem; text-align: center; color: #2ecc71; text-shadow: 0 0 10px #2ecc71; opacity: 0; animation: fadeInOut 2.5s forwards; }
+        @keyframes fadeInOut { 0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 1; } }
+
+        .card { background: rgba(10, 30, 20, 0.9); padding: 2.5rem; border-radius: 30px; border: 2px solid #2ecc71; width: 85%; max-width: 400px; z-index: 2; backdrop-filter: blur(15px); text-align: center; display: none; box-shadow: 0 0 50px rgba(46, 204, 113, 0.4); }
+        h1 { margin: 0; font-size: 3rem; color: #fff; text-shadow: 0 0 20px #2ecc71; }
+        .tagline { color: #00f2ff; font-size: 0.9rem; letter-spacing: 5px; margin-bottom: 25px; }
+
+        /* ستايل العرض القديم "الحلو" */
+        .info-display-container { text-align: right; }
+        .info-header { background: #1a1a1a; padding: 15px; border-radius: 15px; border: 1px solid #2ecc71; color: #fff; font-size: 0.9rem; margin-bottom: 20px; text-shadow: 0 0 5px #fff; }
+        .accent-text { color: #00f2ff; font-weight: bold; }
+        
+        .info-group { background: rgba(0, 50, 0, 0.2); border-radius: 15px; border: 1px solid rgba(46, 204, 113, 0.3); padding: 15px; margin-bottom: 15px; color: #fff; text-shadow: 0 0 5px #fff; }
+        .info-label { display: block; color: #00f2ff; font-size: 0.8rem; margin-bottom: 5px; font-weight: bold; }
+        .info-icon { font-size: 1.1rem; vertical-align: middle; margin-left: 8px; }
+
+        /* أزرار الاتصال القديمة */
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
+        .action-btn { background-color: #2ecc71; color: #000; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4); text-decoration: none; display: block; text-align: center; }
+        .action-btn:hover { background-color: #27ae60; transform: translateY(-2px); }
+
+        /* ستايل التفعيل (بقي كما هو) */
+        input, select { width: 100%; padding: 13px; margin: 10px 0; background: rgba(0, 50, 0, 0.2); border: 1px solid rgba(46, 204, 113, 0.3); color: #fff; border-radius: 12px; box-sizing: border-box; text-align: right; }
+        button#submitBtn { width: 100%; padding: 16px; margin-top: 15px; background: linear-gradient(135deg, #2ecc71, #00f2ff); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; font-size: 1.1rem; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4); }
     </style>
 </head>
 <body>
-<div id="welcome-screen"><div id="welcome-text">كل ما نتركه خلفنا .. هو ما سيحكي عنا يوماً</div></div>
+
+<div id="welcome-screen">
+    <div class="loader"></div>
+    <div id="welcome-text">جاري البحث عن صاحب الأثر...</div>
+</div>
+
 <canvas id="chipCanvas"></canvas>
-<div class="card" id="mainCard">
+
+<div class="card" id="displayCard">
+    <h1>أثَـــر</h1>
+    <div class="tagline">ATHAR LEGACY</div>
+    
+    <div class="info-display-container">
+        <div class="info-header">لقد وجدت <span class="accent-text">أثراً مفقوداً</span> .. بمسحك لهذا الكود، أنت الخطوة الأولى لإعادته.</div>
+        
+        <div class="info-group">
+            <span class="info-label"><span class="info-icon">👤</span> صاحب الأثر</span>
+            <span id="displayName">لم يحدد</span>
+        </div>
+
+        <div class="info-group">
+            <span class="info-label"><span class="info-icon">📧</span> البريد الإلكتروني</span>
+            <span id="displayEmail">لم يحدد</span>
+        </div>
+
+        <div class="info-group">
+            <span class="info-label"><span class="info-icon">📲</span> حساب التواصل</span>
+            <span id="displayAccount">لم يحدد</span>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="#" id="callBtn" class="action-btn">📞 اتصال</a>
+            <a href="#" id="whatsappBtn" class="action-btn">💬 واتساب</a>
+        </div>
+    </div>
+</div>
+
+<div class="card" id="activationCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
     <form id="activationForm">
-        <input type="text" name="name" id="nameInput" placeholder="صاحب الأثر *" required>
-        <input type="tel" name="phone" id="phoneInput" placeholder="رقم الجوال *" required>
-        <input type="email" name="email" id="emailInput" placeholder="البريد الإلكتروني (اختياري)">
-        <input type="text" name="account" id="accountInput" placeholder="حساب التواصل X / إنستقرام (اختياري)">
-        <select name="bloodType" id="bloodInput">
-            <option value="">فصيلة الدم (اختياري)</option>
+        <input type="text" name="name" id="activateNameInput" placeholder="صاحب الأثر *" required>
+        <input type="tel" name="phone" id="activatePhoneInput" placeholder="رقم الجوال *" required>
+        <input type="email" name="email" id="activateEmailInput" placeholder="البريد الإلكتروني">
+        <input type="text" name="account" id="activateAccountInput" placeholder="حساب التواصل X / إنستقرام">
+        <select name="bloodType" id="activateBloodInput">
+            <option value="">فصيلة الدم</option>
             <option value="A+">A+</option><option value="A-">A-</option>
             <option value="B+">B+</option><option value="B-">B-</option>
             <option value="O+">O+</option><option value="O-">O-</option>
             <option value="AB+">AB+</option><option value="AB-">AB-</option>
         </select>
-        <input type="text" name="medical" id="medicalInput" placeholder="حالة طبية مزمنة (اختياري)">
-        <input type="tel" name="password" placeholder="كلمة السر (4 أرقام) *" pattern="[0-9]{4}" maxlength="4" required inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-        <div class="password-hint">⚠️ يرجى حفظ كلمة السر لتتمكن من تحديث بياناتك مستقبلاً.</div>
-        <input type="text" name="itemCode" id="itemCode" placeholder="كود التفعيل الذهبي *" required>
+        <input type="text" name="medical" id="activateMedicalInput" placeholder="حالة طبية">
+        <input type="tel" name="password" placeholder="كلمة السر (4 أرقام)" pattern="[0-9]{4}" maxlength="4" required inputmode="numeric">
+        <input type="text" name="itemCode" id="activateItemCode" placeholder="كود التفعيل الذهبي *" required>
         <button type="submit" id="submitBtn">بث الحياة في أثرك</button>
     </form>
 </div>
+
 <script>
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbx0sFC9dCpr9kxYQ-6ZyYZ-xxqO97BamHabnDcsP2FxeCk9p64pyJlh0NDn7s0oP45-/exec';
 
-    // هذه هي الوظيفة التي ستجلب البيانات فور فتح الرابط
-    function checkExistingData(code) {
+    // دالة فحص وجلب البيانات (دمجتها مع التصميم القديم)
+    function checkData(code) {
         fetch(webAppUrl + "?itemCode=" + code)
         .then(response => response.json())
         .then(data => {
             if (data && data.status === "تم التفعيل") {
-                document.getElementById('nameInput').value = data.name || "";
-                document.getElementById('phoneInput').value = data.phone || "";
-                document.getElementById('emailInput').value = data.email || "";
-                document.getElementById('accountInput').value = data.account || "";
-                document.getElementById('bloodInput').value = data.bloodType || "";
-                document.getElementById('medicalInput').value = data.medical || "";
-                document.getElementById('submitBtn').innerText = "تحديث الأثر";
+                // تعبئة بيانات العرض في التصميم الحلو
+                document.getElementById('displayName').innerText = data.name || "لم يحدد";
+                document.getElementById('displayEmail').innerText = data.email || "لم يحدد";
+                document.getElementById('displayAccount').innerText = data.account || "لم يحدد";
+                
+                // تحديث روابط الأزرار
+                document.getElementById('callBtn').href = "tel:" + data.phone;
+                document.getElementById('whatsappBtn').href = "https://wa.me/" + data.phone;
+                
+                // الانتقال لشاشة العثور على المعلومات
+                document.getElementById('welcome-text').innerText = "تم العثور على المعلومات!";
+                
+                setTimeout(() => {
+                    document.getElementById('welcome-screen').style.opacity = '0';
+                    setTimeout(() => { document.getElementById('welcome-screen').style.display = 'none'; document.getElementById('displayCard').style.display = 'block'; }, 1000);
+                }, 1500);
+            } else {
+                // القطعة غير مفعلة، ننتقل لكرت التفعيل
+                document.getElementById('welcome-text').innerText = "لم يتم تفعيل هذا الكود بعد، يرجى التفعيل.";
+                
+                setTimeout(() => {
+                    document.getElementById('welcome-screen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('welcome-screen').style.display = 'none';
+                        document.getElementById('activateItemCode').value = code;
+                        document.getElementById('activateItemCode').readOnly = true;
+                        document.getElementById('activationCard').style.display = 'block';
+                    }, 1000);
+                }, 1500);
             }
-        }).catch(err => console.log("لا توجد بيانات سابقة أو الكود جديد"));
-    }
-
-    function autoFillCode() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        if (code) {
-            document.getElementById('itemCode').value = code;
-            document.getElementById('itemCode').readOnly = true;
-            checkExistingData(code); // فحص البيانات فوراً عند وجود كود
-        }
+        });
     }
 
     window.onload = () => {
-        autoFillCode();
-        setTimeout(() => {
-            const welcome = document.getElementById('welcome-screen');
-            welcome.style.opacity = '0';
-            setTimeout(() => { welcome.style.display = 'none'; document.getElementById('mainCard').style.display = 'block'; }, 2500);
-        }, 3500);
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        if (code) {
+            checkData(code);
+        } else {
+            document.getElementById('welcome-text').innerText = "الكود مفقود من الرابط، يرجى التأكد.";
+        }
     };
 
-    // أنيميشن الخلفية (كودك الأصلي)
+    // --- أنيميشن الخلفية (بقي كما هو) ---
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
     function init() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; particles = []; for (let i = 0; i < 80; i++) particles.push(new Particle()); }
     class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * w; this.y = Math.random() * h; this.v = Math.random() * 1.8 + 0.5; this.color = Math.random() > 0.4 ? '#2ecc71' : '#00f2ff'; this.dir = Math.random() > 0.5 ? 'h' : 'v'; } draw() { ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, 2.5, 2.5); if (this.dir === 'h') this.x += this.v; else this.y += this.v; if (this.x > w || this.y > h) this.reset(); } }
-    function animate() { ctx.fillStyle = 'rgba(0, 0, 0, 0.12)'; ctx.fillRect(0, 0, w, h); particles.forEach(p => p.draw()); requestAnimationFrame(animate); }
+    function animate() { ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; ctx.fillRect(0, 0, w, h); particles.forEach(p => p.draw()); requestAnimationFrame(animate); }
     init(); animate();
 
     document.getElementById('activationForm').addEventListener('submit', function(e) {
@@ -98,9 +164,7 @@
         const btn = document.getElementById('submitBtn');
         btn.disabled = true; btn.innerText = 'جاري المعالجة...';
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(this)) })
-        .then(() => { alert('تم الحفظ بنجاح!'); location.reload(); })
-        .catch(() => alert('حدث خطأ'))
-        .finally(() => { btn.disabled = false; });
+        .then(() => { alert('تم الحفظ بنجاح!'); location.reload(); });
     });
 </script>
 </body>
