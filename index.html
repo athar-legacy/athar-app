@@ -10,28 +10,29 @@
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة التحميل */
+        /* شاشة التحميل المتتابعة */
         #loading-screen { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
-        .neon-msg { font-size: 1.4rem; text-align: center; color: var(--neon); text-shadow: 0 0 15px var(--neon); opacity: 0; transition: 0.8s; padding: 20px; line-height: 1.6; position: absolute; width: 80%; }
+        .msg-container { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .neon-msg { font-size: 1.4rem; text-align: center; color: var(--neon); text-shadow: 0 0 15px var(--neon); opacity: 0; transition: 0.8s; padding: 20px; line-height: 1.6; position: absolute; width: 80%; display: none; }
         
-        /* خط التحميل السفلي */
-        .loader-container { position: absolute; bottom: 20%; width: 60%; height: 2px; background: rgba(255,255,255,0.1); }
-        #loader-bar { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: width 3s linear; }
+        .loader-container { position: absolute; bottom: -40px; width: 60%; height: 2px; background: rgba(255,255,255,0.1); }
+        #loader-bar { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: width 0.5s ease-out; }
 
         /* الكروت */
         .card { background: rgba(10, 30, 20, 0.95); padding: 2rem; border-radius: 30px; border: 2px solid var(--neon); width: 85%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; opacity: 0; transition: 0.8s; max-height: 85vh; overflow-y: auto; }
         
-        h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon); }
+        h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon); color: #fff; }
         .tagline { color: var(--neon-2); font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 20px; }
         
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 15px; margin: 8px 0; border-right: 4px solid var(--neon); text-align: right; }
         .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 4px; }
+        .info-box span { font-size: 1.1rem; word-break: break-all; }
         
         .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; margin-top: 10px; }
         .btn-call { background: var(--neon); }
         .btn-wa { background: #25D366; }
 
-        input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
         #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 10px; }
         .signature { margin-top: 30px; font-size: 0.7rem; color: #666; border-top: 1px solid #222; padding-top: 10px; }
     </style>
@@ -39,11 +40,13 @@
 <body>
 
 <div id="loading-screen">
-    <div id="m1" class="neon-msg">" كل ما نتركه خلفنا سيحكي عنا يوماً "</div>
-    <div id="m2" class="neon-msg">جاري البحث عن صاحب الأثر...</div>
-    <div id="m3" class="neon-msg">تم العثور على المعلومات!</div>
-    <div id="mNew" class="neon-msg">مستخدم جديد.. <br> مرحباً بك في عالم أثَر</div>
-    <div class="loader-container"><div id="loader-bar"></div></div>
+    <div class="msg-container">
+        <div id="m1" class="neon-msg">" كل ما نتركه خلفنا سيحكي عنا يوماً "</div>
+        <div id="m2" class="neon-msg">جاري البحث عن صاحب الأثر...</div>
+        <div id="m3" class="neon-msg">تم العثور على المعلومات!</div>
+        <div id="mNew" class="neon-msg">مستخدم جديد.. <br> مرحباً بك في عالم أثَر</div>
+        <div class="loader-container"><div id="loader-bar"></div></div>
+    </div>
 </div>
 
 <canvas id="chipCanvas"></canvas>
@@ -51,18 +54,22 @@
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <p>مشروع يجمع بين الفن والتقنية لتوثيق الهوية عبر NFC.</p>
+    <p style="line-height: 1.6;">مشروع يجمع بين الفن والتقنية لتوثيق الهوية بطريقة مبتكرة عبر تقنية NFC. كل قطعة هي أثر لا ينسى.</p>
     <div class="signature">صُنع بواسطة Welf Bassam</div>
 </div>
 
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
     <div class="tagline">بيانات صاحب الأثر</div>
-    <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
-    <div class="info-box"><strong>رقم الجوال</strong> <span id="vPhone"></span></div>
-    <div class="info-box" id="vBloodBox"><strong>فصيلة الدم</strong> <span id="vBlood"></span></div>
-    <div class="info-box" id="vMedBox" style="display:none;"><strong>الحالة الصحية</strong> <span id="vMed"></span></div>
-    <div class="info-box" id="vAccBox" style="display:none;"><strong>التواصل</strong> <span id="vAcc"></span></div>
+    <div class="info-box"><strong><i class="fas fa-user"></i> صاحب الأثر</strong> <span id="vName"></span></div>
+    <div class="info-box"><strong><i class="fas fa-phone"></i> رقم الجوال</strong> <span id="vPhone"></span></div>
+    
+    <div class="info-box" id="vEmailBox" style="display:none;"><strong><i class="fas fa-envelope"></i> البريد الإلكتروني</strong> <span id="vEmail"></span></div>
+    
+    <div class="info-box" id="vBloodBox"><strong><i class="fas fa-heart"></i> فصيلة الدم</strong> <span id="vBlood"></span></div>
+    <div class="info-box" id="vMedBox" style="display:none;"><strong><i class="fas fa-notes-medical"></i> الحالة الصحية</strong> <span id="vMed"></span></div>
+    <div class="info-box" id="vAccBox" style="display:none;"><strong><i class="fas fa-hashtag"></i> التواصل</strong> <span id="vAcc"></span></div>
+    
     <div style="display:flex; gap:10px;">
         <a id="cBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
         <a id="wBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
@@ -75,6 +82,7 @@
     <form id="regForm">
         <input type="text" name="name" placeholder="الاسم الكامل *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
+        <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
         <select name="platform">
             <option value="">تطبيق التواصل (اختياري)</option>
             <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X</option><option>TikTok</option>
@@ -89,61 +97,76 @@
 </div>
 
 <script>
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwgJMW-yAR4GjIz4WAB1PShzCcialzz8JS3_CdNtiyBu9m4qMUDbrlMeYUYzeSUREB1/exec';
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxA7_6OgRs-nyhQPd3_lvO7vcEC4Cy0oF1S9IcwiSFluj4W-IILHZZXqXR6KnxaJfiY/exec';
     const code = new URLSearchParams(window.location.search).get('code');
     const bar = document.getElementById('loader-bar');
 
+    async function show(el, time, p) {
+        el.style.display = 'block';
+        setTimeout(() => el.style.opacity = '1', 50);
+        bar.style.width = p + '%';
+        await new Promise(r => setTimeout(r, time));
+        el.style.opacity = '0';
+        await new Promise(r => setTimeout(r, 800));
+        el.style.display = 'none';
+    }
+
     async function run() {
         if (!code) {
-            await show(document.getElementById('m1'), 2000, 100);
+            await show(document.getElementById('m1'), 2500, 100);
             finish('mainLanding');
             return;
         }
 
-        // المرحلة 1: الحكمة
-        await show(document.getElementById('m1'), 2000, 40);
+        await show(document.getElementById('m1'), 2000, 30);
         
-        // المرحلة 2: البحث (تظهر وتستمر حتى انتهاء الفيتش)
         const m2 = document.getElementById('m2');
-        m2.style.opacity = '1';
-        bar.style.width = '80%';
+        m2.style.display = 'block';
+        setTimeout(() => m2.style.opacity = '1', 50);
+        bar.style.width = '70%';
         
         try {
             const res = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
             const data = await res.json();
+            
             m2.style.opacity = '0';
-            await new Promise(r => setTimeout(r, 600));
+            await new Promise(r => setTimeout(r, 800));
+            m2.style.display = 'none';
 
             if (data.status === "تم التفعيل") {
                 await show(document.getElementById('m3'), 1500, 100);
+                
                 document.getElementById('vName').innerText = data.name;
                 document.getElementById('vPhone').innerText = data.phone;
                 document.getElementById('vBlood').innerText = data.blood || "غير محدد";
                 document.getElementById('cBtn').href = `tel:${data.phone}`;
                 document.getElementById('wBtn').href = `https://wa.me/${data.phone}`;
-                if(data.medical && data.medical.trim() !== "") {
+
+                // منطق عرض الإيميل
+                if(data.email && data.email.trim() !== "" && data.email !== "undefined") {
+                    document.getElementById('vEmail').innerText = data.email;
+                    document.getElementById('vEmailBox').style.display = 'block';
+                }
+                
+                if(data.medical && data.medical.trim() !== "" && data.medical !== "undefined") {
                     document.getElementById('vMed').innerText = data.medical;
                     document.getElementById('vMedBox').style.display = 'block';
                 }
-                if(data.account) {
+
+                if(data.account && data.account !== "undefined") {
                     document.getElementById('vAcc').innerText = data.account;
                     document.getElementById('vAccBox').style.display = 'block';
                 }
+                
                 finish('displayCard');
             } else {
                 await show(document.getElementById('mNew'), 2000, 100);
                 document.getElementById('hCode').value = code;
                 finish('regCard');
             }
-        } catch(e) { finish('mainLanding'); }
-    }
-
-    function show(el, time, p) {
-        return new Promise(r => {
-            el.style.opacity = '1';
-            bar.style.width = p + '%';
-            setTimeout(() => { el.style.opacity = '0'; setTimeout(r, 800); }, time);
-        });
+        } catch(e) { 
+            finish('mainLanding'); 
+        }
     }
 
     function finish(id) {
@@ -170,7 +193,6 @@
         .then(() => { alert('تم التفعيل بنجاح!'); location.reload(); });
     };
 
-    // Particles
     const canvas = document.getElementById('chipCanvas'), ctx = canvas.getContext('2d');
     let w, h, ps = [];
     function init() { 
