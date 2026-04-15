@@ -7,34 +7,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --neon: #00ffcc; --neon-2: #00f2ff; }
-        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة التحميل المتتابعة */
-        #loading-screen { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
-        .msg-container { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; }
-        .neon-msg { font-size: 1.4rem; text-align: center; color: var(--neon); text-shadow: 0 0 15px var(--neon); opacity: 0; transition: 0.8s; padding: 20px; line-height: 1.6; position: absolute; width: 80%; display: none; }
+        /* السماح بالتمرير في الصفحة كاملة */
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        .loader-container { position: absolute; bottom: -40px; width: 60%; height: 2px; background: rgba(255,255,255,0.1); }
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
+        
+        /* شاشة التحميل */
+        #loading-screen { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; justify-content: center; align-items: center; transition: 0.8s; }
+        
+        .msg-container { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        .neon-msg { font-size: 1.4rem; text-align: center; color: var(--neon); text-shadow: 0 0 15px var(--neon); opacity: 0; transition: 0.8s; padding: 20px; line-height: 1.6; position: absolute; width: 85%; display: none; top: 50%; transform: translateY(-50%); }
+        
+        /* ضبط موقع خط التحميل تحت الكلام بوضوح */
+        .loader-wrapper { position: absolute; top: calc(50% + 60px); width: 60%; height: 2px; background: rgba(255,255,255,0.1); }
         #loader-bar { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: width 0.5s ease-out; }
 
-        /* الكروت */
-        .card { background: rgba(10, 30, 20, 0.95); padding: 2rem; border-radius: 30px; border: 2px solid var(--neon); width: 85%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; opacity: 0; transition: 0.8s; max-height: 85vh; overflow-y: auto; }
+        /* الكروت - تفعيل التمرير */
+        .card { background: rgba(10, 30, 20, 0.95); padding: 2rem; border-radius: 30px; border: 2px solid var(--neon); width: 85%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; opacity: 0; transition: 0.8s; margin: 20px 0; box-shadow: 0 0 30px rgba(0, 255, 204, 0.1); }
         
         h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon); color: #fff; }
         .tagline { color: var(--neon-2); font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 20px; }
         
-        .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 15px; margin: 8px 0; border-right: 4px solid var(--neon); text-align: right; }
+        .info-box { background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 15px; margin: 10px 0; border-right: 4px solid var(--neon); text-align: right; }
         .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 4px; }
-        .info-box span { font-size: 1.1rem; word-break: break-all; }
+        .info-box span { font-size: 1.1rem; word-break: break-all; color: #fff; }
         
         .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; margin-top: 10px; }
         .btn-call { background: var(--neon); }
         .btn-wa { background: #25D366; }
 
-        input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
-        #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 10px; }
-        .signature { margin-top: 30px; font-size: 0.7rem; color: #666; border-top: 1px solid #222; padding-top: 10px; }
+        input, select { width: 100%; padding: 14px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; font-size: 1rem; }
+        #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 15px; font-size: 1.1rem; }
+        .signature { margin-top: 30px; font-size: 0.7rem; color: #666; border-top: 1px solid #222; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -45,7 +51,7 @@
         <div id="m2" class="neon-msg">جاري البحث عن صاحب الأثر...</div>
         <div id="m3" class="neon-msg">تم العثور على المعلومات!</div>
         <div id="mNew" class="neon-msg">مستخدم جديد.. <br> مرحباً بك في عالم أثَر</div>
-        <div class="loader-container"><div id="loader-bar"></div></div>
+        <div class="loader-wrapper"><div id="loader-bar"></div></div>
     </div>
 </div>
 
@@ -54,7 +60,7 @@
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <p style="line-height: 1.6;">مشروع يجمع بين الفن والتقنية لتوثيق الهوية بطريقة مبتكرة عبر تقنية NFC. كل قطعة هي أثر لا ينسى.</p>
+    <p style="line-height: 1.8;">مشروع يجمع بين الفن والتقنية لتوثيق الهوية بطريقة مبتكرة عبر تقنية NFC. <br><br> كل قطعة تحمل قصة، وكل قصة هي أثر لا ينسى.</p>
     <div class="signature">صُنع بواسطة Welf Bassam</div>
 </div>
 
@@ -63,14 +69,12 @@
     <div class="tagline">بيانات صاحب الأثر</div>
     <div class="info-box"><strong><i class="fas fa-user"></i> صاحب الأثر</strong> <span id="vName"></span></div>
     <div class="info-box"><strong><i class="fas fa-phone"></i> رقم الجوال</strong> <span id="vPhone"></span></div>
-    
     <div class="info-box" id="vEmailBox" style="display:none;"><strong><i class="fas fa-envelope"></i> البريد الإلكتروني</strong> <span id="vEmail"></span></div>
-    
     <div class="info-box" id="vBloodBox"><strong><i class="fas fa-heart"></i> فصيلة الدم</strong> <span id="vBlood"></span></div>
     <div class="info-box" id="vMedBox" style="display:none;"><strong><i class="fas fa-notes-medical"></i> الحالة الصحية</strong> <span id="vMed"></span></div>
     <div class="info-box" id="vAccBox" style="display:none;"><strong><i class="fas fa-hashtag"></i> التواصل</strong> <span id="vAcc"></span></div>
     
-    <div style="display:flex; gap:10px;">
+    <div style="display:flex; gap:10px; flex-wrap: wrap;">
         <a id="cBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
         <a id="wBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
     </div>
@@ -87,10 +91,10 @@
             <option value="">تطبيق التواصل (اختياري)</option>
             <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X</option><option>TikTok</option>
         </select>
-        <input type="text" name="account" placeholder="اليوزر">
+        <input type="text" name="account" placeholder="اسم المستخدم">
         <select name="bloodType"><option value="">فصيلة الدم (اختياري)</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select>
         <input type="text" name="medical" placeholder="أمراض مزمنة أو حساسية؟ (اختياري)">
-        <input type="text" name="password" placeholder="كلمة السر (4 أرقام) *" pattern="\d{4}" maxlength="4" required>
+        <input type="text" name="password" placeholder="كلمة السر (4 أرقام فقط) *" pattern="\d{4}" maxlength="4" required>
         <input type="hidden" name="itemCode" id="hCode">
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
@@ -119,54 +123,45 @@
         }
 
         await show(document.getElementById('m1'), 2000, 30);
-        
         const m2 = document.getElementById('m2');
         m2.style.display = 'block';
         setTimeout(() => m2.style.opacity = '1', 50);
-        bar.style.width = '70%';
+        bar.style.width = '75%';
         
         try {
             const res = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
             const data = await res.json();
-            
             m2.style.opacity = '0';
             await new Promise(r => setTimeout(r, 800));
             m2.style.display = 'none';
 
             if (data.status === "تم التفعيل") {
                 await show(document.getElementById('m3'), 1500, 100);
-                
                 document.getElementById('vName').innerText = data.name;
                 document.getElementById('vPhone').innerText = data.phone;
                 document.getElementById('vBlood').innerText = data.blood || "غير محدد";
                 document.getElementById('cBtn').href = `tel:${data.phone}`;
                 document.getElementById('wBtn').href = `https://wa.me/${data.phone}`;
 
-                // منطق عرض الإيميل
                 if(data.email && data.email.trim() !== "" && data.email !== "undefined") {
                     document.getElementById('vEmail').innerText = data.email;
                     document.getElementById('vEmailBox').style.display = 'block';
                 }
-                
                 if(data.medical && data.medical.trim() !== "" && data.medical !== "undefined") {
                     document.getElementById('vMed').innerText = data.medical;
                     document.getElementById('vMedBox').style.display = 'block';
                 }
-
                 if(data.account && data.account !== "undefined") {
                     document.getElementById('vAcc').innerText = data.account;
                     document.getElementById('vAccBox').style.display = 'block';
                 }
-                
                 finish('displayCard');
             } else {
                 await show(document.getElementById('mNew'), 2000, 100);
                 document.getElementById('hCode').value = code;
                 finish('regCard');
             }
-        } catch(e) { 
-            finish('mainLanding'); 
-        }
+        } catch(e) { finish('mainLanding'); }
     }
 
     function finish(id) {
@@ -176,6 +171,7 @@
             const el = document.getElementById(id);
             el.style.display = 'block';
             setTimeout(() => el.style.opacity = '1', 50);
+            document.body.style.overflowY = 'auto'; // تفعيل التمرير عند ظهور الكرت
         }, 800);
     }
 
@@ -208,6 +204,7 @@
         requestAnimationFrame(draw);
     }
     init(); draw();
+    window.onresize = init;
 </script>
 </body>
 </html>
