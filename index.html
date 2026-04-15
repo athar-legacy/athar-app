@@ -8,99 +8,25 @@
     <style>
         :root { --neon: #00ffcc; --neon-2: #00f2ff; }
         
-        /* تفعيل التمرير بشكل كامل */
-        body { 
-            margin: 0; 
-            background: #000; 
-            color: #fff; 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            min-height: 100vh; 
-            overflow-y: auto; 
-            overflow-x: hidden;
-        }
-        
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
         canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         
-        /* شاشة التحميل المهيكلة بشكل صحيح */
-        #loading-screen { 
-            position: fixed; 
-            inset: 0; 
-            background: #000; 
-            z-index: 100; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            transition: opacity 0.8s; 
-        }
-        
-        .loading-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 40px; /* مسافة كافية بين الكلام والخط */
-            width: 90%;
-        }
-        
-        .neon-msg { 
-            font-size: 1.4rem; 
-            text-align: center; 
-            color: var(--neon); 
-            text-shadow: 0 0 15px var(--neon); 
-            opacity: 0; 
-            transition: 0.8s; 
-            line-height: 1.6;
-            display: none;
-        }
-        
-        .loader-wrapper { 
-            width: 60%; 
-            height: 2px; 
-            background: rgba(255,255,255,0.1); 
-            position: relative;
-        }
-        
-        #loader-bar { 
-            width: 0%; 
-            height: 100%; 
-            background: var(--neon); 
-            box-shadow: 0 0 10px var(--neon); 
-            transition: width 0.5s ease-out; 
-        }
+        #loading-screen { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
+        .loading-content { display: flex; flex-direction: column; align-items: center; gap: 40px; width: 90%; }
+        .neon-msg { font-size: 1.4rem; text-align: center; color: var(--neon); text-shadow: 0 0 15px var(--neon); opacity: 0; transition: 0.8s; line-height: 1.6; display: none; }
+        .loader-wrapper { width: 60%; height: 2px; background: rgba(255,255,255,0.1); position: relative; }
+        #loader-bar { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: width 0.5s ease-out; }
 
-        /* الكروت - تصميم يسمح بالتمرير */
-        .card { 
-            background: rgba(10, 30, 20, 0.95); 
-            padding: 2rem; 
-            border-radius: 30px; 
-            border: 2px solid var(--neon); 
-            width: 85%; 
-            max-width: 380px; 
-            z-index: 2; 
-            backdrop-filter: blur(20px); 
-            text-align: center; 
-            display: none; 
-            opacity: 0; 
-            transition: 0.8s; 
-            margin: 40px 0; /* مسافة من الأعلى والأسفل للمرونة */
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.1); 
-        }
-        
+        .card { background: rgba(10, 30, 20, 0.95); padding: 2rem; border-radius: 30px; border: 2px solid var(--neon); width: 85%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; opacity: 0; transition: 0.8s; margin: 40px 0; box-shadow: 0 0 30px rgba(0, 255, 204, 0.1); }
         h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon); color: #fff; }
         .tagline { color: var(--neon-2); font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 20px; }
-        
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 15px; margin: 12px 0; border-right: 4px solid var(--neon); text-align: right; }
         .info-box strong { color: var(--neon-2); font-size: 0.75rem; display: block; margin-bottom: 5px; }
         .info-box span { font-size: 1.1rem; word-break: break-all; color: #fff; display: block; }
-        
         .btn-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
         .btn { flex: 1; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; }
         .btn-call { background: var(--neon); }
         .btn-wa { background: #25D366; }
-
         input, select { width: 100%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; font-size: 1rem; }
         #subBtn { width: 100%; padding: 18px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 20px; font-size: 1.1rem; }
         .signature { margin-top: 35px; font-size: 0.75rem; color: #666; border-top: 1px solid #222; padding-top: 15px; }
@@ -130,13 +56,12 @@
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
     <div class="tagline">بيانات صاحب الأثر</div>
-    <div class="info-box"><strong><i class="fas fa-user"></i> صاحب الأثر</strong> <span id="vName"></span></div>
-    <div class="info-box"><strong><i class="fas fa-phone"></i> رقم الجوال</strong> <span id="vPhone"></span></div>
-    <div class="info-box" id="vEmailBox" style="display:none;"><strong><i class="fas fa-envelope"></i> البريد الإلكتروني</strong> <span id="vEmail"></span></div>
-    <div class="info-box" id="vBloodBox"><strong><i class="fas fa-heart"></i> فصيلة الدم</strong> <span id="vBlood"></span></div>
-    <div class="info-box" id="vMedBox" style="display:none;"><strong><i class="fas fa-notes-medical"></i> الحالة الصحية</strong> <span id="vMed"></span></div>
-    <div class="info-box" id="vAccBox" style="display:none;"><strong><i class="fas fa-hashtag"></i> التواصل</strong> <span id="vAcc"></span></div>
-    
+    <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
+    <div class="info-box"><strong>رقم الجوال</strong> <span id="vPhone"></span></div>
+    <div class="info-box" id="vEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="vEmail"></span></div>
+    <div class="info-box" id="vBloodBox"><strong>فصيلة الدم</strong> <span id="vBlood"></span></div>
+    <div class="info-box" id="vMedBox" style="display:none;"><strong>الحالة الصحية</strong> <span id="vMed"></span></div>
+    <div class="info-box" id="vAccBox" style="display:none;"><strong>التواصل</strong> <span id="vAcc"></span></div>
     <div class="btn-container">
         <a id="cBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
         <a id="wBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
@@ -147,18 +72,21 @@
     <h1>أثَـــر</h1>
     <div class="tagline">تفعيل قطعة جديدة</div>
     <form id="regForm">
-        <input type="text" name="name" placeholder="الاسم الكامل *" required>
-        <input type="tel" name="phone" placeholder="رقم الجوال *" required>
-        <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
-        <select name="platform">
+        <input type="text" id="regName" name="name" placeholder="الاسم الكامل *" required>
+        <input type="tel" id="regPhone" name="phone" placeholder="رقم الجوال *" required>
+        <input type="email" id="regEmail" name="email" placeholder="البريد الإلكتروني (اختياري)">
+        <select id="regPlatform" name="platform">
             <option value="">تطبيق التواصل (اختياري)</option>
             <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X</option><option>TikTok</option>
         </select>
-        <input type="text" name="account" placeholder="اسم المستخدم">
-        <select name="bloodType"><option value="">فصيلة الدم (اختياري)</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select>
-        <input type="text" name="medical" placeholder="أمراض مزمنة أو حساسية؟ (اختياري)">
-        <input type="text" name="password" placeholder="كلمة السر (4 أرقام) *" pattern="\d{4}" maxlength="4" required>
-        <input type="hidden" name="itemCode" id="hCode">
+        <input type="text" id="regAcc" name="account" placeholder="اسم المستخدم">
+        <select id="regBlood" name="bloodType">
+            <option value="">فصيلة الدم (اختياري)</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+        </select>
+        <input type="text" id="regMed" name="medical" placeholder="أمراض مزمنة أو حساسية؟ (اختياري)">
+        <input type="text" id="regPass" name="password" placeholder="كلمة السر (4 أرقام فقط) *" pattern="\d{4}" maxlength="4" required>
+        <input type="hidden" id="hCode" name="itemCode">
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
 </div>
@@ -207,11 +135,11 @@
                 document.getElementById('cBtn').href = `tel:${data.phone}`;
                 document.getElementById('wBtn').href = `https://wa.me/${data.phone}`;
 
-                if(data.email && data.email.trim() !== "" && data.email !== "undefined") {
+                if(data.email && data.email !== "undefined") {
                     document.getElementById('vEmail').innerText = data.email;
                     document.getElementById('vEmailBox').style.display = 'block';
                 }
-                if(data.medical && data.medical.trim() !== "" && data.medical !== "undefined") {
+                if(data.medical && data.medical !== "undefined") {
                     document.getElementById('vMed').innerText = data.medical;
                     document.getElementById('vMedBox').style.display = 'block';
                 }
@@ -222,17 +150,16 @@
                 finish('displayCard');
             } else {
                 await show(document.getElementById('mNew'), 2000, 100);
-                document.getElementById('hCode').value = code;
+                document.getElementById('hCode').value = code; // تعبئة الكود في الفورم
                 finish('regCard');
             }
         } catch(e) { finish('mainLanding'); }
     }
 
     function finish(id) {
-        const screen = document.getElementById('loading-screen');
-        screen.style.opacity = '0';
+        document.getElementById('loading-screen').style.opacity = '0';
         setTimeout(() => {
-            screen.style.display = 'none';
+            document.getElementById('loading-screen').style.display = 'none';
             const el = document.getElementById(id);
             el.style.display = 'block';
             setTimeout(() => el.style.opacity = '1', 50);
@@ -241,16 +168,40 @@
 
     window.onload = run;
 
+    // إصلاح مشكلة إرسال البيانات
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
         const btn = document.getElementById('subBtn');
         btn.innerText = 'جاري الحفظ...';
         btn.disabled = true;
-        const formData = new FormData(this);
-        const p = formData.get('platform'), a = formData.get('account');
-        if(p && a) formData.set('account', p + ": " + a);
-        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(formData) })
-        .then(() => { alert('تم التفعيل بنجاح!'); location.reload(); });
+
+        const p = document.getElementById('regPlatform').value;
+        const a = document.getElementById('regAcc').value;
+        let finalAcc = a;
+        if(p && a) finalAcc = p + ": " + a;
+
+        const params = new URLSearchParams();
+        params.append('name', document.getElementById('regName').value);
+        params.append('phone', document.getElementById('regPhone').value);
+        params.append('email', document.getElementById('regEmail').value);
+        params.append('account', finalAcc);
+        params.append('bloodType', document.getElementById('regBlood').value);
+        params.append('medical', document.getElementById('regMed').value);
+        params.append('password', document.getElementById('regPass').value);
+        params.append('itemCode', document.getElementById('hCode').value);
+
+        fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: params
+        }).then(() => {
+            alert('تم التفعيل بنجاح! سيتم تحديث الصفحة.');
+            location.reload();
+        }).catch(err => {
+            alert('حدث خطأ، يرجى المحاولة مرة أخرى.');
+            btn.disabled = false;
+            btn.innerText = 'بث الحياة في أثرك';
+        });
     };
 
     const canvas = document.getElementById('chipCanvas'), ctx = canvas.getContext('2d');
