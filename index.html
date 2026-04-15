@@ -6,51 +6,44 @@
     <title>أثَـــر | ATHAR LEGACY</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* لون أخضر مايل للزرقة نيون */
-        :root { --neon-main: #00ffcc; --neon-accent: #00f2ff; }
-        
+        :root { --neon: #00ffcc; --neon-2: #00f2ff; }
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشات التحميل */
-        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        /* شاشة التحميل */
+        #loading-screen { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
+        .neon-msg { font-size: 1.4rem; text-align: center; color: var(--neon); text-shadow: 0 0 15px var(--neon); opacity: 0; transition: 0.8s; padding: 20px; line-height: 1.6; position: absolute; width: 80%; }
         
-        .msg-container { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; }
-        
-        .neon-msg { font-size: 1.4rem; text-align: center; color: var(--neon-main); text-shadow: 0 0 10px var(--neon-main), 0 0 20px var(--neon-main); opacity: 0; display: none; transition: opacity 0.8s; padding: 20px; line-height: 1.6; }
+        /* خط التحميل السفلي */
+        .loader-container { position: absolute; bottom: 20%; width: 60%; height: 2px; background: rgba(255,255,255,0.1); }
+        #loader-bar { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: width 3s linear; }
 
-        /* خط التحميل النيون */
-        #loader-bar { width: 0%; height: 2px; background: var(--neon-main); box-shadow: 0 0 10px var(--neon-main); position: absolute; bottom: -10px; transition: width 0.5s; display: none; }
-
-        .card { background: rgba(10, 30, 20, 0.95); padding: 2rem; border-radius: 30px; border: 2px solid var(--neon-main); width: 85%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); box-shadow: 0 0 40px rgba(0, 255, 204, 0.2); text-align: center; display: none; opacity: 0; transition: opacity 0.8s ease-in; max-height: 85vh; overflow-y: auto; }
+        /* الكروت */
+        .card { background: rgba(10, 30, 20, 0.95); padding: 2rem; border-radius: 30px; border: 2px solid var(--neon); width: 85%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; opacity: 0; transition: 0.8s; max-height: 85vh; overflow-y: auto; }
         
-        h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon-main); color: #fff; }
-        .tagline { color: var(--neon-accent); font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 20px; }
-
-        .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 15px; margin: 8px 0; border-right: 4px solid var(--neon-main); text-align: right; }
-        .info-box strong { color: var(--neon-accent); font-size: 0.7rem; display: block; margin-bottom: 4px; }
+        h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon); }
+        .tagline { color: var(--neon-2); font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 20px; }
         
-        .contact-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
-        .row-btns { display: flex; gap: 8px; }
-        .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; }
-        .btn-call { background: var(--neon-main); }
+        .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 15px; margin: 8px 0; border-right: 4px solid var(--neon); text-align: right; }
+        .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 4px; }
+        
+        .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; margin-top: 10px; }
+        .btn-call { background: var(--neon); }
         .btn-wa { background: #25D366; }
 
-        input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-main); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
-        #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon-main), var(--neon-accent)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 10px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; }
+        #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 10px; }
         .signature { margin-top: 30px; font-size: 0.7rem; color: #666; border-top: 1px solid #222; padding-top: 10px; }
     </style>
 </head>
 <body>
 
-<div id="welcome-screen">
-    <div class="msg-container">
-        <div id="msg1" class="neon-msg">" كل ما نتركه خلفنا سيحكي عنا يوماً "</div>
-        <div id="msg2" class="neon-msg">جاري البحث عن صاحب الأثر...</div>
-        <div id="msg3" class="neon-msg">تم العثور على المعلومات!</div>
-        <div id="msgNew" class="neon-msg">مستخدم جديد.. <br> مرحباً بك في عالم أثَر</div>
-        <div id="loader-bar"></div>
-    </div>
+<div id="loading-screen">
+    <div id="m1" class="neon-msg">" كل ما نتركه خلفنا سيحكي عنا يوماً "</div>
+    <div id="m2" class="neon-msg">جاري البحث عن صاحب الأثر...</div>
+    <div id="m3" class="neon-msg">تم العثور على المعلومات!</div>
+    <div id="mNew" class="neon-msg">مستخدم جديد.. <br> مرحباً بك في عالم أثَر</div>
+    <div class="loader-container"><div id="loader-bar"></div></div>
 </div>
 
 <canvas id="chipCanvas"></canvas>
@@ -58,9 +51,7 @@
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <div style="line-height: 1.8; text-align: center; font-size: 0.95rem; color: #ddd;">
-        أثَر هو مشروع يجمع بين الفن والتقنية، نهدف لتوثيق الهوية بطريقة مبتكرة عبر تقنية NFC. <br><br> كل قطعة تحمل قصة، وكل قصة هي أثر لا ينسى.
-    </div>
+    <p>مشروع يجمع بين الفن والتقنية لتوثيق الهوية عبر NFC.</p>
     <div class="signature">صُنع بواسطة Welf Bassam</div>
 </div>
 
@@ -70,14 +61,11 @@
     <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
     <div class="info-box"><strong>رقم الجوال</strong> <span id="vPhone"></span></div>
     <div class="info-box" id="vBloodBox"><strong>فصيلة الدم</strong> <span id="vBlood"></span></div>
-    <div class="info-box" id="vMedicalBox" style="display:none;"><strong>الحالة الصحية</strong> <span id="vMedical"></span></div>
-    <div class="info-box" id="vAccBox" style="display:none;"><strong>التواصل الاجتماعي</strong> <span id="vAcc"></span></div>
-    
-    <div class="contact-actions">
-        <div class="row-btns">
-            <a id="callBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
-            <a id="waBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
-        </div>
+    <div class="info-box" id="vMedBox" style="display:none;"><strong>الحالة الصحية</strong> <span id="vMed"></span></div>
+    <div class="info-box" id="vAccBox" style="display:none;"><strong>التواصل</strong> <span id="vAcc"></span></div>
+    <div style="display:flex; gap:10px;">
+        <a id="cBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
+        <a id="wBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
     </div>
 </div>
 
@@ -87,19 +75,15 @@
     <form id="regForm">
         <input type="text" name="name" placeholder="الاسم الكامل *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
-        <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
         <select name="platform">
             <option value="">تطبيق التواصل (اختياري)</option>
-            <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X (Twitter)</option><option>TikTok</option>
+            <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X</option><option>TikTok</option>
         </select>
-        <input type="text" name="account" placeholder="اسم المستخدم">
-        <select name="bloodType">
-            <option value="">فصيلة الدم (اختياري)</option>
-            <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
-        </select>
-        <input type="text" name="medical" placeholder="أية أمراض مزمنة أو حساسية؟ (اختياري)">
-        <input type="text" name="password" placeholder="كلمة السر (4 أرقام فقط) *" pattern="\d{4}" maxlength="4" required style="font-family: Arial;">
-        <input type="hidden" name="itemCode" id="hiddenCode">
+        <input type="text" name="account" placeholder="اليوزر">
+        <select name="bloodType"><option value="">فصيلة الدم (اختياري)</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select>
+        <input type="text" name="medical" placeholder="أمراض مزمنة أو حساسية؟ (اختياري)">
+        <input type="text" name="password" placeholder="كلمة السر (4 أرقام) *" pattern="\d{4}" maxlength="4" required>
+        <input type="hidden" name="itemCode" id="hCode">
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
 </div>
@@ -109,69 +93,70 @@
     const code = new URLSearchParams(window.location.search).get('code');
     const bar = document.getElementById('loader-bar');
 
-    async function showMsg(id, time, progress) {
-        const el = document.getElementById(id);
-        el.style.display = 'block';
-        bar.style.display = 'block';
-        setTimeout(() => el.style.opacity = '1', 50);
-        bar.style.width = progress + '%';
-        await new Promise(r => setTimeout(r, time));
-        el.style.opacity = '0';
-        await new Promise(r => setTimeout(r, 800));
-        el.style.display = 'none';
-    }
-
-    async function sequence() {
+    async function run() {
         if (!code) {
-            await showMsg('msg1', 2500, 100);
-            showScreen('mainLanding');
+            await show(document.getElementById('m1'), 2000, 100);
+            finish('mainLanding');
             return;
         }
 
-        await showMsg('msg1', 2000, 30);
-        await showMsg('msg2', 2000, 60);
-
+        // المرحلة 1: الحكمة
+        await show(document.getElementById('m1'), 2000, 40);
+        
+        // المرحلة 2: البحث (تظهر وتستمر حتى انتهاء الفيتش)
+        const m2 = document.getElementById('m2');
+        m2.style.opacity = '1';
+        bar.style.width = '80%';
+        
         try {
             const res = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
             const data = await res.json();
+            m2.style.opacity = '0';
+            await new Promise(r => setTimeout(r, 600));
 
             if (data.status === "تم التفعيل") {
-                await showMsg('msg3', 1500, 100);
+                await show(document.getElementById('m3'), 1500, 100);
                 document.getElementById('vName').innerText = data.name;
                 document.getElementById('vPhone').innerText = data.phone;
                 document.getElementById('vBlood').innerText = data.blood || "غير محدد";
-                document.getElementById('callBtn').href = `tel:${data.phone}`;
-                document.getElementById('waBtn').href = `https://wa.me/${data.phone}`;
+                document.getElementById('cBtn').href = `tel:${data.phone}`;
+                document.getElementById('wBtn').href = `https://wa.me/${data.phone}`;
                 if(data.medical && data.medical.trim() !== "") {
-                    document.getElementById('vMedical').innerText = data.medical;
-                    document.getElementById('vMedicalBox').style.display = 'block';
+                    document.getElementById('vMed').innerText = data.medical;
+                    document.getElementById('vMedBox').style.display = 'block';
                 }
                 if(data.account) {
                     document.getElementById('vAcc').innerText = data.account;
                     document.getElementById('vAccBox').style.display = 'block';
                 }
-                showScreen('displayCard');
+                finish('displayCard');
             } else {
-                await showMsg('msgNew', 2000, 100);
-                document.getElementById('hiddenCode').value = code;
-                showScreen('regCard');
+                await show(document.getElementById('mNew'), 2000, 100);
+                document.getElementById('hCode').value = code;
+                finish('regCard');
             }
-        } catch(e) { 
-            showScreen('mainLanding'); 
-        }
+        } catch(e) { finish('mainLanding'); }
     }
 
-    function showScreen(id) {
-        document.getElementById('welcome-screen').style.opacity = '0';
+    function show(el, time, p) {
+        return new Promise(r => {
+            el.style.opacity = '1';
+            bar.style.width = p + '%';
+            setTimeout(() => { el.style.opacity = '0'; setTimeout(r, 800); }, time);
+        });
+    }
+
+    function finish(id) {
+        document.getElementById('loading-screen').style.opacity = '0';
         setTimeout(() => {
-            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('loading-screen').style.display = 'none';
             const el = document.getElementById(id);
             el.style.display = 'block';
             setTimeout(() => el.style.opacity = '1', 50);
         }, 800);
     }
 
-    window.onload = sequence;
+    window.onload = run;
 
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
@@ -185,22 +170,22 @@
         .then(() => { alert('تم التفعيل بنجاح!'); location.reload(); });
     };
 
-    // Animation Particles
+    // Particles
     const canvas = document.getElementById('chipCanvas'), ctx = canvas.getContext('2d');
     let w, h, ps = [];
     function init() { 
         w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
-        ps = []; for(let i=0; i<60; i++) ps.push({x:Math.random()*w, y:Math.random()*h, v:Math.random()*0.5+0.3, c:Math.random()>0.5?'#00ffcc':'#00f2ff'});
+        ps = []; for(let i=0; i<50; i++) ps.push({x:Math.random()*w, y:Math.random()*h, v:Math.random()*0.5+0.2, c:Math.random()>0.5?'#00ffcc':'#00f2ff'});
     }
     function draw() {
-        ctx.fillStyle = 'rgba(0,0,0,0.15)'; ctx.fillRect(0,0,w,h);
+        ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h);
         ps.forEach(p => {
             ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 1.5, 1.5);
             p.y += p.v; if(p.y > h) p.y = -5;
         });
         requestAnimationFrame(draw);
     }
-    window.onresize = init; init(); draw();
+    init(); draw();
 </script>
 </body>
 </html>
