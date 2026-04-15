@@ -7,69 +7,69 @@
     <style>
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        
         #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 2s ease-in-out; }
         #welcome-text { color: #2ecc71; font-size: 1.4rem; text-align: center; text-shadow: 0 0 15px #2ecc71; padding: 25px; opacity: 0; transform: scale(0.95); transition: 1.5s ease-in-out; max-width: 85%; line-height: 1.6; }
+
         .card { background: rgba(10, 30, 20, 0.95); padding: 2.2rem; border-radius: 35px; border: 2px solid #2ecc71; width: 88%; max-width: 380px; z-index: 2; backdrop-filter: blur(20px); text-align: center; display: none; box-shadow: 0 0 50px rgba(46, 204, 113, 0.4); animation: slideUp 1.2s ease-out; max-height: 90vh; overflow-y: auto; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
         h1 { margin: 0; font-size: 2.8rem; text-shadow: 0 0 20px #2ecc71; }
         .tagline { color: #00f2ff; font-size: 0.75rem; letter-spacing: 5px; margin-bottom: 20px; }
+
         .info-header { background: rgba(46, 204, 113, 0.1); padding: 15px; border-radius: 15px; border: 1px solid #2ecc71; color: #fff; font-size: 0.85rem; margin-bottom: 15px; line-height: 1.6; }
         .info-box { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(46, 204, 113, 0.2); border-radius: 12px; padding: 12px; margin-bottom: 10px; text-align: right; }
         .info-label { color: #00f2ff; font-size: 0.7rem; display: block; margin-bottom: 2px; }
         .info-value { color: #fff; font-size: 1rem; word-break: break-all; }
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { padding: 15px; border-radius: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; transition: 0.3s; }
-        .btn-call { background: #2ecc71; color: #000; }
-        .btn-wa { background: #25D366; color: #fff; }
+
+        .btn { width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; transition: 0.3s; cursor: pointer; border: none; }
+        .btn-submit { background: #2ecc71; color: #000; margin-top: 10px; }
+        .btn-call { background: #2ecc71; color: #000; margin-top: 15px; }
+
         input, select { width: 100%; padding: 12px; margin: 7px 0; background: rgba(0,0,0,0.5); border: 1px solid rgba(46, 204, 113, 0.5); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; font-size: 0.9rem; }
-        .next-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, #2ecc71, #00f2ff); border: none; border-radius: 10px; font-weight: bold; color: #000; margin-top: 10px; cursor: pointer; font-size: 1rem; }
     </style>
 </head>
 <body>
 
-<div id="welcome-screen"><div id="welcome-text">كل ما نتركه خلفنا .. هو ما سيحكي عنا يوماً</div></div>
-<canvas id="chipCanvas"></canvas>
-
-<div class="card" id="introCard">
-    <h1>أثَـــر</h1>
-    <div class="tagline">ATHAR LEGACY</div>
-    <p>نحن نحول المقتنيات العادية إلى حكايات رقمية خالدة.</p>
-    <button class="next-btn" onclick="showActivationForm()">البدء في تسجيل الأثر</button>
+<div id="welcome-screen">
+    <div id="welcome-text">كل ما نتركه خلفنا .. هو ما سيحكي عنا يوماً</div>
 </div>
+
+<canvas id="chipCanvas"></canvas>
 
 <div class="card" id="activateCard">
     <h1>تسجيل أثَـــر</h1>
-    <form id="actForm">
+    <div class="tagline">ATHAR LEGACY</div>
+    <form action="https://script.google.com/macros/s/AKfycbzL7RFGxEYiLBewc5mwuQtIzHrIhUIJ4QsxqtfRPnkpAs4ggqFNm31hs-Z-4XWuOWtP/exec" method="POST" id="mainForm">
         <input type="text" name="name" placeholder="الاسم الكامل *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
         <input type="email" name="email" placeholder="البريد الإلكتروني">
-        <input type="text" name="account" placeholder="يوزر حساب التواصل (سناب/إنستا)">
+        <input type="text" name="account" placeholder="حساب التواصل (إنستا/سناب)">
         <select name="bloodType">
             <option value="">فصيلة الدم</option>
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
         </select>
-        <input type="text" name="medical" placeholder="أي حالة طبية؟">
-        <input type="password" name="password" placeholder="كلمة سر (4 أرقام)" maxlength="4" required>
-        <input type="text" name="itemCode" id="itemCodeInput" placeholder="كود التفعيل الذهبي *" required>
-        <button type="submit" class="next-btn" id="subBtn">بث الحياة في أثرك</button>
+        <input type="text" name="medical" placeholder="أي حالة طبية أو حساسية؟">
+        <input type="password" name="password" placeholder="كلمة سر (4 أرقام) *" maxlength="4" required>
+        <input type="text" name="itemCode" id="itemCodeInput" placeholder="كود التفعيل" readonly style="background: #111; color: #888;">
+        <button type="submit" class="btn btn-submit">بث الحياة في أثرك</button>
     </form>
 </div>
 
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
-    <div class="info-header">تم العثور على معلومات صاحب الأثر</div>
-    <div class="info-box"><span class="info-label">👤 الاسم</span><div class="info-value" id="valName">-</div></div>
-    <div class="info-box"><span class="info-label">📞 الجوال</span><div class="info-value" id="valPhone">-</div></div>
-    <div class="info-box"><span class="info-label">📱 الحساب</span><div class="info-value" id="valAccount">-</div></div>
-    <div class="info-box"><span class="info-label">🏥 الحالة الطبية</span><div class="info-value" id="valMedical">-</div></div>
-    <div class="action-grid">
-        <a href="" id="linkCall" class="btn btn-call">📞 إتصال</a>
-        <a href="" id="linkWA" class="btn btn-wa">💬 واتساب</a>
-    </div>
+    <div class="tagline">ATHAR LEGACY</div>
+    <div class="info-header">لقد وجدت <span style="color:#00f2ff">أثراً مفقوداً</span>.. أنت الخطوة الأولى لإعادته.</div>
+    <div class="info-box"><span class="info-label">👤 صاحب الأثر</span><div class="info-value" id="valName">-</div></div>
+    <div class="info-box"><span class="info-label">📞 رقم التواصل</span><div class="info-value" id="valPhone">-</div></div>
+    <div class="info-box"><span class="info-label">📱 حساب التواصل</span><div class="info-value" id="valAccount">-</div></div>
+    <div class="info-box"><span class="info-label">🏥 حالة طبية</span><div class="info-value" id="valMedical">-</div></div>
+    <a href="" id="linkCall" class="btn btn-call">📞 إتصال مباشر</a>
 </div>
 
 <script>
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxrhUBfu09buszdd-BKf08hvEqu8N0-ltEFoLXReOLSi6INMmdqxSqThBYr_1q2TIU/exec';
+    // الرابط الأخير الذي أرسلتيه
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbzR3FLGq23bl5C6d679ngMcNS9GJOY2vByly_xtfg-dlvQOXhtc86kvr5OmmVtTsSmQ/exec';
 
     function initSite() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -79,30 +79,39 @@
         setTimeout(() => { welcomeText.style.opacity = '1'; }, 500);
 
         if (code) {
+            // رحلة البحث عن الكود
             setTimeout(() => { 
                 welcomeText.style.opacity = '0'; 
-                setTimeout(() => { welcomeText.innerText = "جاري البحث في السجلات..."; welcomeText.style.opacity = '1'; }, 1000);
+                setTimeout(() => { welcomeText.innerText = "جاري البحث في سجلات أثر..."; welcomeText.style.opacity = '1'; }, 1000);
             }, 3000);
 
             fetch(webAppUrl + "?itemCode=" + code)
             .then(res => res.json())
             .then(data => {
                 if (data.status === "تم التفعيل") {
-                    document.getElementById('valName').innerText = data.name;
-                    document.getElementById('valPhone').innerText = data.phone;
-                    document.getElementById('valAccount').innerText = data.account;
-                    document.getElementById('valMedical').innerText = data.medical || "لا يوجد";
-                    document.getElementById('linkCall').href = "tel:" + data.phone;
-                    document.getElementById('linkWA').href = "https://wa.me/" + data.phone;
-                    transitionTo('displayCard');
+                    setTimeout(() => {
+                        document.getElementById('valName').innerText = data.name;
+                        document.getElementById('valPhone').innerText = data.phone;
+                        document.getElementById('valAccount').innerText = data.account || "غير متوفر";
+                        document.getElementById('valMedical').innerText = data.medical || "لا يوجد";
+                        document.getElementById('linkCall').href = "tel:" + data.phone;
+                        transitionTo('displayCard');
+                    }, 5000);
                 } else {
-                    document.getElementById('itemCodeInput').value = code;
-                    transitionTo('activateCard');
+                    setTimeout(() => {
+                        document.getElementById('itemCodeInput').value = code;
+                        transitionTo('activateCard');
+                    }, 5000);
                 }
             })
-            .catch(() => { transitionTo('activateCard'); });
+            .catch(() => {
+                setTimeout(() => {
+                    document.getElementById('itemCodeInput').value = code;
+                    transitionTo('activateCard');
+                }, 5000);
+            });
         } else {
-            setTimeout(() => { transitionTo('introCard'); }, 3000);
+            document.getElementById('welcome-text').innerText = "يرجى مسح قطعة أثر أولاً";
         }
     }
 
@@ -114,34 +123,9 @@
         }, 1500);
     }
 
-    function showActivationForm() {
-        document.getElementById('introCard').style.display = 'none';
-        document.getElementById('activateCard').style.display = 'block';
-    }
-
     window.onload = initSite;
 
-    document.getElementById('actForm').onsubmit = function(e) {
-        e.preventDefault();
-        const sub = document.getElementById('subBtn');
-        sub.disabled = true; sub.innerText = "جاري الحفظ...";
-        
-        fetch(webAppUrl, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            body: new URLSearchParams(new FormData(this)) 
-        })
-        .then(() => { 
-            alert("تم الحفظ بنجاح!"); 
-            window.location.reload(); 
-        })
-        .catch(() => { 
-            alert("حدث خطأ في الإرسال");
-            sub.disabled = false;
-        });
-    };
-
-    // أنيميشن بسيط
+    // أنيميشن الخلفية
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h;
