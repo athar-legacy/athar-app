@@ -30,12 +30,11 @@
         .btn-call { background: var(--neon-green); }
         .btn-wa { background: #25D366; }
 
-        input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-green); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; font-family: inherit; }
-        .note { font-size: 0.7rem; color: #aaa; margin: 5px 0 15px; text-align: right; line-height: 1.4; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-green); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
+        .note { font-size: 0.7rem; color: #ff4d4d; margin: 5px 0 15px; text-align: right; line-height: 1.4; }
         
         #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon-green), var(--neon-blue)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 10px; }
 
-        .landing-text { line-height: 1.8; text-align: justify; font-size: 0.95rem; color: #ddd; }
         .signature { margin-top: 30px; font-size: 0.7rem; color: #666; border-top: 1px solid #222; padding-top: 10px; }
     </style>
 </head>
@@ -51,7 +50,7 @@
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <div class="landing-text">
+    <div style="line-height: 1.8; text-align: justify; font-size: 0.95rem; color: #ddd;">
         أثَر هو مشروع يجمع بين الفن الرقمي والتقنية، نهدف لتوثيق اللحظات وحفظ الهوية بطريقة مبتكرة عبر تقنية NFC. كل قطعة تحمل قصة، وكل قصة هي أثر لا ينسى.
     </div>
     <div class="signature">صُنع بواسطة Welf Bassam</div>
@@ -64,6 +63,7 @@
     <div class="info-box"><strong><i class="fas fa-heart"></i> فصيلة الدم</strong> <span id="vBlood"></span></div>
     <div class="info-box"><strong><i class="fas fa-notes-medical"></i> الحالة الطبية</strong> <span id="vMedical"></span></div>
     <div class="info-box" id="vAccBox" style="display:none;"><strong><i class="fas fa-hashtag"></i> التواصل</strong> <span id="vAcc"></span></div>
+    
     <div class="contact-actions">
         <a id="callBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
         <a id="waBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
@@ -77,67 +77,62 @@
         <input type="text" name="name" placeholder="الاسم الكامل *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
         <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
+        
         <select name="platform">
             <option value="">اختيار تطبيق التواصل (اختياري)</option>
             <option>Snapchat</option><option>Instagram</option><option>X (Twitter)</option><option>TikTok</option>
         </select>
         <input type="text" name="account" placeholder="اسم المستخدم">
+        
         <select name="bloodType">
             <option value="">فصيلة الدم (اختياري)</option>
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
         </select>
+        
         <input type="text" name="medical" placeholder="هل لديك أية أمراض مزمنة أو حساسية؟">
+        
         <input type="text" name="password" placeholder="كلمة السر (4 أرقام فقط) *" pattern="\d{4}" maxlength="4" required style="font-family: Arial;">
         <div class="note">⚠️ يجب حفظ كلمة السر لتتمكن من تحديث بياناتك مستقبلاً.</div>
+        
         <input type="hidden" name="itemCode" id="hiddenCode">
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
 </div>
 
 <script>
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbjp08se-85to_YWolt18IVA-dHwbkOWUeIzhPE5MLeP2_fdvUi0JTHevtgYz4|exec'; // تأكدي من تحديث الرابط كاملاً هنا
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbwgJMW-yAR4GjIz4WAB1PShzCcialzz8JS3_CdNtiyBu9m4qMUDbrlMeYUYzeSUREB1/exec';
+    const code = new URLSearchParams(window.location.search).get('code');
 
     window.onload = () => {
         if (!code) {
-            // دخول مباشر للموقع بدون كود
             setTimeout(() => { showScreen('mainLanding'); }, 2500);
         } else {
-            // دخول عبر رابط قطعة (code موجود)
-            document.getElementById('statusText').innerText = "جاري البحث عن الأثر...";
-            fetch(webAppUrl + "?read=" + encodeURIComponent(code))
+            document.getElementById('statusText').innerText = "جاري البحث عن صاحب الأثر...";
+            fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
                 .then(res => res.json())
                 .then(data => {
-                    if (data && data.status === "تم التفعيل") {
-                        document.getElementById('statusText').innerText = "تم العثور على صاحب الأثر";
+                    if (data.status === "تم التفعيل") {
+                        document.getElementById('statusText').innerText = "تم العثور على المعلومات!";
                         document.getElementById('vName').innerText = data.name;
                         document.getElementById('vBlood').innerText = data.blood || "غير محدد";
                         document.getElementById('vMedical').innerText = data.medical || "لا يوجد";
-                        document.getElementById('callBtn').href = "tel:" + data.phone;
-                        document.getElementById('waBtn').href = "https://wa.me/" + data.phone;
+                        document.getElementById('callBtn').href = `tel:${data.phone}`;
+                        document.getElementById('waBtn').href = `https://wa.me/${data.phone}`;
                         if(data.account) { document.getElementById('vAcc').innerText = data.account; document.getElementById('vAccBox').style.display='block'; }
                         setTimeout(() => { showScreen('displayCard'); }, 1500);
                     } else {
-                        // الكود موجود لكنه جديد (غير مفعل)
-                        document.getElementById('statusText').innerText = "جاري تهيئة مستخدم جديد...";
+                        document.getElementById('statusText').innerText = "مرحباً بك في عالم أثَر";
                         document.getElementById('hiddenCode').value = code;
                         setTimeout(() => { showScreen('regCard'); }, 1500);
                     }
-                })
-                .catch(() => {
-                    // في حال فشل الاتصال، نفتح صفحة التسجيل احتياطاً
-                    document.getElementById('hiddenCode').value = code;
-                    showScreen('regCard');
-                });
+                }).catch(() => { showScreen('mainLanding'); });
         }
     };
 
     function showScreen(id) {
-        const welcome = document.getElementById('welcome-screen');
-        welcome.style.opacity = '0';
+        document.getElementById('welcome-screen').style.opacity = '0';
         setTimeout(() => {
-            welcome.style.display = 'none';
+            document.getElementById('welcome-screen').style.display = 'none';
             const el = document.getElementById(id);
             el.style.display = 'block';
             setTimeout(() => { el.style.opacity = '1'; }, 50);
@@ -149,21 +144,28 @@
         const btn = document.getElementById('subBtn');
         btn.innerText = 'جاري الحفظ...';
         btn.disabled = true;
-        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(this)) })
+        
+        const formData = new FormData(this);
+        // دمج المنصة مع اليوزر في خانة الحساب
+        const plat = formData.get('platform');
+        const acc = formData.get('account');
+        if(plat && acc) formData.set('account', plat + ": " + acc);
+
+        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(formData) })
         .then(() => { 
             alert('تم تفعيل أثرك بنجاح!'); 
             location.reload(); 
         });
     };
 
-    // Particles
+    // Animation
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
     function init() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; particles = []; for (let i = 0; i < 50; i++) particles.push(new Particle()); }
     class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * w; this.y = Math.random() * h; this.v = Math.random() * 0.8 + 0.2; this.color = Math.random() > 0.5 ? '#2ecc71' : '#00f2ff'; } draw() { ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, 1.5, 1.5); this.y += this.v; if (this.y > h) this.reset(); } }
     function animate() { ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h); particles.forEach(p => p.draw()); requestAnimationFrame(animate); }
-    window.onresize = init; init(); animate();
+    init(); animate();
 </script>
 </body>
 </html>
