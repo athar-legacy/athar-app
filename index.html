@@ -8,7 +8,6 @@
     <style>
         :root { --neon: #00ffcc; --neon-2: #00f2ff; }
         
-        /* السماح بالتمرير وضبط الخلفية */
         body { 
             margin: 0; 
             background: #000; 
@@ -24,7 +23,7 @@
         
         canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
         
-        /* شاشة التحميل */
+        /* شاشة التحميل المنظمة */
         #loading-screen { 
             position: fixed; 
             inset: 0; 
@@ -42,21 +41,22 @@
             flex-direction: column;
             align-items: center;
             width: 90%;
-            position: relative;
+            text-align: center;
         }
         
+        /* ضبط النص ليختفي تماماً قبل ظهور غيره */
         .neon-msg { 
-            font-size: 1.4rem; 
-            text-align: center; 
+            font-size: 1.3rem; 
             color: var(--neon); 
             text-shadow: 0 0 15px var(--neon); 
             opacity: 0; 
-            transition: 0.8s; 
+            transition: opacity 0.4s ease-in-out; 
             line-height: 1.6;
-            margin-bottom: 50px; /* مسافة ثابتة تحت الكلام */
-            min-height: 80px;
+            margin-bottom: 60px; /* مسافة أمان كبيرة فوق الخط */
+            min-height: 3.5rem; /* حجز مساحة ثابتة للنص لمنع القفز */
             display: flex;
             align-items: center;
+            justify-content: center;
         }
         
         .loader-wrapper { 
@@ -92,21 +92,21 @@
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.1); 
         }
         
-        h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon); color: #fff; }
-        .tagline { color: var(--neon-2); font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 25px; }
+        h1 { margin: 0; font-size: 2.3rem; text-shadow: 0 0 15px var(--neon); color: #fff; }
+        .tagline { color: var(--neon-2); font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 25px; }
         
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 15px; margin: 12px 0; border-right: 4px solid var(--neon); text-align: right; }
-        .info-box strong { color: var(--neon-2); font-size: 0.75rem; display: block; margin-bottom: 5px; }
-        .info-box span { font-size: 1.1rem; word-break: break-all; color: #fff; display: block; }
+        .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 5px; }
+        .info-box span { font-size: 1.05rem; word-break: break-all; color: #fff; display: block; }
         
         .btn-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-        .btn { flex: 1; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; }
+        .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
         .btn-call { background: var(--neon); }
         .btn-wa { background: #25D366; }
 
-        input, select { width: 100%; padding: 15px; margin: 10px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; font-size: 1rem; }
-        #subBtn { width: 100%; padding: 18px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 20px; font-size: 1.1rem; }
-        .signature { margin-top: 35px; font-size: 0.75rem; color: #666; border-top: 1px solid #222; padding-top: 15px; }
+        input, select { width: 100%; padding: 14px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; font-size: 1rem; }
+        #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 15px; font-size: 1rem; }
+        .signature { margin-top: 30px; font-size: 0.7rem; color: #666; border-top: 1px solid #222; padding-top: 15px; }
     </style>
 </head>
 <body>
@@ -123,15 +123,15 @@
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <p style="line-height: 1.8;">مشروع يجمع بين الفن والتقنية لتوثيق الهوية بطريقة مبتكرة عبر تقنية NFC.</p>
+    <p style="line-height: 1.8;">مشروع يجمع بين الفن والتقنية لتوثيق الهوية بطريقة مبتكرة عبر تقنية NFC. كل قطعة تحمل قصة، وكل قصة هي أثر لا ينسى.</p>
     <div class="signature">صُنع بواسطة Welf Bassam</div>
 </div>
 
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
     <div class="tagline">بيانات صاحب الأثر</div>
-    <div class="info-box" id="boxName"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
-    <div class="info-box" id="boxPhone"><strong>رقم الجوال</strong> <span id="vPhone"></span></div>
+    <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
+    <div class="info-box"><strong>رقم الجوال</strong> <span id="vPhone"></span></div>
     <div class="info-box" id="vEmailBox" style="display:none;"><strong>البريد الإلكتروني</strong> <span id="vEmail"></span></div>
     <div class="info-box" id="vBloodBox"><strong>فصيلة الدم</strong> <span id="vBlood"></span></div>
     <div class="info-box" id="vMedBox" style="display:none;"><strong>الحالة الصحية</strong> <span id="vMed"></span></div>
@@ -172,9 +172,10 @@
     const bar = document.getElementById('loader-bar');
     const msgEl = document.getElementById('m-text');
 
-    async function changeMsg(txt, p, duration = 2000) {
+    // وظيفة تبديل النص بنعومة لمنع التشابك
+    async function changeMsg(txt, p, duration = 1500) {
         msgEl.style.opacity = '0';
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise(r => setTimeout(r, 450));
         msgEl.innerText = txt;
         msgEl.style.opacity = '1';
         bar.style.width = p + '%';
@@ -188,7 +189,7 @@
             return;
         }
 
-        await changeMsg('" كل ما نتركه خلفنا سيحكي عنا يوماً "', 30);
+        await changeMsg('" كل ما نتركه خلفنا سيحكي عنا يوماً "', 25);
         await changeMsg('جاري البحث عن صاحب الأثر...', 60);
         
         try {
@@ -196,7 +197,7 @@
             const data = await res.json();
 
             if (data.status === "تم التفعيل") {
-                await changeMsg('تم العثور على المعلومات!', 100, 1000);
+                await changeMsg('تم العثور على المعلومات!', 100, 800);
                 document.getElementById('vName').innerText = data.name;
                 document.getElementById('vPhone').innerText = data.phone;
                 document.getElementById('vBlood').innerText = data.blood || "غير محدد";
@@ -217,7 +218,7 @@
                 }
                 finish('displayCard');
             } else {
-                await changeMsg('مستخدم جديد.. مرحباً بك في عالم أثَر', 100, 1500);
+                await changeMsg('مستخدم جديد.. مرحباً بك في عالم أثَر', 100, 1200);
                 document.getElementById('hCode').value = code;
                 finish('regCard');
             }
