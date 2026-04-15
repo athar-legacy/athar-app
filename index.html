@@ -15,16 +15,18 @@
             min-height: 100vh; overflow-y: auto; overflow-x: hidden;
         }
 
-        /* خلفية الأنيميشن - تغطي كامل الصفحة */
+        /* الطبقة 1: الأنيميشن (بالخلفية دائماً) */
         #nfc-canvas { 
             position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%; 
             z-index: 1; pointer-events: none; 
         }
 
-        /* شاشة التحميل */
+        /* الطبقة 2: شاشة التحميل (خلفية شفافة لرؤية الأنيميشن) */
         #loading-screen { 
-            position: fixed; inset: 0; background: #000; z-index: 100; 
+            position: fixed; inset: 0; 
+            background: rgba(0, 0, 0, 0.85); /* تعتيم خفيف لرؤية الخطوط خلفه */
+            z-index: 100; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             transition: opacity 0.8s; 
         }
@@ -45,7 +47,7 @@
         .loader-wrapper { width: 60%; height: 2px; background: rgba(255,255,255,0.1); position: relative; }
         #loader-bar { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: width 0.5s ease-out; }
 
-        /* تصميم الكروت */
+        /* الطبقة 3: الكروت (تظهر فوق الأنيميشن) */
         .card { 
             background: rgba(10, 30, 20, 0.9); padding: 2.5rem 2rem; 
             border-radius: 30px; border: 1px solid var(--neon); 
@@ -60,15 +62,20 @@
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 15px; margin: 12px 0; border-right: 4px solid var(--neon); text-align: right; }
         .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 5px; }
         .info-box span { font-size: 1.05rem; word-break: break-all; color: #fff; display: block; }
+        
         .btn-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
         .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
         .btn-call { background: var(--neon); }
         .btn-wa { background: #25D366; }
+
         input, select { width: 100%; padding: 14px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; font-size: 1rem; }
         #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 15px; font-size: 1rem; }
+        .signature { margin-top: 30px; font-size: 0.7rem; color: #666; border-top: 1px solid #222; padding-top: 15px; }
     </style>
 </head>
 <body>
+
+<canvas id="nfc-canvas"></canvas>
 
 <div id="loading-screen">
     <div class="loading-content">
@@ -77,13 +84,11 @@
     </div>
 </div>
 
-<canvas id="nfc-canvas"></canvas>
-
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
     <p style="line-height: 1.8;">مشروع يجمع بين الفن والتقنية لتوثيق الهوية بطريقة مبتكرة عبر تقنية NFC.</p>
-    <div style="margin-top:20px; font-size:0.7rem; color:#666;">صُنع بواسطة Welf Bassam</div>
+    <div class="signature">صُنع بواسطة Welf Bassam</div>
 </div>
 
 <div class="card" id="displayCard">
@@ -188,7 +193,64 @@
         }, 800);
     }
 
+    // --- أنيميشن شرائح NFC ---
+    const canvas = document.getElementById('nfc-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, dots = [];
+
+    function init() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        dots = [];
+        for (let i = 0; i < 45; i++) dots.push(new Pulse());
+    }
+
+    class Pulse {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.speed = Math.random() * 2 + 1;
+            this.dir = Math.floor(Math.random() * 4);
+            this.history = [];
+            this.maxHistory = Math.random() * 25 + 15;
+            this.color = Math.random() > 0.5 ? '#00ffcc' : '#00f2ff';
+        }
+        update() {
+            this.history.push({x: this.x, y: this.y});
+            if (this.history.length > this.maxHistory) this.history.shift();
+            if (Math.random() < 0.04) this.dir = Math.floor(Math.random() * 4);
+            if (this.dir === 0) this.x += this.speed;
+            else if (this.dir === 1) this.x -= this.speed;
+            else if (this.dir === 2) this.y += this.speed;
+            else if (this.dir === 3) this.y -= this.speed;
+            if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 1.2;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            if (this.history.length > 0) {
+                ctx.moveTo(this.history[0].x, this.history[0].y);
+                for (let h of this.history) ctx.lineTo(h.x, h.y);
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function animate() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.fillRect(0, 0, width, height);
+        dots.forEach(d => { d.update(); d.draw(); });
+        requestAnimationFrame(animate);
+    }
+
+    init(); animate();
     window.onload = run;
+    window.onresize = init;
 
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
@@ -208,79 +270,6 @@
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
         .then(() => { alert('تم التفعيل!'); location.reload(); });
     };
-
-    // --- نظام أنيميشن الـ NFC المطور ---
-    const canvas = document.getElementById('nfc-canvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, dots = [];
-
-    function init() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        dots = [];
-        // إنشاء نقاط انطلاق الكهرباء
-        for (let i = 0; i < 40; i++) {
-            dots.push(new Pulse());
-        }
-    }
-
-    class Pulse {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.speed = Math.random() * 2 + 1;
-            this.dir = Math.floor(Math.random() * 4); // 0:R, 1:L, 2:D, 3:U
-            this.history = [];
-            this.maxHistory = Math.random() * 20 + 10;
-            this.color = Math.random() > 0.5 ? '#00ffcc' : '#00f2ff';
-        }
-        update() {
-            this.history.push({x: this.x, y: this.y});
-            if (this.history.length > this.maxHistory) this.history.shift();
-
-            // حركة بـ زوايا قائمة 90 درجة (مثل الشرائح)
-            if (Math.random() < 0.05) this.dir = Math.floor(Math.random() * 4);
-
-            if (this.dir === 0) this.x += this.speed;
-            else if (this.dir === 1) this.x -= this.speed;
-            else if (this.dir === 2) this.y += this.speed;
-            else if (this.dir === 3) this.y -= this.speed;
-
-            if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
-        }
-        draw() {
-            ctx.beginPath();
-            ctx.strokeStyle = this.color;
-            ctx.lineWidth = 1.5;
-            ctx.lineCap = 'round';
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = this.color;
-            
-            if (this.history.length > 0) {
-                ctx.moveTo(this.history[0].x, this.history[0].y);
-                for (let h of this.history) ctx.lineTo(h.x, h.y);
-            }
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-        }
-    }
-
-    function animate() {
-        // تأثير الشفافية لخلق ذيل مشع (Trail)
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-        ctx.fillRect(0, 0, width, height);
-        
-        dots.forEach(d => {
-            d.update();
-            d.draw();
-        });
-        requestAnimationFrame(animate);
-    }
-
-    init();
-    animate();
-    window.onresize = init;
 </script>
 </body>
 </html>
