@@ -8,7 +8,7 @@
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة التحميل النصية - مدة بقاء فخمة وتلاشي هادئ */
+        /* شاشة التحميل النصية - توقيت دقيق وتلاشي ناعم */
         #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; justify-content: center; align-items: center; transition: opacity 2s ease-in-out; }
         #welcome-text { color: #2ecc71; font-size: 1.4rem; text-align: center; text-shadow: 0 0 15px #2ecc71; padding: 25px; opacity: 0; transform: scale(0.95); transition: 1.5s ease-in-out; max-width: 85%; line-height: 1.6; }
 
@@ -43,9 +43,7 @@
 <div class="card" id="introCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <p style="line-height: 1.7; font-size: 0.9rem; color: #ddd; margin-bottom: 20px;">
-        نحن نحول المقتنيات العادية إلى حكايات رقمية خالدة. تقنية NFC مدمجة بجمال الرزين لتكون دليلاً لمن يجدك ويحفظ بياناتك الهامة.
-    </p>
+    <p style="line-height: 1.7; font-size: 0.9rem; color: #ddd; margin-bottom: 20px;">نحن نحول المقتنيات العادية إلى حكايات رقمية خالدة. تقنية NFC مدمجة بجمال الرزين لتكون دليلاً لمن يجدك ويحفظ بياناتك الهامة.</p>
     <button class="next-btn" onclick="showActivationForm()">البدء في تسجيل الأثر</button>
 </div>
 
@@ -66,7 +64,7 @@
             <input type="text" name="account" placeholder="اليوزر" style="width: 60%;">
         </div>
         <select name="bloodType">
-            <option value="">فصيلة الدم (اختياري)</option>
+            <option value="">فصيلة الدم</option>
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
         </select>
         <input type="text" name="medical" placeholder="أي حالة طبية أو حساسية؟">
@@ -79,15 +77,13 @@
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <div class="info-header">لقد وجدت <span style="color:#00f2ff">أثراً مفقوداً</span>.. بمسحك لهذا الكود، أنت الخطوة الأولى لإعادته لصاحبه.</div>
-    
+    <div class="info-header">لقد وجدت <span style="color:#00f2ff">أثراً مفقوداً</span>.. أنت الخطوة الأولى لإعادته لصاحبه.</div>
     <div class="info-box"><span class="info-label">👤 صاحب الأثر</span><div class="info-value" id="valName">-</div></div>
     <div class="info-box"><span class="info-label">📞 رقم التواصل</span><div class="info-value" id="valPhone">-</div></div>
     <div class="info-box"><span class="info-label">📧 البريد الإلكتروني</span><div class="info-value" id="valEmail">-</div></div>
     <div class="info-box"><span class="info-label">📱 حساب التواصل</span><div class="info-value" id="valAccount">-</div></div>
     <div class="info-box"><span class="info-label">🩸 فصيلة الدم</span><div class="info-value" id="valBlood">-</div></div>
     <div class="info-box"><span class="info-label">🏥 حالة طبية</span><div class="info-value" id="valMedical">-</div></div>
-
     <div class="action-grid">
         <a href="" id="linkCall" class="btn btn-call">📞 إتصال</a>
         <a href="" id="linkWA" class="btn btn-wa">💬 واتساب</a>
@@ -95,6 +91,7 @@
 </div>
 
 <script>
+    // الرابط الجديد الذي أرسلتيه
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbloehyCWm9I4ZQnmB4HtT0-8iF71T4lfvP7tP0fBn8RuxatV7RB2qsmCJhFHwFurde/exec';
 
     function initSite() {
@@ -102,9 +99,11 @@
         const code = urlParams.get('code');
         const welcomeText = document.getElementById('welcome-text');
 
+        // ظهور النص الأول بهدوء
         setTimeout(() => { welcomeText.style.opacity = '1'; welcomeText.style.transform = 'scale(1)'; }, 500);
 
         if (code) {
+            // رحلة المنقذ - شاشات ترحيبية لمدة 3.5 ثانية
             setTimeout(() => { 
                 welcomeText.style.opacity = '0'; 
                 setTimeout(() => {
@@ -113,7 +112,6 @@
                 }, 1500);
             }, 3500);
 
-            // جلب البيانات من الرابط الجديد
             fetch(webAppUrl + "?itemCode=" + code)
             .then(res => res.json())
             .then(data => {
@@ -133,7 +131,7 @@
                             document.getElementById('linkWA').href = "https://wa.me/" + data.phone;
                             transitionTo('displayCard');
                         }, 1500);
-                    }, 7000); 
+                    }, 7000); // وقت كافي للقراءة والتلاشي
                 } else {
                     setTimeout(() => {
                         welcomeText.style.opacity = '0';
@@ -147,12 +145,12 @@
                     }, 7000);
                 }
             })
-            .catch(err => {
-                // في حال فشل الاتصال بالرابط
-                console.error(err);
-                welcomeText.innerText = "حدث خطأ في الاتصال.. يرجى المحاولة لاحقاً";
+            .catch(() => {
+                // حل مشكلة التعليق في حال فشل الرابط
+                setTimeout(() => { transitionTo('activateCard'); }, 4000);
             });
         } else {
+            // الموقع بدون كود
             setTimeout(() => { transitionTo('introCard'); }, 4000);
         }
     }
@@ -184,7 +182,7 @@
     function anim() { ctx.fillStyle='rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h); particles.forEach(p=>p.draw()); requestAnimationFrame(anim); }
     initC(); anim();
 
-    // إرسال البيانات للرابط الجديد
+    // إرسال البيانات للجدول
     document.getElementById('actForm').onsubmit = function(e) {
         e.preventDefault();
         const sub = document.getElementById('subBtn');
@@ -193,11 +191,11 @@
         
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: formData })
         .then(() => { 
-            alert("تم تسجيل أثرك بنجاح! سيتم الآن تحديث الصفحة."); 
+            alert("تم تفعيل أثرك بنجاح!"); 
             location.reload(); 
         })
-        .catch(err => { 
-            alert("حدث خطأ في الحفظ، يرجى التحقق من اتصالك."); 
+        .catch(() => { 
+            alert("حدث خطأ، تأكدي من إعدادات الرابط"); 
             sub.disabled = false; sub.innerText = "بث الحياة في أثرك";
         });
     };
