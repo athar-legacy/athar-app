@@ -15,28 +15,18 @@
             min-height: 100vh; overflow-y: auto; overflow-x: hidden;
         }
 
-        /* خلفية الخطوط المشعة */
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        /* خلفية الأنيميشن - تغطي كامل الصفحة */
+        #nfc-canvas { 
+            position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            z-index: 1; pointer-events: none; 
+        }
 
+        /* شاشة التحميل */
         #loading-screen { 
             position: fixed; inset: 0; background: #000; z-index: 100; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             transition: opacity 0.8s; 
-        }
-
-        /* تصميم خطوط NFC المشعة بالكود */
-        .nfc-circuit {
-            position: absolute; width: 300px; height: 300px;
-            border: 2px solid rgba(0, 255, 204, 0.1);
-            border-radius: 50%;
-            z-index: -1;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.5; box-shadow: 0 0 20px var(--neon); }
-            50% { transform: scale(1.1); opacity: 0.8; box-shadow: 0 0 50px var(--neon-2); }
-            100% { transform: scale(1); opacity: 0.5; box-shadow: 0 0 20px var(--neon); }
         }
 
         .loading-content {
@@ -45,8 +35,8 @@
         }
 
         .neon-msg { 
-            font-size: 1.3rem; color: var(--neon); 
-            text-shadow: 0 0 15px var(--neon); opacity: 0; 
+            font-size: 1.4rem; color: var(--neon); 
+            text-shadow: 0 0 20px var(--neon); opacity: 0; 
             transition: opacity 0.4s ease-in-out; 
             margin-bottom: 60px; min-height: 3.5rem;
             display: flex; align-items: center; justify-content: center;
@@ -55,11 +45,12 @@
         .loader-wrapper { width: 60%; height: 2px; background: rgba(255,255,255,0.1); position: relative; }
         #loader-bar { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: width 0.5s ease-out; }
 
+        /* تصميم الكروت */
         .card { 
-            background: rgba(10, 30, 20, 0.95); padding: 2.5rem 2rem; 
-            border-radius: 30px; border: 2px solid var(--neon); 
+            background: rgba(10, 30, 20, 0.9); padding: 2.5rem 2rem; 
+            border-radius: 30px; border: 1px solid var(--neon); 
             width: 85%; max-width: 380px; z-index: 2; 
-            backdrop-filter: blur(20px); text-align: center; 
+            backdrop-filter: blur(15px); text-align: center; 
             display: none; opacity: 0; transition: 0.8s; margin: 40px 0;
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.1); 
         }
@@ -80,14 +71,13 @@
 <body>
 
 <div id="loading-screen">
-    <div class="nfc-circuit"></div>
     <div class="loading-content">
         <div id="m-text" class="neon-msg"></div>
         <div class="loader-wrapper"><div id="loader-bar"></div></div>
     </div>
 </div>
 
-<canvas id="chipCanvas"></canvas>
+<canvas id="nfc-canvas"></canvas>
 
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
@@ -219,35 +209,78 @@
         .then(() => { alert('تم التفعيل!'); location.reload(); });
     };
 
-    // كود الخطوط الإلكترونية المشعة (Canvas Logic)
-    const canvas = document.getElementById('chipCanvas'), ctx = canvas.getContext('2d');
-    let w, h, lines = [];
-    function init() { 
-        w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
-        lines = []; for(let i=0; i<20; i++) lines.push(new Line());
+    // --- نظام أنيميشن الـ NFC المطور ---
+    const canvas = document.getElementById('nfc-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, dots = [];
+
+    function init() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        dots = [];
+        // إنشاء نقاط انطلاق الكهرباء
+        for (let i = 0; i < 40; i++) {
+            dots.push(new Pulse());
+        }
     }
-    class Line {
+
+    class Pulse {
         constructor() { this.reset(); }
         reset() {
-            this.x = Math.random() * w; this.y = Math.random() * h;
-            this.v = Math.random() * 2 + 1; this.len = Math.random() * 100 + 50;
-            this.ang = (Math.floor(Math.random() * 4) * 90) * Math.PI / 180;
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.speed = Math.random() * 2 + 1;
+            this.dir = Math.floor(Math.random() * 4); // 0:R, 1:L, 2:D, 3:U
+            this.history = [];
+            this.maxHistory = Math.random() * 20 + 10;
+            this.color = Math.random() > 0.5 ? '#00ffcc' : '#00f2ff';
+        }
+        update() {
+            this.history.push({x: this.x, y: this.y});
+            if (this.history.length > this.maxHistory) this.history.shift();
+
+            // حركة بـ زوايا قائمة 90 درجة (مثل الشرائح)
+            if (Math.random() < 0.05) this.dir = Math.floor(Math.random() * 4);
+
+            if (this.dir === 0) this.x += this.speed;
+            else if (this.dir === 1) this.x -= this.speed;
+            else if (this.dir === 2) this.y += this.speed;
+            else if (this.dir === 3) this.y -= this.speed;
+
+            if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
         }
         draw() {
-            ctx.beginPath(); ctx.strokeStyle = Math.random() > 0.5 ? '#00ffcc' : '#00f2ff';
-            ctx.lineWidth = 0.5; ctx.moveTo(this.x, this.y);
-            let x2 = this.x + Math.cos(this.ang) * this.len;
-            let y2 = this.y + Math.sin(this.ang) * this.len;
-            ctx.lineTo(x2, y2); ctx.stroke();
-            this.x = x2; this.y = y2;
-            if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
+            ctx.beginPath();
+            ctx.strokeStyle = this.color;
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = this.color;
+            
+            if (this.history.length > 0) {
+                ctx.moveTo(this.history[0].x, this.history[0].y);
+                for (let h of this.history) ctx.lineTo(h.x, h.y);
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
         }
     }
-    function draw() {
-        ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,w,h);
-        lines.forEach(l => l.draw()); requestAnimationFrame(draw);
+
+    function animate() {
+        // تأثير الشفافية لخلق ذيل مشع (Trail)
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.fillRect(0, 0, width, height);
+        
+        dots.forEach(d => {
+            d.update();
+            d.draw();
+        });
+        requestAnimationFrame(animate);
     }
-    init(); draw(); window.onresize = init;
+
+    init();
+    animate();
+    window.onresize = init;
 </script>
 </body>
 </html>
