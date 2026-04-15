@@ -6,42 +6,42 @@
     <title>أثَـــر | ATHAR LEGACY</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --neon-green: #2ecc71; --neon-blue: #00f2ff; }
+        :root { --neon-main: #2ecc71; --neon-accent: #00f2ff; }
         body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         canvas { position: absolute; top: 0; left: 0; z-index: 1; }
         
-        /* شاشة التحميل النيون */
-        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
-        .neon-text { font-size: 1.4rem; text-align: center; color: #fff; text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green), 0 0 40px var(--neon-blue); margin-bottom: 20px; padding: 0 20px; line-height: 1.6; animation: pulsate 2s infinite alternate; opacity: 0; transition: opacity 0.8s; }
-        .search-status { color: var(--neon-blue); font-size: 1rem; letter-spacing: 2px; margin-top: 10px; opacity: 0; transition: opacity 0.8s; }
+        /* شاشات التحميل المتتابعة */
+        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .neon-msg { font-size: 1.5rem; text-align: center; color: var(--neon-main); text-shadow: 0 0 15px var(--neon-main), 0 0 30px var(--neon-main); opacity: 0; transition: opacity 0.8s; padding: 20px; position: absolute; }
 
-        @keyframes pulsate { 100% { text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green), 0 0 20px var(--neon-blue); } }
-
-        .card { background: rgba(10, 30, 20, 0.92); padding: 2rem; border-radius: 30px; border: 2px solid var(--neon-green); width: 85%; max-width: 380px; z-index: 2; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(46, 204, 113, 0.3); text-align: center; display: none; opacity: 0; transition: opacity 0.5s; max-height: 85vh; overflow-y: auto; }
+        .card { background: rgba(10, 30, 20, 0.92); padding: 2rem; border-radius: 30px; border: 2px solid var(--neon-main); width: 85%; max-width: 380px; z-index: 2; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(46, 204, 113, 0.3); text-align: center; display: none; opacity: 0; transition: opacity 0.5s; max-height: 85vh; overflow-y: auto; }
         
-        h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon-green); }
-        .tagline { color: var(--neon-blue); font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 20px; }
+        h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon-main); }
+        .tagline { color: var(--neon-accent); font-size: 0.75rem; letter-spacing: 4px; margin-bottom: 20px; }
 
-        .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 15px; margin: 8px 0; border-right: 4px solid var(--neon-green); text-align: right; }
-        .info-box strong { color: var(--neon-blue); font-size: 0.7rem; display: block; margin-bottom: 4px; }
+        .info-box { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 15px; margin: 8px 0; border-right: 4px solid var(--neon-main); text-align: right; }
+        .info-box strong { color: var(--neon-accent); font-size: 0.7rem; display: block; margin-bottom: 4px; }
+        .info-box span { font-size: 1.1rem; }
         
-        .contact-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .contact-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+        .row-btns { display: flex; gap: 8px; }
         .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; }
-        .btn-call { background: var(--neon-green); }
+        .btn-call { background: var(--neon-main); }
         .btn-wa { background: #25D366; }
 
-        input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-green); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
-        .note { font-size: 0.7rem; color: #ff4d4d; margin: 5px 0 10px; text-align: right; line-height: 1.4; }
-        
-        #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon-green), var(--neon-blue)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 10px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-main); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
+        .note { font-size: 0.7rem; color: #ff4d4d; margin: 5px 0 15px; text-align: right; }
+        #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon-main), var(--neon-accent)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 10px; }
         .signature { margin-top: 30px; font-size: 0.7rem; color: #666; border-top: 1px solid #222; padding-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="welcome-screen">
-    <div class="neon-text" id="neonMsg">" كل ما نتركه خلفنا سيحكي عنا يوماً "</div>
-    <div class="search-status" id="statusMsg"></div>
+    <div id="msg1" class="neon-msg">" كل ما نتركه خلفنا سيحكي عنا يوماً "</div>
+    <div id="msg2" class="neon-msg">جاري البحث عن صاحب الأثر...</div>
+    <div id="msg3" class="neon-msg">تم العثور على المعلومات!</div>
+    <div id="msgNew" class="neon-msg">مستخدم جديد.. <br> مرحباً بك في عالم أثَر</div>
 </div>
 
 <canvas id="chipCanvas"></canvas>
@@ -49,23 +49,24 @@
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY</div>
-    <div style="line-height: 1.8; text-align: justify; font-size: 0.95rem; color: #ddd;">
-        أثَر هو مشروع يجمع بين الفن الرقمي والتقنية، نهدف لتوثيق اللحظات وحفظ الهوية بطريقة مبتكرة عبر تقنية NFC. كل قطعة تحمل قصة، وكل قصة هي أثر لا ينسى.
-    </div>
+    <div style="line-height: 1.8; text-align: justify; font-size: 0.95rem;">أثَر هو مشروع يجمع بين الفن والتقنية، نهدف لتوثيق الهوية بطريقة مبتكرة عبر تقنية NFC. كل قطعة تحمل قصة، وكل قصة هي أثر لا ينسى.</div>
     <div class="signature">صُنع بواسطة Welf Bassam</div>
 </div>
 
 <div class="card" id="displayCard">
     <h1>أثَـــر</h1>
-    <div class="tagline">تم العثور على المعلومات</div>
-    <div class="info-box"><strong><i class="fas fa-user"></i> صاحب الأثر</strong> <span id="vName"></span></div>
-    <div class="info-box"><strong><i class="fas fa-heart"></i> فصيلة الدم</strong> <span id="vBlood"></span></div>
-    <div class="info-box"><strong><i class="fas fa-notes-medical"></i> الحالة الطبية</strong> <span id="vMedical"></span></div>
-    <div class="info-box" id="vAccBox" style="display:none;"><strong><i class="fas fa-hashtag"></i> التواصل</strong> <span id="vAcc"></span></div>
+    <div class="tagline">بيانات صاحب الأثر</div>
+    <div class="info-box"><strong>صاحب الأثر</strong> <span id="vName"></span></div>
+    <div class="info-box"><strong>رقم الجوال</strong> <span id="vPhone"></span></div>
+    <div class="info-box" id="vBloodBox"><strong>فصيلة الدم</strong> <span id="vBlood"></span></div>
+    <div class="info-box" id="vMedicalBox" style="display:none;"><strong>الحالة الصحية</strong> <span id="vMedical"></span></div>
+    <div class="info-box" id="vAccBox" style="display:none;"><strong>التواصل الاجتماعي</strong> <span id="vAcc"></span></div>
     
     <div class="contact-actions">
-        <a id="callBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
-        <a id="waBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
+        <div class="row-btns">
+            <a id="callBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
+            <a id="waBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
+        </div>
     </div>
 </div>
 
@@ -77,17 +78,17 @@
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
         <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
         <select name="platform">
-            <option value="">اختيار تطبيق التواصل (اختياري)</option>
-            <option>Snapchat</option><option>Instagram</option><option>X (Twitter)</option><option>TikTok</option>
+            <option value="">تطبيق التواصل (اختياري)</option>
+            <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X (Twitter)</option><option>TikTok</option>
         </select>
         <input type="text" name="account" placeholder="اسم المستخدم">
         <select name="bloodType">
             <option value="">فصيلة الدم (اختياري)</option>
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
         </select>
-        <input type="text" name="medical" placeholder="هل لديك أية أمراض مزمنة أو حساسية؟">
+        <input type="text" name="medical" placeholder="أية أمراض مزمنة أو حساسية؟ (اختياري)">
         <input type="text" name="password" placeholder="كلمة السر (4 أرقام فقط) *" pattern="\d{4}" maxlength="4" required style="font-family: Arial;">
-        <div class="note">⚠️ يجب حفظ كلمة السر لتتمكن من تحديث بياناتك مستقبلاً.</div>
+        <div class="note">⚠️ احفظ كلمة السر لتحديث بياناتك مستقبلاً.</div>
         <input type="hidden" name="itemCode" id="hiddenCode">
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
@@ -97,41 +98,93 @@
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbwgJMW-yAR4GjIz4WAB1PShzCcialzz8JS3_CdNtiyBu9m4qMUDbrlMeYUYzeSUREB1/exec';
     const code = new URLSearchParams(window.location.search).get('code');
 
-    const neonMsg = document.getElementById('neonMsg');
-    const statusMsg = document.getElementById('statusMsg');
-
-    async function startExperience() {
-        // المرحلة 1: رسالة أثر النيون (3 ثوانٍ)
-        neonMsg.style.opacity = "1";
-        await new Promise(r => setTimeout(r, 3000));
-
+    async function sequence() {
         if (!code) {
+            await showMsg('msg1', 2000);
             showScreen('mainLanding');
-        } else {
-            // المرحلة 2: جاري البحث عن الأثر (3 ثوانٍ)
-            neonMsg.style.opacity = "0";
-            await new Promise(r => setTimeout(r, 800));
-            statusMsg.innerText = "جاري البحث عن الأثر...";
-            statusMsg.style.opacity = "1";
-            
-            try {
-                const response = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
-                const data = await response.json();
-                await new Promise(r => setTimeout(r, 2200)); // تكملة الـ 3 ثوانٍ للبحث
+            return;
+        }
 
-                statusMsg.style.opacity = "0";
-                await new Promise(r => setTimeout(r, 800));
+        await showMsg('msg1', 2000);
+        await showMsg('msg2', 500); // تظهر أثناء الجلب
 
-                if (data.status === "تم التفعيل") {
-                    // المرحلة 3 للمسجل: تم العثور على المعلومات
-                    statusMsg.innerText = "تم العثور على المعلومات";
-                    statusMsg.style.opacity = "1";
-                    
-                    document.getElementById('vName').innerText = data.name;
-                    document.getElementById('vBlood').innerText = data.blood || "غير محدد";
-                    document.getElementById('vMedical').innerText = data.medical || "لا يوجد";
-                    document.getElementById('callBtn').href = `tel:${data.phone}`;
-                    document.getElementById('waBtn').href = `https://wa.me/${data.phone}`;
-                    if(data.account) { document.getElementById('vAcc').innerText = data.account; document.getElementById('vAccBox').style.display='block'; }
-                    
-                    await new Promise(r
+        try {
+            const res = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
+            const data = await res.json();
+
+            if (data.status === "تم التفعيل") {
+                await showMsg('msg3', 1500);
+                document.getElementById('vName').innerText = data.name;
+                document.getElementById('vPhone').innerText = data.phone;
+                document.getElementById('vBlood').innerText = data.blood || "غير محدد";
+                document.getElementById('callBtn').href = `tel:${data.phone}`;
+                document.getElementById('waBtn').href = `https://wa.me/${data.phone}`;
+                
+                if(data.medical && data.medical.trim() !== "") {
+                    document.getElementById('vMedical').innerText = data.medical;
+                    document.getElementById('vMedicalBox').style.display = 'block';
+                }
+                if(data.account) {
+                    document.getElementById('vAcc').innerText = data.account;
+                    document.getElementById('vAccBox').style.display = 'block';
+                }
+                showScreen('displayCard');
+            } else {
+                await showMsg('msgNew', 2000);
+                document.getElementById('hiddenCode').value = code;
+                showScreen('regCard');
+            }
+        } catch(e) { showScreen('mainLanding'); }
+    }
+
+    function showMsg(id, time) {
+        return new Promise(res => {
+            const el = document.getElementById(id);
+            el.style.opacity = '1';
+            setTimeout(() => {
+                el.style.opacity = '0';
+                setTimeout(res, 800);
+            }, time);
+        });
+    }
+
+    function showScreen(id) {
+        document.getElementById('welcome-screen').style.display = 'none';
+        const el = document.getElementById(id);
+        el.style.display = 'block';
+        setTimeout(() => el.style.opacity = '1', 50);
+    }
+
+    window.onload = sequence;
+
+    document.getElementById('regForm').onsubmit = function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('subBtn');
+        btn.innerText = 'جاري الحفظ...';
+        btn.disabled = true;
+        const formData = new FormData(this);
+        const p = formData.get('platform'), a = formData.get('account');
+        if(p && a) formData.set('account', p + ": " + a);
+        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(formData) })
+        .then(() => { alert('تم التفعيل بنجاح!'); location.reload(); });
+    };
+
+    // Particles
+    const canvas = document.getElementById('chipCanvas'), ctx = canvas.getContext('2d');
+    let w, h, ps = [];
+    function init() { 
+        w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
+        ps = []; for(let i=0; i<50; i++) ps.push({x:Math.random()*w, y:Math.random()*h, v:Math.random()*0.5+0.2, c:Math.random()>0.5?'#2ecc71':'#00f2ff'});
+    }
+    function draw() {
+        ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h);
+        ps.forEach(p => {
+            ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, 1.5, 1.5);
+            p.y += p.v; if(p.y > h) p.y = -5;
+        });
+        requestAnimationFrame(draw);
+    }
+    init(); draw();
+</script>
+</body>
+</html>
