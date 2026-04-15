@@ -12,8 +12,8 @@
         
         /* شاشة التحميل النيون */
         #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s; }
-        .neon-text { font-size: 1.4rem; text-align: center; color: #fff; text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green), 0 0 40px var(--neon-blue); margin-bottom: 20px; padding: 0 20px; line-height: 1.6; animation: pulsate 2s infinite alternate; }
-        .search-status { color: var(--neon-blue); font-size: 0.9rem; letter-spacing: 2px; min-height: 1.2rem; }
+        .neon-text { font-size: 1.4rem; text-align: center; color: #fff; text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green), 0 0 40px var(--neon-blue); margin-bottom: 20px; padding: 0 20px; line-height: 1.6; animation: pulsate 2s infinite alternate; opacity: 0; transition: opacity 0.8s; }
+        .search-status { color: var(--neon-blue); font-size: 1rem; letter-spacing: 2px; margin-top: 10px; opacity: 0; transition: opacity 0.8s; }
 
         @keyframes pulsate { 100% { text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green), 0 0 20px var(--neon-blue); } }
 
@@ -31,18 +31,17 @@
         .btn-wa { background: #25D366; }
 
         input, select { width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-green); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
-        .note { font-size: 0.7rem; color: #ff4d4d; margin: 5px 0 15px; text-align: right; line-height: 1.4; }
+        .note { font-size: 0.7rem; color: #ff4d4d; margin: 5px 0 10px; text-align: right; line-height: 1.4; }
         
         #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon-green), var(--neon-blue)); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; margin-top: 10px; }
-
         .signature { margin-top: 30px; font-size: 0.7rem; color: #666; border-top: 1px solid #222; padding-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="welcome-screen">
-    <div class="neon-text">" كل ما نتركه خلفنا سيحكي عنا يوماً "</div>
-    <div class="search-status" id="statusText"></div>
+    <div class="neon-text" id="neonMsg">" كل ما نتركه خلفنا سيحكي عنا يوماً "</div>
+    <div class="search-status" id="statusMsg"></div>
 </div>
 
 <canvas id="chipCanvas"></canvas>
@@ -77,23 +76,18 @@
         <input type="text" name="name" placeholder="الاسم الكامل *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
         <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
-        
         <select name="platform">
             <option value="">اختيار تطبيق التواصل (اختياري)</option>
             <option>Snapchat</option><option>Instagram</option><option>X (Twitter)</option><option>TikTok</option>
         </select>
         <input type="text" name="account" placeholder="اسم المستخدم">
-        
         <select name="bloodType">
             <option value="">فصيلة الدم (اختياري)</option>
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
         </select>
-        
         <input type="text" name="medical" placeholder="هل لديك أية أمراض مزمنة أو حساسية؟">
-        
         <input type="text" name="password" placeholder="كلمة السر (4 أرقام فقط) *" pattern="\d{4}" maxlength="4" required style="font-family: Arial;">
         <div class="note">⚠️ يجب حفظ كلمة السر لتتمكن من تحديث بياناتك مستقبلاً.</div>
-        
         <input type="hidden" name="itemCode" id="hiddenCode">
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
@@ -103,69 +97,41 @@
     const webAppUrl = 'https://script.google.com/macros/s/AKfycbwgJMW-yAR4GjIz4WAB1PShzCcialzz8JS3_CdNtiyBu9m4qMUDbrlMeYUYzeSUREB1/exec';
     const code = new URLSearchParams(window.location.search).get('code');
 
-    window.onload = () => {
+    const neonMsg = document.getElementById('neonMsg');
+    const statusMsg = document.getElementById('statusMsg');
+
+    async function startExperience() {
+        // المرحلة 1: رسالة أثر النيون (3 ثوانٍ)
+        neonMsg.style.opacity = "1";
+        await new Promise(r => setTimeout(r, 3000));
+
         if (!code) {
-            setTimeout(() => { showScreen('mainLanding'); }, 2500);
+            showScreen('mainLanding');
         } else {
-            document.getElementById('statusText').innerText = "جاري البحث عن صاحب الأثر...";
-            fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === "تم التفعيل") {
-                        document.getElementById('statusText').innerText = "تم العثور على المعلومات!";
-                        document.getElementById('vName').innerText = data.name;
-                        document.getElementById('vBlood').innerText = data.blood || "غير محدد";
-                        document.getElementById('vMedical').innerText = data.medical || "لا يوجد";
-                        document.getElementById('callBtn').href = `tel:${data.phone}`;
-                        document.getElementById('waBtn').href = `https://wa.me/${data.phone}`;
-                        if(data.account) { document.getElementById('vAcc').innerText = data.account; document.getElementById('vAccBox').style.display='block'; }
-                        setTimeout(() => { showScreen('displayCard'); }, 1500);
-                    } else {
-                        document.getElementById('statusText').innerText = "مرحباً بك في عالم أثَر";
-                        document.getElementById('hiddenCode').value = code;
-                        setTimeout(() => { showScreen('regCard'); }, 1500);
-                    }
-                }).catch(() => { showScreen('mainLanding'); });
-        }
-    };
+            // المرحلة 2: جاري البحث عن الأثر (3 ثوانٍ)
+            neonMsg.style.opacity = "0";
+            await new Promise(r => setTimeout(r, 800));
+            statusMsg.innerText = "جاري البحث عن الأثر...";
+            statusMsg.style.opacity = "1";
+            
+            try {
+                const response = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
+                const data = await response.json();
+                await new Promise(r => setTimeout(r, 2200)); // تكملة الـ 3 ثوانٍ للبحث
 
-    function showScreen(id) {
-        document.getElementById('welcome-screen').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('welcome-screen').style.display = 'none';
-            const el = document.getElementById(id);
-            el.style.display = 'block';
-            setTimeout(() => { el.style.opacity = '1'; }, 50);
-        }, 800);
-    }
+                statusMsg.style.opacity = "0";
+                await new Promise(r => setTimeout(r, 800));
 
-    document.getElementById('regForm').onsubmit = function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('subBtn');
-        btn.innerText = 'جاري الحفظ...';
-        btn.disabled = true;
-        
-        const formData = new FormData(this);
-        // دمج المنصة مع اليوزر في خانة الحساب
-        const plat = formData.get('platform');
-        const acc = formData.get('account');
-        if(plat && acc) formData.set('account', plat + ": " + acc);
-
-        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(formData) })
-        .then(() => { 
-            alert('تم تفعيل أثرك بنجاح!'); 
-            location.reload(); 
-        });
-    };
-
-    // Animation
-    const canvas = document.getElementById('chipCanvas');
-    const ctx = canvas.getContext('2d');
-    let w, h, particles = [];
-    function init() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; particles = []; for (let i = 0; i < 50; i++) particles.push(new Particle()); }
-    class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * w; this.y = Math.random() * h; this.v = Math.random() * 0.8 + 0.2; this.color = Math.random() > 0.5 ? '#2ecc71' : '#00f2ff'; } draw() { ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, 1.5, 1.5); this.y += this.v; if (this.y > h) this.reset(); } }
-    function animate() { ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h); particles.forEach(p => p.draw()); requestAnimationFrame(animate); }
-    init(); animate();
-</script>
-</body>
-</html>
+                if (data.status === "تم التفعيل") {
+                    // المرحلة 3 للمسجل: تم العثور على المعلومات
+                    statusMsg.innerText = "تم العثور على المعلومات";
+                    statusMsg.style.opacity = "1";
+                    
+                    document.getElementById('vName').innerText = data.name;
+                    document.getElementById('vBlood').innerText = data.blood || "غير محدد";
+                    document.getElementById('vMedical').innerText = data.medical || "لا يوجد";
+                    document.getElementById('callBtn').href = `tel:${data.phone}`;
+                    document.getElementById('waBtn').href = `https://wa.me/${data.phone}`;
+                    if(data.account) { document.getElementById('vAcc').innerText = data.account; document.getElementById('vAccBox').style.display='block'; }
+                    
+                    await new Promise(r
