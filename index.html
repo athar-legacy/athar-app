@@ -52,13 +52,12 @@
     <form id="actForm">
         <input type="text" name="name" placeholder="الاسم الكامل *" required>
         <input type="tel" name="phone" placeholder="رقم الجوال *" required>
-        <input type="email" name="email" placeholder="البريد الإلكتروني (اختياري)">
+        <input type="email" name="email" placeholder="البريد الإلكتروني">
         <div style="display: flex; gap: 5px;">
             <select name="appPlatform" style="width: 40%;">
                 <option value="Snapchat">سناب</option>
                 <option value="Instagram">إنستا</option>
                 <option value="X">X</option>
-                <option value="TikTok">تيك توك</option>
             </select>
             <input type="text" name="account" placeholder="اليوزر" style="width: 60%;">
         </div>
@@ -88,7 +87,8 @@
 </div>
 
 <script>
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbloehyCWm9I4ZQnmB4HtT0-8iF71T4lfvP7tP0fBn8RuxatV7RB2qsmCJhFHwFurde/exec';
+    // الرابط الجديد الخاص بك
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbzL7RFGxEYiLBewc5mwuQtIzHrIhUIJ4QsxqtfRPnkpAs4ggqFNm31hs-Z-4XWuOWtP/exec';
 
     function initSite() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -98,20 +98,19 @@
         setTimeout(() => { welcomeText.style.opacity = '1'; }, 500);
 
         if (code) {
-            // شاشات ترحيبية
             setTimeout(() => { 
                 welcomeText.style.opacity = '0'; 
-                setTimeout(() => { welcomeText.innerText = "جاري البحث عن صاحب الأثر..."; welcomeText.style.opacity = '1'; }, 1500);
-            }, 3500);
+                setTimeout(() => { welcomeText.innerText = "جاري البحث عن صاحب الأثر..."; welcomeText.style.opacity = '1'; }, 1000);
+            }, 3000);
 
-            // إضافة "Timeout" لضمان عدم التعليق
+            // إضافة نظام منع التعليق (Timeout)
             const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 8000); // إذا تأخر أكثر من 8 ثواني اقطع الاتصال
+            const timeoutId = setTimeout(() => controller.abort(), 7000);
 
             fetch(webAppUrl + "?itemCode=" + code, { signal: controller.signal })
             .then(res => res.json())
             .then(data => {
-                clearTimeout(id);
+                clearTimeout(timeoutId);
                 if (data.status === "تم التفعيل") {
                     setTimeout(() => {
                         welcomeText.style.opacity = '0';
@@ -124,40 +123,38 @@
                             document.getElementById('linkCall').href = "tel:" + data.phone;
                             document.getElementById('linkWA').href = "https://wa.me/" + data.phone;
                             transitionTo('displayCard');
-                        }, 1500);
-                    }, 6500);
+                        }, 1000);
+                    }, 5000);
                 } else {
-                    goToRegistration(code);
+                    showActivation(code);
                 }
             })
             .catch(() => {
-                // إذا فشل الاتصال أو تأخر، افتح صفحة التسجيل فوراً بدل التعليق
-                goToRegistration(code);
+                showActivation(code);
             });
         } else {
-            setTimeout(() => { transitionTo('introCard'); }, 4000);
+            setTimeout(() => { transitionTo('introCard'); }, 3500);
         }
     }
 
-    function goToRegistration(code) {
+    function showActivation(code) {
         const welcomeText = document.getElementById('welcome-text');
         setTimeout(() => {
             welcomeText.style.opacity = '0';
             setTimeout(() => {
-                welcomeText.innerText = "كود جديد.. أهلاً بك في عالم أثر";
-                welcomeText.style.opacity = '1';
+                welcomeText.innerText = "كود جديد.. أهلاً بك في عالم أثر"; welcomeText.style.opacity = '1';
                 document.getElementById('itemCodeInput').value = code;
                 transitionTo('activateCard');
-            }, 1500);
-        }, 6500);
+            }, 1000);
+        }, 5000);
     }
 
     function transitionTo(id) {
         const welcome = document.getElementById('welcome-screen');
         setTimeout(() => {
             welcome.style.opacity = '0';
-            setTimeout(() => { welcome.style.display = 'none'; document.getElementById(id).style.display = 'block'; }, 2000);
-        }, 3500);
+            setTimeout(() => { welcome.style.display = 'none'; document.getElementById(id).style.display = 'block'; }, 1500);
+        }, 3000);
     }
 
     function showActivationForm() {
@@ -167,30 +164,32 @@
 
     window.onload = initSite;
 
-    // إرسال البيانات
     document.getElementById('actForm').onsubmit = function(e) {
         e.preventDefault();
         const sub = document.getElementById('subBtn');
         sub.disabled = true; sub.innerText = "جاري الحفظ...";
-        const formData = new URLSearchParams(new FormData(this));
         
-        fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: formData })
+        fetch(webAppUrl, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: new URLSearchParams(new FormData(this)) 
+        })
         .then(() => { 
             alert("تم تفعيل أثرك بنجاح!"); 
-            location.reload(); 
+            window.location.reload(); 
         })
         .catch(() => { 
-            alert("حدث خطأ في الحفظ"); sub.disabled = false; 
+            alert("حدث خطأ، يرجى المحاولة مرة أخرى."); 
+            sub.disabled = false; 
         });
     };
 
-    // أنيميشن بسيط للخلفية
     const canvas = document.getElementById('chipCanvas');
     const ctx = canvas.getContext('2d');
     let w, h;
     function initC() { w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; }
     window.onresize = initC; initC();
-    function anim() { ctx.fillStyle='rgba(0,0,0,0.1)'; ctx.fillRect(0,0,w,h); requestAnimationFrame(anim); }
+    function anim() { ctx.fillStyle='rgba(0,0,0,0.05)'; ctx.fillRect(0,0,w,h); requestAnimationFrame(anim); }
     anim();
 </script>
 </body>
