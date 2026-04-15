@@ -15,17 +15,26 @@
             min-height: 100vh; overflow-y: auto; overflow-x: hidden;
         }
 
-        /* الطبقة 1: الأنيميشن (بالخلفية دائماً) */
-        #nfc-canvas { 
+        /* الطبقة 1: خلفية الدوائر الإلكترونية الثابتة (مثل الصورة تماماً) */
+        #pcb-bg { 
             position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%; 
-            z-index: 1; pointer-events: none; 
+            z-index: 1; pointer-events: none;
+            background-image: 
+                /* رسم المسارات الأفقية والعمودية */
+                linear-gradient(90deg, rgba(0, 255, 204, 0.15) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(0, 255, 204, 0.15) 1px, transparent 1px),
+                /* رسم المسارات المائلة */
+                linear-gradient(45deg, rgba(0, 255, 204, 0.1) 1px, transparent 1px),
+                linear-gradient(-45deg, rgba(0, 255, 204, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 50px 50px, 100px 100px, 100px 100px;
+            background-position: center;
         }
 
-        /* الطبقة 2: شاشة التحميل (خلفية شفافة لرؤية الأنيميشن) */
+        /* الطبقة 2: شاشة التحميل لرؤية الأنيميشن خلفها */
         #loading-screen { 
             position: fixed; inset: 0; 
-            background: rgba(0, 0, 0, 0.85); /* تعتيم خفيف لرؤية الخطوط خلفه */
+            background: rgba(0, 0, 0, 0.88); /* تعتيم لرؤية الخلفية */
             z-index: 100; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             transition: opacity 0.8s; 
@@ -47,14 +56,14 @@
         .loader-wrapper { width: 60%; height: 2px; background: rgba(255,255,255,0.1); position: relative; }
         #loader-bar { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: width 0.5s ease-out; }
 
-        /* الطبقة 3: الكروت (تظهر فوق الأنيميشن) */
+        /* الطبقة 3: الكروت التي تظهر فوق الخلفية */
         .card { 
-            background: rgba(10, 30, 20, 0.9); padding: 2.5rem 2rem; 
-            border-radius: 30px; border: 1px solid var(--neon); 
+            background: rgba(10, 30, 20, 0.92); padding: 2.5rem 2rem; 
+            border-radius: 30px; border: 2px solid var(--neon); 
             width: 85%; max-width: 380px; z-index: 2; 
-            backdrop-filter: blur(15px); text-align: center; 
+            backdrop-filter: blur(20px); text-align: center; 
             display: none; opacity: 0; transition: 0.8s; margin: 40px 0;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.1); 
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.2); 
         }
 
         h1 { margin: 0; font-size: 2.3rem; text-shadow: 0 0 15px var(--neon); color: #fff; }
@@ -75,7 +84,7 @@
 </head>
 <body>
 
-<canvas id="nfc-canvas"></canvas>
+<div id="pcb-bg"></div>
 
 <div id="loading-screen">
     <div class="loading-content">
@@ -193,64 +202,7 @@
         }, 800);
     }
 
-    // --- أنيميشن شرائح NFC ---
-    const canvas = document.getElementById('nfc-canvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, dots = [];
-
-    function init() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        dots = [];
-        for (let i = 0; i < 45; i++) dots.push(new Pulse());
-    }
-
-    class Pulse {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.speed = Math.random() * 2 + 1;
-            this.dir = Math.floor(Math.random() * 4);
-            this.history = [];
-            this.maxHistory = Math.random() * 25 + 15;
-            this.color = Math.random() > 0.5 ? '#00ffcc' : '#00f2ff';
-        }
-        update() {
-            this.history.push({x: this.x, y: this.y});
-            if (this.history.length > this.maxHistory) this.history.shift();
-            if (Math.random() < 0.04) this.dir = Math.floor(Math.random() * 4);
-            if (this.dir === 0) this.x += this.speed;
-            else if (this.dir === 1) this.x -= this.speed;
-            else if (this.dir === 2) this.y += this.speed;
-            else if (this.dir === 3) this.y -= this.speed;
-            if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
-        }
-        draw() {
-            ctx.beginPath();
-            ctx.strokeStyle = this.color;
-            ctx.lineWidth = 1.2;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = this.color;
-            if (this.history.length > 0) {
-                ctx.moveTo(this.history[0].x, this.history[0].y);
-                for (let h of this.history) ctx.lineTo(h.x, h.y);
-            }
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-        }
-    }
-
-    function animate() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-        ctx.fillRect(0, 0, width, height);
-        dots.forEach(d => { d.update(); d.draw(); });
-        requestAnimationFrame(animate);
-    }
-
-    init(); animate();
     window.onload = run;
-    window.onresize = init;
 
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
