@@ -87,20 +87,16 @@
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">Where Art Meets Technology</div>
-    
     <div class="description">
         <p>في <span style="color: var(--neon); font-weight: bold;">أثَـــر</span>، نحوّل القطع الفنية إلى مخازن رقمية للذكريات.</p>
         <p>دمجنا سحر الريزن اليدوي بتقنية NFC المتطورة لتخليد هويتك بلمسة واحدة من جوالك.</p>
     </div>
-
     <div class="features">
         <div class="feat-item"><i class="fas fa-microchip"></i><span>ربط ذكي</span></div>
         <div class="feat-item"><i class="fas fa-palette"></i><span>فن يدوي</span></div>
         <div class="feat-item"><i class="fas fa-shield-alt"></i><span>خصوصية</span></div>
     </div>
-
     <button class="explore-btn" onclick="document.getElementById('gallery').scrollIntoView({behavior: 'smooth'})">استكشف الأثر</button>
-
     <div id="gallery" style="margin-top: 50px; padding-top: 20px; border-top: 1px solid rgba(0,255,204,0.1);">
         <div class="tagline" style="font-size: 0.6rem;">Gallery | معرض الأعمال</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
@@ -108,7 +104,6 @@
             <div style="aspect-ratio: 1/1; background: rgba(0,242,255,0.1); border-radius: 12px; border: 1px solid var(--neon-2); display: flex; align-items: center; justify-content: center;"><i class="fas fa-image" style="opacity: 0.2;"></i></div>
         </div>
     </div>
-
     <div class="signature-area">PROJECT BY: <span style="color: #999;">WELF BASSAM</span></div>
 </div>
 
@@ -149,7 +144,7 @@
 </div>
 
 <script>
-    const webAppUrl = 'https://script.google.com/macros/s/AKfycbxMyRg-ci17i-_PEEOPr95W5EoU4skA4sGDdWk3D2q8QPeVMOfpQWjHsOKSBP3Q-bcq/exec'; 
+    const webAppUrl = 'https://script.google.com/macros/s/AKfycbyMbo87H2nz1c2I9pV1j20A80XKL9mr6ahEhXjMnjWG6j4IjyvaCBBReRhe_gPkVA5s/exec'; 
     const code = new URLSearchParams(window.location.search).get('code');
     const bar = document.getElementById('loader-bar');
     const msgEl = document.getElementById('m-text');
@@ -188,7 +183,7 @@
     }
 
     function renderData(data) {
-        currentPass = data.password; 
+        currentPass = data.password ? data.password.toString().trim() : ""; 
         const container = document.getElementById('displayFields');
         let html = `
             <div class="info-box"><strong>صاحب الأثر</strong> <span>${data.name}</span></div>
@@ -212,13 +207,18 @@
 
     function unlockEdit() {
         const userPass = prompt("أدخل كلمة السر (4 أرقام) لتعديل البيانات:");
-        if (userPass === currentPass) {
+        if (userPass === null) return;
+        
+        const inputPass = userPass.toString().trim();
+        const storedPass = currentPass.toString().trim();
+
+        if (inputPass === storedPass && storedPass !== "") {
             document.getElementById('displayCard').style.display = 'none';
             document.getElementById('regCard').style.display = 'block';
             setTimeout(() => document.getElementById('regCard').style.opacity = '1', 50);
             document.getElementById('regTitle').innerText = "تحديث بيانات الأثر";
             document.getElementById('subBtn').innerText = "حفظ التغييرات";
-        } else if (userPass !== null) {
+        } else {
             alert("عذراً، كلمة السر غير صحيحة.");
         }
     }
@@ -236,12 +236,10 @@
     const canvas = document.getElementById('nfc-canvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
-
     function init() {
         w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
         particles = []; for(let i=0; i<35; i++) particles.push(new Particle());
     }
-
     class Particle {
         constructor() { this.reset(); }
         reset() {
@@ -266,14 +264,12 @@
             ctx.stroke(); ctx.shadowBlur = 0;
         }
     }
-
     function animate() {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
         ctx.fillRect(0, 0, w, h);
         particles.forEach(p => { p.update(); p.draw(); });
         requestAnimationFrame(animate);
     }
-
     init(); animate(); window.onload = run; window.onresize = init;
 
     document.getElementById('regForm').onsubmit = function(e) {
