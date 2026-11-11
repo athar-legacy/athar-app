@@ -76,7 +76,6 @@
         .btn-wa { background: #25D366; color: #fff; }
         .btn-save { background: var(--neon-2); width: 100%; margin-top: 5px; }
 
-        /* تنسيق مجموعة الحقول المرتبطة بالتواصل لتكون واضحة بصرياً */
         .social-group {
             background: rgba(0, 255, 204, 0.03);
             border: 1px dashed rgba(0, 255, 204, 0.3);
@@ -152,7 +151,6 @@
         <input type="tel" id="regPhone" placeholder="رقم الجوال *" required>
         <input type="email" id="regEmail" placeholder="البريد الإلكتروني (اختياري)">
         
-        <!-- مجموعة تواصل متناسقة وواضحة -->
         <div class="social-group">
             <span class="social-label"><i class="fas fa-share-alt"></i> ربط حساب التواصل (اختياري)</span>
             <select id="regPlatform">
@@ -167,7 +165,6 @@
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
         </select>
         
-        <!-- خانة الأمراض المزمنة أصبحت اختيارية بالكامل -->
         <input type="text" id="regMed" placeholder="أمراض مزمنة أو حساسية؟ (اختياري)">
         
         <input type="text" id="regPass" placeholder="كلمة السر (4 أرقام مثل 0000) *" pattern="\d{4}" maxlength="4" required>
@@ -218,8 +215,8 @@
     }
 
     function renderData(data) {
-        // تخزين كلمة السر كـ String نصي بدقة تامة لمنع مشاكل الأصفار مثل 0000
-        currentPass = data.password !== undefined && data.password !== null ? String(data.password).trim() : ""; 
+        // تنظيف كلمة السر وقراءتها كنص دقيق مع الحفاظ على الأصفار البادئة
+        currentPass = data.password !== undefined && data.password !== null ? String(data.password).trim().replace(/^['"]/, '') : ""; 
         const container = document.getElementById('displayFields');
         let html = `
             <div class="info-box"><strong>صاحب الأثر</strong> <span>${data.name}</span></div>
@@ -259,10 +256,9 @@
     }
 
     function unlockEdit() {
-        const userPass = prompt("أدخل كلمة السر (4 أرقام) لتعديل البيانات:");
+        const userPass = prompt("أدخل كلمة السر (4 أرقام):");
         if (userPass === null) return;
         
-        // مقارنة نصية بحتة تمنع أي ثغرة للأصفار أو مسافات فارغة
         const inputPass = String(userPass).trim();
         const storedPass = String(currentPass).trim();
 
@@ -339,7 +335,11 @@
         params.append('account', p ? p + ": " + a : a);
         params.append('bloodType', document.getElementById('regBlood').value);
         params.append('medical', document.getElementById('regMed').value);
-        params.append('password', String(document.getElementById('regPass').value).trim());
+        
+        // إرسال كلمة السر متبوعة بحرف مسافة أو علامة نصية خفية تجبر جوجل شيتس على التعامل معها كنص كامل يحافظ على الأصفار
+        let rawPass = String(document.getElementById('regPass').value).trim();
+        params.append('password', "\t" + rawPass);
+        
         params.append('itemCode', document.getElementById('hCode').value);
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
         .then(() => { alert('تم بنجاح!'); location.reload(); });
