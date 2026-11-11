@@ -5,8 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أثَـــر | ATHAR LEGACY</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="أثر">
+    <meta name="theme-color" content="#000000">
+
     <style>
-        :root { --neon: #00ffcc; --neon-2: #00f2ff; }
+        :root { --neon: #00ffcc; --neon-2: #00f2ff; --emergency: #ff3366; }
         
         body { 
             margin: 0; background: #000; color: #fff; 
@@ -59,11 +66,25 @@
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 15px; margin: 12px 0; border-right: 4px solid var(--neon); text-align: right; }
         .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 5px; }
         .info-box span { font-size: 1.05rem; color: #fff; }
+
+        .info-box.emergency { border-right-color: var(--emergency); background: rgba(255, 51, 102, 0.05); }
+        .info-box.emergency strong { color: var(--emergency); }
         
-        .btn-container { display: flex; gap: 10px; margin-top: 20px; }
-        .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-container { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn { flex: 1; min-width: 45%; padding: 12px; border-radius: 12px; font-weight: bold; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; cursor: pointer; border: none; }
         .btn-call { background: var(--neon); }
-        .btn-wa { background: #25D366; }
+        .btn-wa { background: #25D366; color: #fff; }
+        .btn-save { background: var(--neon-2); width: 100%; margin-top: 5px; }
+
+        /* تنسيق مجموعة الحقول المرتبطة بالتواصل لتكون واضحة بصرياً */
+        .social-group {
+            background: rgba(0, 255, 204, 0.03);
+            border: 1px dashed rgba(0, 255, 204, 0.3);
+            padding: 10px;
+            border-radius: 15px;
+            margin: 10px 0;
+        }
+        .social-label { font-size: 0.75rem; color: var(--neon-2); text-align: right; margin-bottom: 5px; display: block; }
 
         input, select { width: 100%; padding: 14px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
         #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; color: #000; margin-top: 15px; cursor: pointer; }
@@ -119,6 +140,7 @@
     <div class="btn-container">
         <a id="cBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
         <a id="wBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
+        <button onclick="saveContact()" class="btn btn-save"><i class="fas fa-address-card"></i> حفظ في جهات الاتصال</button>
     </div>
 </div>
 
@@ -129,17 +151,26 @@
         <input type="text" id="regName" placeholder="الاسم الكامل *" required>
         <input type="tel" id="regPhone" placeholder="رقم الجوال *" required>
         <input type="email" id="regEmail" placeholder="البريد الإلكتروني (اختياري)">
-        <select id="regPlatform">
-            <option value="">تطبيق التواصل (اختياري)</option>
-            <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X</option>
-        </select>
-        <input type="text" id="regAcc" placeholder="اسم المستخدم">
+        
+        <!-- مجموعة تواصل متناسقة وواضحة -->
+        <div class="social-group">
+            <span class="social-label"><i class="fas fa-share-alt"></i> ربط حساب التواصل (اختياري)</span>
+            <select id="regPlatform">
+                <option value="">اختر التطبيق...</option>
+                <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X</option>
+            </select>
+            <input type="text" id="regAcc" placeholder="اكتب اسم المستخدم أو المعرف هنا...">
+        </div>
+
         <select id="regBlood">
-            <option value="">فصيلة الدم</option>
+            <option value="">فصيلة الدم (اختياري)</option>
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
         </select>
-        <input type="text" id="regMed" placeholder="أمراض مزمنة أو حساسية؟">
-        <input type="text" id="regPass" placeholder="كلمة السر (4 أرقام) *" pattern="\d{4}" maxlength="4" required>
+        
+        <!-- خانة الأمراض المزمنة أصبحت اختيارية بالكامل -->
+        <input type="text" id="regMed" placeholder="أمراض مزمنة أو حساسية؟ (اختياري)">
+        
+        <input type="text" id="regPass" placeholder="كلمة السر (4 أرقام مثل 0000) *" pattern="\d{4}" maxlength="4" required>
         <input type="hidden" id="hCode">
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
@@ -151,6 +182,7 @@
     const bar = document.getElementById('loader-bar');
     const msgEl = document.getElementById('m-text');
     let currentPass = ""; 
+    let globalData = {}; 
 
     async function changeMsg(txt, p, duration = 1500) {
         msgEl.style.opacity = '0';
@@ -173,6 +205,7 @@
             const res = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
             const data = await res.json();
             if (data.status === "تم التفعيل") {
+                globalData = data; 
                 renderData(data);
                 await changeMsg('تم العثور على المعلومات!', 100, 800);
                 finish('displayCard');
@@ -185,15 +218,20 @@
     }
 
     function renderData(data) {
-        currentPass = data.password ? data.password.toString().trim() : ""; 
+        // تخزين كلمة السر كـ String نصي بدقة تامة لمنع مشاكل الأصفار مثل 0000
+        currentPass = data.password !== undefined && data.password !== null ? String(data.password).trim() : ""; 
         const container = document.getElementById('displayFields');
         let html = `
             <div class="info-box"><strong>صاحب الأثر</strong> <span>${data.name}</span></div>
             <div class="info-box"><strong>رقم الجوال</strong> <span>${data.phone}</span></div>
         `;
         if(data.email && data.email !== "undefined") html += `<div class="info-box"><strong>البريد الإلكتروني</strong> <span>${data.email}</span></div>`;
-        if(data.blood) html += `<div class="info-box"><strong>فصيلة الدم</strong> <span>${data.blood}</span></div>`;
-        if(data.medical && data.medical !== "undefined") html += `<div class="info-box"><strong>الحالة الصحية</strong> <span>${data.medical}</span></div>`;
+        if(data.blood) html += `<div class="info-box" style="border-right-color: var(--neon-2);"><strong>فصيلة الدم</strong> <span style="color: var(--neon-2); font-weight: bold;">${data.blood}</span></div>`;
+        
+        if(data.medical && data.medical !== "undefined") {
+            html += `<div class="info-box emergency"><strong><i class="fas fa-heartbeat"></i> الحالة الصحية / حساسية</strong> <span style="color: #ff99bb;">${data.medical}</span></div>`;
+        }
+        
         if(data.account && data.account !== "undefined") html += `<div class="info-box"><strong>التواصل</strong> <span>${data.account}</span></div>`;
         
         container.innerHTML = html;
@@ -207,11 +245,26 @@
         document.getElementById('hCode').value = code;
     }
 
+    function saveContact() {
+        if (!globalData.name || !globalData.phone) return;
+        const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${globalData.name}\nTEL:${globalData.phone}\nEMAIL:${globalData.email || ''}\nNOTE:تم الحفظ عبر مشروع أثر - Athar Legacy\nEND:VCARD`;
+        const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${globalData.name}.vcf`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     function unlockEdit() {
         const userPass = prompt("أدخل كلمة السر (4 أرقام) لتعديل البيانات:");
         if (userPass === null) return;
-        const inputPass = userPass.toString().trim();
-        const storedPass = currentPass.toString().trim();
+        
+        // مقارنة نصية بحتة تمنع أي ثغرة للأصفار أو مسافات فارغة
+        const inputPass = String(userPass).trim();
+        const storedPass = String(currentPass).trim();
 
         if (inputPass === storedPass && storedPass !== "") {
             document.getElementById('displayCard').style.display = 'none';
@@ -286,7 +339,7 @@
         params.append('account', p ? p + ": " + a : a);
         params.append('bloodType', document.getElementById('regBlood').value);
         params.append('medical', document.getElementById('regMed').value);
-        params.append('password', document.getElementById('regPass').value);
+        params.append('password', String(document.getElementById('regPass').value).trim());
         params.append('itemCode', document.getElementById('hCode').value);
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
         .then(() => { alert('تم بنجاح!'); location.reload(); });
