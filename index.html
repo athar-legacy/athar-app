@@ -167,7 +167,9 @@
         
         <input type="text" id="regMed" placeholder="أمراض مزمنة أو حساسية؟ (اختياري)">
         
-        <input type="text" id="regPass" placeholder="كلمة السر (4 أرقام مثل 0000) *" pattern="\d{4}" maxlength="4" required>
+        <!-- شرط منع البدء بالصفر: تتكون من 4 أرقام ولا تبدأ بالرقم 0 -->
+        <input type="text" id="regPass" placeholder="كلمة السر (4 أرقام لا تبدأ بـ 0 مثل 1234) *" pattern="[1-9][0-9]{3}" maxlength="4" title="يجب أن تكون 4 أرقام ولا تبدأ بالصفر" required>
+        
         <input type="hidden" id="hCode">
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
     </form>
@@ -215,8 +217,7 @@
     }
 
     function renderData(data) {
-        // تنظيف كلمة السر وقراءتها كنص دقيق مع الحفاظ على الأصفار البادئة
-        currentPass = data.password !== undefined && data.password !== null ? String(data.password).trim().replace(/^['"]/, '') : ""; 
+        currentPass = data.password !== undefined && data.password !== null ? String(data.password).trim() : ""; 
         const container = document.getElementById('displayFields');
         let html = `
             <div class="info-box"><strong>صاحب الأثر</strong> <span>${data.name}</span></div>
@@ -331,15 +332,12 @@
         const params = new URLSearchParams();
         params.append('name', document.getElementById('regName').value);
         params.append('phone', document.getElementById('regPhone').value);
+        params.append('email', document.getElementById('regEmail, regEmail').value || document.getElementById('regEmail').value);
         params.append('email', document.getElementById('regEmail').value);
         params.append('account', p ? p + ": " + a : a);
         params.append('bloodType', document.getElementById('regBlood').value);
         params.append('medical', document.getElementById('regMed').value);
-        
-        // إرسال كلمة السر متبوعة بحرف مسافة أو علامة نصية خفية تجبر جوجل شيتس على التعامل معها كنص كامل يحافظ على الأصفار
-        let rawPass = String(document.getElementById('regPass').value).trim();
-        params.append('password', "\t" + rawPass);
-        
+        params.append('password', String(document.getElementById('regPass').value).trim());
         params.append('itemCode', document.getElementById('hCode').value);
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
         .then(() => { alert('تم بنجاح!'); location.reload(); });
