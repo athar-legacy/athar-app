@@ -22,7 +22,6 @@
             min-height: 100vh; overflow-x: hidden;
         }
 
-        /* زر تبديل اللغة العلوي */
         #langToggle {
             position: fixed; top: 20px; left: 20px; z-index: 10;
             background: rgba(0, 255, 204, 0.1); border: 1px solid var(--neon);
@@ -68,16 +67,6 @@
         [dir="ltr"] .description { text-align: left; border-right: none; border-left: 3px solid var(--neon); padding-right: 0; padding-left: 15px; }
         .description p { font-size: 0.85rem; line-height: 1.7; color: #ddd; margin: 8px 0; }
 
-        .instruction-section { text-align: right; margin-top: 25px; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid rgba(0,255,204,0.1); }
-        [dir="ltr"] .instruction-section { text-align: left; }
-        .instruction-title { color: var(--neon); font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        [dir="ltr"] .instruction-title { flex-direction: row-reverse; justify-content: flex-end; }
-        .instruction-list { list-style: none; padding: 0; margin: 0; }
-        .instruction-list li { font-size: 0.75rem; color: #bbb; line-height: 1.6; margin-bottom: 12px; position: relative; padding-right: 20px; }
-        [dir="ltr"] .instruction-list li { padding-right: 0; padding-left: 20px; }
-        .instruction-list li::before { content: "•"; color: var(--neon); position: absolute; right: 0; }
-        [dir="ltr"] .instruction-list li::before { right: auto; left: 0; }
-
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 15px; margin: 12px 0; border-right: 4px solid var(--neon); text-align: right; }
         [dir="ltr"] .info-box { text-align: left; border-right: none; border-left: 4px solid var(--neon); }
         .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 5px; }
@@ -87,7 +76,6 @@
         [dir="ltr"] .info-box.emergency { border-left-color: var(--emergency); }
         .info-box.emergency strong { color: var(--emergency); }
 
-        /* صندوق الإحصائيات الفخم */
         .stats-box {
             background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.2);
             padding: 10px; border-radius: 15px; margin: 12px 0; display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -117,7 +105,6 @@
 </head>
 <body>
 
-<!-- زر تغيير اللغة -->
 <button id="langToggle" onclick="toggleLanguage()">EN / عربي</button>
 
 <div id="canvas-container"><canvas id="nfc-canvas"></canvas></div>
@@ -129,7 +116,6 @@
     </div>
 </div>
 
-<!-- بطاقة الترحيب (عند عدم وجود كود) -->
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY GUIDE</div>
@@ -142,7 +128,6 @@
     <div class="signature-area">PROJECT BY: <span style="color: #999;">WELF BASSAM</span></div>
 </div>
 
-<!-- بطاقة عرض البيانات -->
 <div class="card" id="displayCard" style="position: relative;">
     <div onclick="unlockEdit()" id="editToggle" style="position: absolute; top: 25px; right: 25px; cursor: pointer; opacity: 0.5;">
         <i class="fas fa-user-lock" style="color: var(--neon); font-size: 1.1rem;"></i>
@@ -150,7 +135,6 @@
     <h1>أثَـــر</h1>
     <div class="tagline t-viewtag">بيانات صاحب الأثر</div>
     
-    <!-- عداد الإحصائيات -->
     <div class="stats-box">
         <i class="fas fa-chart-line"></i>
         <span id="statsText">عدد مرات المسح:</span> <strong id="visitCount" style="color:#fff; margin-right: 5px;">0</strong>
@@ -164,7 +148,6 @@
     </div>
 </div>
 
-<!-- بطاقة التسجيل والتحديث -->
 <div class="card" id="regCard">
     <h1>أثَـــر</h1>
     <div class="tagline" id="regTitle">تفعيل قطعة جديدة</div>
@@ -174,16 +157,16 @@
         <input type="email" id="regEmail" placeholder="البريد الإلكتروني (اختياري)">
         
         <div class="social-group">
-            <span class="social-label"><i class="fas fa-share-alt"></i> <span class="t-social">ربط حساب التواصل (اختياري)</span></span>
+            <span class="social-label"><i class="fas fa-share-alt"></i> <span class="t-socialLbl">ربط حساب التواصل (اختياري)</span></span>
             <select id="regPlatform">
-                <option value="" class="t-selectapp">اختر التطبيق...</option>
+                <option value="" id="tOptApp">اختر التطبيق...</option>
                 <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X</option>
             </select>
             <input type="text" id="regAcc" placeholder="اسم المستخدم أو المعرف...">
         </div>
 
         <select id="regBlood">
-            <option value="" class="t-selectblood">فصيلة الدم (اختياري)</option>
+            <option value="" id="tOptBlood">فصيلة الدم (اختياري)</option>
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
         </select>
         
@@ -204,10 +187,8 @@
     let globalData = {}; 
     let currentLang = 'ar';
 
-    // نصوص اللغات (عربي / إنجليزي)
     const translations = {
         ar: {
-            tagline: "ATHAR LEGACY GUIDE",
             viewtag: "بيانات صاحب الأثر",
             regtitle: "تفعيل قطعة جديدة",
             updatetitle: "تحديث بيانات الأثر",
@@ -222,10 +203,18 @@
             emailLbl: "البريد الإلكتروني",
             bloodLbl: "فصيلة الدم",
             medLbl: "الحالة الصحية / حساسية",
-            socialLbl: "التواصل"
+            socialLbl: "التواصل",
+            pName: "الاسم الكامل *",
+            pPhone: "رقم الجوال *",
+            pEmail: "البريد الإلكتروني (اختياري)",
+            pSocialLbl: "ربط حساب التواصل (اختياري)",
+            pApp: "اختر التطبيق...",
+            pAcc: "اسم المستخدم أو المعرف...",
+            pBlood: "فصيلة الدم (اختياري)",
+            pMed: "أمراض مزمنة أو حساسية؟ (اختياري)",
+            pPass: "كلمة السر (4 أرقام لا تبدأ بـ 0) *"
         },
         en: {
-            tagline: "ATHAR LEGACY GUIDE",
             viewtag: "ATHAR OWNER PROFILE",
             regtitle: "ACTIVATE NEW PIECE",
             updatetitle: "UPDATE ATHAR DATA",
@@ -240,7 +229,16 @@
             emailLbl: "Email",
             bloodLbl: "Blood Type",
             medLbl: "Medical Condition / Allergy",
-            socialLbl: "Social Media"
+            socialLbl: "Social Media",
+            pName: "Full Name *",
+            pPhone: "Phone Number *",
+            pEmail: "Email (Optional)",
+            pSocialLbl: "Link Social Account (Optional)",
+            pApp: "Select App...",
+            pAcc: "Username or Handle...",
+            pBlood: "Blood Type (Optional)",
+            pMed: "Chronic Disease or Allergy? (Optional)",
+            pPass: "Password (4 digits, not starting with 0) *"
         }
     };
 
@@ -250,17 +248,38 @@
         root.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
         root.setAttribute('lang', currentLang);
         
-        // تحديث النصوص الثابتة
-        document.querySelector('.t-viewtag').innerText = translations[currentLang].viewtag;
-        document.querySelector('.t-call').innerText = translations[currentLang].call;
-        document.querySelector('.t-wa').innerText = translations[currentLang].wa;
-        document.querySelector('.t-save').innerText = translations[currentLang].save;
-        document.querySelector('.t-social').innerText = currentLang === 'ar' ? 'ربط حساب التواصل (اختياري)' : 'Link Social Account (Optional)';
-        document.getElementById('statsText').innerText = translations[currentLang].stats;
+        const t = translations[currentLang];
         
+        // تحديث النصوص الثابتة
+        document.querySelector('.t-viewtag').innerText = t.viewtag;
+        document.querySelector('.t-call').innerText = t.call;
+        document.querySelector('.t-wa').innerText = t.wa;
+        document.querySelector('.t-save').innerText = t.save;
+        document.querySelector('.t-socialLbl').innerText = t.socialLbl;
+        document.getElementById('statsText').innerText = t.stats;
+        
+        // تحديث حقول التسجيل (Placeholders)
+        document.getElementById('regName').placeholder = t.pName;
+        document.getElementById('regPhone').placeholder = t.pPhone;
+        document.getElementById('regEmail').placeholder = t.pEmail;
+        document.getElementById('tOptApp').innerText = t.pApp;
+        document.getElementById('regAcc').placeholder = t.pAcc;
+        document.getElementById('tOptBlood').innerText = t.pBlood;
+        document.getElementById('regMed').placeholder = t.pMed;
+        document.getElementById('regPass').placeholder = t.pPass;
+        
+        const regTitleEl = document.getElementById('regTitle');
+        if (regTitleEl.innerText.includes('تفعيل') || regTitleEl.innerText.includes('ACTIVATE')) {
+            regTitleEl.innerText = t.regtitle;
+        } else {
+            regTitleEl.innerText = t.updatetitle;
+        }
+
         const subBtn = document.getElementById('subBtn');
-        if(subBtn.innerText.includes('حفظ') || subBtn.innerText.includes('Save')) {
-            // يبقي النص مناسباً للحالة
+        if (subBtn.innerText.includes('بث') || subBtn.innerText.includes('Breathe')) {
+            subBtn.innerText = t.subreg;
+        } else {
+            subBtn.innerText = t.subup;
         }
         
         if(globalData.name) renderData(globalData);
