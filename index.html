@@ -36,34 +36,35 @@
         #canvas-container { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
         #nfc-canvas { width: 100%; height: 100%; }
 
-        /* شاشة تحميل فخمة ومبهرة */
+        /* شاشة التحميل العملية والنظيفة المتوافقة مع ستايل الموقع */
         #loading-screen { 
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); 
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.92); 
             z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            transition: opacity 0.8s; backdrop-filter: blur(10px);
+            transition: opacity 0.6s; backdrop-filter: blur(12px);
         }
 
-        .loading-content { width: 85%; max-width: 350px; text-align: center; z-index: 101; }
-        
-        /* أيقونة نبض نيون جمالية في التحميل */
-        .loading-icon {
-            font-size: 2.5rem; color: var(--neon); margin-bottom: 20px;
-            text-shadow: 0 0 20px var(--neon);
-            animation: pulseIcon 1.5s infinite alternate;
+        .loading-card {
+            background: rgba(10, 30, 20, 0.94); padding: 2rem 1.5rem;
+            border-radius: 25px; border: 1px solid var(--neon);
+            width: 85%; max-width: 320px; text-align: center;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.15);
+            display: flex; flex-direction: column; align-items: center;
         }
-        @keyframes pulseIcon {
-            0% { transform: scale(1); opacity: 0.7; text-shadow: 0 0 10px var(--neon); }
-            100% { transform: scale(1.15); opacity: 1; text-shadow: 0 0 25px var(--neon-2); }
+
+        .loading-logo {
+            font-size: 1.8rem; letter-spacing: 4px; color: #fff;
+            text-shadow: 0 0 12px var(--neon); margin-bottom: 20px;
         }
 
         .neon-msg { 
-            font-size: 1.1rem; color: var(--neon); text-shadow: 0 0 15px var(--neon); 
-            opacity: 0; transition: opacity 0.4s; margin-bottom: 30px; min-height: 3rem;
-            display: flex; align-items: center; justify-content: center; line-height: 1.6;
+            font-size: 0.95rem; color: var(--neon); text-shadow: 0 0 10px var(--neon); 
+            opacity: 0; transition: opacity 0.3s ease-in-out; margin-bottom: 25px; min-height: 2.5rem;
+            display: flex; align-items: center; justify-content: center; line-height: 1.5;
+            font-weight: 500;
         }
 
-        .loader-wrapper { width: 70%; height: 3px; background: rgba(255,255,255,0.1); margin: 0 auto; border-radius: 5px; overflow: hidden; }
-        #loader-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--neon), var(--neon-2)); box-shadow: 0 0 12px var(--neon); transition: width 0.5s; }
+        .loader-wrapper { width: 80%; height: 2px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; }
+        #loader-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--neon), var(--neon-2)); box-shadow: 0 0 10px var(--neon); transition: width 0.4s ease; }
 
         .card { 
             background: rgba(10, 30, 20, 0.94); padding: 1.5rem; 
@@ -119,10 +120,10 @@
 
 <div id="canvas-container"><canvas id="nfc-canvas"></canvas></div>
 
-<!-- شاشة التحميل المطورة والأنيقة -->
+<!-- شاشة التحميل المخصصة والعملية -->
 <div id="loading-screen">
-    <div class="loading-content">
-        <div class="loading-icon"><i class="fas fa-fingerprint"></i></div>
+    <div class="loading-card">
+        <div class="loading-logo">أثَـــر</div>
         <div id="m-text" class="neon-msg"></div>
         <div class="loader-wrapper"><div id="loader-bar"></div></div>
     </div>
@@ -218,7 +219,10 @@
             pAcc: "اسم المستخدم أو المعرف...",
             pBlood: "فصيلة الدم (اختياري)",
             pMed: "أمراض مزمنة أو حساسية؟ (اختياري)",
-            pPass: "كلمة السر (4 أرقام لا تبدأ بـ 0) *"
+            pPass: "كلمة السر (4 أرقام لا تبدأ بـ 0) *",
+            loadSearching: "جاري البحث عن صاحب الأثر...",
+            loadFound: "تم العثور على المعلومات!",
+            loadNew: "مستخدم جديد.. مرحباً بك في عالم أثَر"
         },
         en: {
             viewtag: "ATHAR OWNER PROFILE",
@@ -243,7 +247,10 @@
             pAcc: "Username or Handle...",
             pBlood: "Blood Type (Optional)",
             pMed: "Chronic Disease or Allergy? (Optional)",
-            pPass: "Password (4 digits, not starting with 0) *"
+            pPass: "Password (4 digits, not starting with 0) *",
+            loadSearching: "Searching for Athar owner...",
+            loadFound: "Information found!",
+            loadNew: "New user.. Welcome to Athar"
         }
     };
 
@@ -305,9 +312,9 @@
         if(globalData.name) renderData(globalData);
     }
 
-    async function changeMsg(txt, p, duration = 1500) {
+    async function changeMsg(txt, p, duration = 1200) {
         msgEl.style.opacity = '0';
-        await new Promise(r => setTimeout(r, 450));
+        await new Promise(r => setTimeout(r, 300));
         msgEl.innerText = txt;
         msgEl.style.opacity = '1';
         bar.style.width = p + '%';
@@ -315,23 +322,22 @@
     }
 
     async function run() {
+        const t = translations[currentLang];
         if (!code) {
-            await changeMsg(currentLang === 'ar' ? '" كل ما نتركه خلفنا سيحكي عنا يوماً "' : '" Everything we leave behind will tell our story "', 100);
             finish('mainLanding');
             return;
         }
-        await changeMsg(currentLang === 'ar' ? '" كل ما نتركه خلفنا سيحكي عنا يوماً "' : '" Everything we leave behind will tell our story "', 30);
-        await changeMsg(currentLang === 'ar' ? 'جاري البحث عن صاحب الأثر...' : 'Searching for Athar owner...', 70);
+        await changeMsg(t.loadSearching, 50, 600);
         try {
             const res = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
             const data = await res.json();
             if (data.status === "تم التفعيل") {
                 globalData = data; 
                 renderData(data);
-                await changeMsg(currentLang === 'ar' ? 'تم العثور على المعلومات!' : 'Information found!', 100, 800);
+                await changeMsg(t.loadFound, 100, 600);
                 finish('displayCard');
             } else {
-                await changeMsg(currentLang === 'ar' ? 'مستخدم جديد.. مرحباً بك في عالم أثَر' : 'New user.. Welcome to Athar', 100, 1000);
+                await changeMsg(t.loadNew, 100, 800);
                 document.getElementById('hCode').value = code;
                 finish('regCard');
             }
@@ -406,7 +412,7 @@
             const el = document.getElementById(id);
             el.style.display = 'block';
             setTimeout(() => el.style.opacity = '1', 50);
-        }, 800);
+        }, 500);
     }
 
     const canvas = document.getElementById('nfc-canvas');
