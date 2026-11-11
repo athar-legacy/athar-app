@@ -75,12 +75,6 @@
         .info-box.emergency { border-right-color: var(--emergency); background: rgba(255, 51, 102, 0.05); }
         [dir="ltr"] .info-box.emergency { border-left-color: var(--emergency); }
         .info-box.emergency strong { color: var(--emergency); }
-
-        .stats-box {
-            background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.2);
-            padding: 10px; border-radius: 15px; margin: 12px 0; display: flex; align-items: center; justify-content: center; gap: 10px;
-            font-size: 0.8rem; color: var(--neon-2);
-        }
         
         .btn-container { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
         .btn { flex: 1; min-width: 45%; padding: 12px; border-radius: 12px; font-weight: bold; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; cursor: pointer; border: none; }
@@ -135,11 +129,6 @@
     <h1>أثَـــر</h1>
     <div class="tagline t-viewtag">بيانات صاحب الأثر</div>
     
-    <div class="stats-box">
-        <i class="fas fa-chart-line"></i>
-        <span id="statsText">عدد مرات المسح:</span> <strong id="visitCount" style="color:#fff; margin-right: 5px;">0</strong>
-    </div>
-
     <div id="displayFields"></div>
     <div class="btn-container">
         <a id="cBtn" class="btn btn-call"><i class="fas fa-phone"></i> <span class="t-call">اتصال</span></a>
@@ -197,7 +186,6 @@
             save: "حفظ في جهات الاتصال",
             subreg: "بث الحياة في أثرك",
             subup: "حفظ التغييرات",
-            stats: "عدد مرات المسح:",
             nameLbl: "صاحب الأثر",
             phoneLbl: "رقم الجوال",
             emailLbl: "البريد الإلكتروني",
@@ -223,7 +211,6 @@
             save: "Save to Contacts",
             subreg: "Breathe Life Into Your Athar",
             subup: "Save Changes",
-            stats: "Total Scans:",
             nameLbl: "Athar Owner",
             phoneLbl: "Phone Number",
             emailLbl: "Email",
@@ -242,6 +229,26 @@
         }
     };
 
+    // قاموس للترجمة الطبية الذكية للحالات الشائعة
+    const medicalDict = {
+        "حساسية اللاكتوز": "Lactose Intolerance",
+        "حساسية البنسلين": "Penicillin Allergy",
+        "ربو": "Asthma",
+        "سكري": "Diabetes",
+        "الضغط": "Hypertension",
+        "حساسية الفول السوداني": "Peanut Allergy"
+    };
+
+    function translateMedical(text) {
+        if (!text) return "";
+        if (currentLang === 'en') {
+            // يبحث في القاموس أو يرجع النص كما هو إذا لم يوجد تطابق حرفي
+            let trimmed = text.trim();
+            return medicalDict[trimmed] || text;
+        }
+        return text;
+    }
+
     function toggleLanguage() {
         currentLang = currentLang === 'ar' ? 'en' : 'ar';
         const root = document.getElementById('htmlRoot');
@@ -250,15 +257,12 @@
         
         const t = translations[currentLang];
         
-        // تحديث النصوص والعناوين
         document.querySelector('.t-viewtag').innerText = t.viewtag;
         document.querySelector('.t-call').innerText = t.call;
         document.querySelector('.t-wa').innerText = t.wa;
         document.querySelector('.t-save').innerText = t.save;
         document.querySelector('.t-socialLbl').innerText = t.socialLbl;
-        document.getElementById('statsText').innerText = t.stats;
         
-        // تحديث حقول التسجيل والـ Placeholders بدقة تامة
         document.getElementById('regName').placeholder = t.pName;
         document.getElementById('regPhone').placeholder = t.pPhone;
         document.getElementById('regEmail').placeholder = t.pEmail;
@@ -308,7 +312,6 @@
             if (data.status === "تم التفعيل") {
                 globalData = data; 
                 renderData(data);
-                document.getElementById('visitCount').innerText = data.visits || 1;
                 await changeMsg('تم العثور على المعلومات!', 100, 800);
                 finish('displayCard');
             } else {
@@ -332,7 +335,8 @@
         if(data.blood) html += `<div class="info-box" style="border-right-color: var(--neon-2);"><strong>${t.bloodLbl}</strong> <span style="color: var(--neon-2); font-weight: bold;">${data.blood}</span></div>`;
         
         if(data.medical && data.medical !== "undefined") {
-            html += `<div class="info-box emergency"><strong><i class="fas fa-heartbeat"></i> ${t.medLbl}</strong> <span style="color: #ff99bb;">${data.medical}</span></div>`;
+            const translatedMedical = translateMedical(data.medical);
+            html += `<div class="info-box emergency"><strong><i class="fas fa-heartbeat"></i> ${t.medLbl}</strong> <span style="color: #ff99bb;">${translatedMedical}</span></div>`;
         }
         
         if(data.account && data.account !== "undefined") html += `<div class="info-box"><strong>${t.socialLbl}</strong> <span>${data.account}</span></div>`;
