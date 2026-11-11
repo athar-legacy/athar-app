@@ -14,7 +14,7 @@
     <meta name="theme-color" content="#000000">
 
     <style>
-        :root { --neon: #00ffcc; --neon-2: #00f2ff; }
+        :root { --neon: #00ffcc; --neon-2: #00f2ff; --emergency: #ff3366; }
         
         body { 
             margin: 0; background: #000; color: #fff; 
@@ -67,11 +67,16 @@
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 15px; margin: 12px 0; border-right: 4px solid var(--neon); text-align: right; }
         .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 5px; }
         .info-box span { font-size: 1.05rem; color: #fff; }
+
+        /* تخصيص صندوق الطوارئ */
+        .info-box.emergency { border-right-color: var(--emergency); background: rgba(255, 51, 102, 0.05); }
+        .info-box.emergency strong { color: var(--emergency); }
         
-        .btn-container { display: flex; gap: 10px; margin-top: 20px; }
-        .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-container { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn { flex: 1; min-width: 45%; padding: 12px; border-radius: 12px; font-weight: bold; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; cursor: pointer; border: none; }
         .btn-call { background: var(--neon); }
-        .btn-wa { background: #25D366; }
+        .btn-wa { background: #25D366; color: #fff; }
+        .btn-save { background: var(--neon-2); width: 100%; margin-top: 5px; }
 
         input, select { width: 100%; padding: 14px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
         #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; color: #000; margin-top: 15px; cursor: pointer; }
@@ -127,6 +132,7 @@
     <div class="btn-container">
         <a id="cBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
         <a id="wBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
+        <button onclick="saveContact()" class="btn btn-save"><i class="fas fa-address-card"></i> حفظ في جهات الاتصال</button>
     </div>
 </div>
 
@@ -159,6 +165,7 @@
     const bar = document.getElementById('loader-bar');
     const msgEl = document.getElementById('m-text');
     let currentPass = ""; 
+    let globalData = {}; // لحفظ البيانات لإنشاء ملف جهة الاتصال
 
     async function changeMsg(txt, p, duration = 1500) {
         msgEl.style.opacity = '0';
@@ -181,6 +188,7 @@
             const res = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
             const data = await res.json();
             if (data.status === "تم التفعيل") {
+                globalData = data; // تخزين البيانات للاستخدام
                 renderData(data);
                 await changeMsg('تم العثور على المعلومات!', 100, 800);
                 finish('displayCard');
@@ -200,8 +208,13 @@
             <div class="info-box"><strong>رقم الجوال</strong> <span>${data.phone}</span></div>
         `;
         if(data.email && data.email !== "undefined") html += `<div class="info-box"><strong>البريد الإلكتروني</strong> <span>${data.email}</span></div>`;
-        if(data.blood) html += `<div class="info-box"><strong>فصيلة الدم</strong> <span>${data.blood}</span></div>`;
-        if(data.medical && data.medical !== "undefined") html += `<div class="info-box"><strong>الحالة الصحية</strong> <span>${data.medical}</span></div>`;
+        if(data.blood) html += `<div class="info-box" style="border-right-color: var(--neon-2);"><strong>فصيلة الدم</strong> <span style="color: var(--neon-2); font-weight: bold;">${data.blood}</span></div>`;
+        
+        // تمييز الحالة الصحية بلون خاص للطوارئ
+        if(data.medical && data.medical !== "undefined") {
+            html += `<div class="info-box emergency"><strong><i class="fas fa-heartbeat"></i> الحالة الصحية / حساسية</strong> <span style="color: #ff99bb;">${data.medical}</span></div>`;
+        }
+        
         if(data.account && data.account !== "undefined") html += `<div class="info-box"><strong>التواصل</strong> <span>${data.account}</span></div>`;
         
         container.innerHTML = html;
@@ -213,6 +226,20 @@
         document.getElementById('regEmail').value = (data.email !== "undefined") ? data.email : "";
         document.getElementById('regMed').value = (data.medical !== "undefined") ? data.medical : "";
         document.getElementById('hCode').value = code;
+    }
+
+    // دالة إنشاء ملف جهات الاتصال (vCard) لتنزيله بضغطة زر
+    function saveContact() {
+        if (!globalData.name || !globalData.phone) return;
+        const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${globalData.name}\nTEL:${globalData.phone}\nEMAIL:${globalData.email || ''}\nNOTE:تم الحفظ عبر مشروع أثر - Athar Legacy\nEND:VCARD`;
+        const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${globalData.name}.vcf`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     function unlockEdit() {
@@ -288,6 +315,7 @@
         const p = document.getElementById('regPlatform').value;
         const a = document.getElementById('regAcc').value;
         const params = new URLSearchParams();
+        params.append('name', document.getElementById('regName5'] || document.getElementById('regName').value);
         params.append('name', document.getElementById('regName').value);
         params.append('phone', document.getElementById('regPhone').value);
         params.append('email', document.getElementById('regEmail').value);
