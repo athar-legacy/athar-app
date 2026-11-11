@@ -229,7 +229,6 @@
         }
     };
 
-    // قاموس للترجمة الطبية الذكية للحالات الشائعة
     const medicalDict = {
         "حساسية اللاكتوز": "Lactose Intolerance",
         "حساسية البنسلين": "Penicillin Allergy",
@@ -242,7 +241,6 @@
     function translateMedical(text) {
         if (!text) return "";
         if (currentLang === 'en') {
-            // يبحث في القاموس أو يرجع النص كما هو إذا لم يوجد تطابق حرفي
             let trimmed = text.trim();
             return medicalDict[trimmed] || text;
         }
