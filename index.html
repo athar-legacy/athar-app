@@ -19,14 +19,16 @@
             margin: 0; background: #000; color: #fff; 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             display: flex; flex-direction: column; align-items: center; 
+            justify-content: center;
             min-height: 100vh; overflow-x: hidden;
+            padding: 10px; box-sizing: border-box;
         }
 
         #langToggle {
-            position: fixed; top: 20px; left: 20px; z-index: 10;
+            position: fixed; top: 15px; left: 15px; z-index: 10;
             background: rgba(0, 255, 204, 0.1); border: 1px solid var(--neon);
-            color: var(--neon); padding: 8px 14px; border-radius: 20px;
-            font-size: 0.75rem; font-weight: bold; cursor: pointer; backdrop-filter: blur(5px);
+            color: var(--neon); padding: 6px 12px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: bold; cursor: pointer; backdrop-filter: blur(5px);
             transition: 0.3s;
         }
         #langToggle:hover { background: var(--neon); color: #000; }
@@ -34,67 +36,81 @@
         #canvas-container { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
         #nfc-canvas { width: 100%; height: 100%; }
 
+        /* شاشة تحميل فخمة ومبهرة */
         #loading-screen { 
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); 
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); 
             z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            transition: opacity 0.8s; 
+            transition: opacity 0.8s; backdrop-filter: blur(10px);
         }
 
-        .loading-content { width: 90%; text-align: center; z-index: 101; }
+        .loading-content { width: 85%; max-width: 350px; text-align: center; z-index: 101; }
+        
+        /* أيقونة نبض نيون جمالية في التحميل */
+        .loading-icon {
+            font-size: 2.5rem; color: var(--neon); margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--neon);
+            animation: pulseIcon 1.5s infinite alternate;
+        }
+        @keyframes pulseIcon {
+            0% { transform: scale(1); opacity: 0.7; text-shadow: 0 0 10px var(--neon); }
+            100% { transform: scale(1.15); opacity: 1; text-shadow: 0 0 25px var(--neon-2); }
+        }
+
         .neon-msg { 
-            font-size: 1.3rem; color: var(--neon); text-shadow: 0 0 20px var(--neon); 
-            opacity: 0; transition: opacity 0.4s; margin-bottom: 50px; min-height: 3.5rem;
-            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: var(--neon); text-shadow: 0 0 15px var(--neon); 
+            opacity: 0; transition: opacity 0.4s; margin-bottom: 30px; min-height: 3rem;
+            display: flex; align-items: center; justify-content: center; line-height: 1.6;
         }
 
-        .loader-wrapper { width: 60%; height: 2px; background: rgba(255,255,255,0.1); margin: 0 auto; }
-        #loader-bar { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: width 0.5s; }
+        .loader-wrapper { width: 70%; height: 3px; background: rgba(255,255,255,0.1); margin: 0 auto; border-radius: 5px; overflow: hidden; }
+        #loader-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--neon), var(--neon-2)); box-shadow: 0 0 12px var(--neon); transition: width 0.5s; }
 
         .card { 
-            background: rgba(10, 30, 20, 0.92); padding: 2rem; 
-            border-radius: 30px; border: 1px solid var(--neon); 
-            width: 85%; max-width: 420px; z-index: 2; 
+            background: rgba(10, 30, 20, 0.94); padding: 1.5rem; 
+            border-radius: 25px; border: 1px solid var(--neon); 
+            width: 90%; max-width: 400px; z-index: 2; 
             backdrop-filter: blur(15px); text-align: center; 
-            display: none; opacity: 0; transition: 0.8s; margin: 40px 0;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.1); 
-            max-height: 85vh; overflow-y: auto;
+            display: none; opacity: 0; transition: 0.8s; margin: 10px 0;
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.12); 
+            max-height: 90vh; overflow-y: auto;
+            box-sizing: border-box;
         }
 
-        h1 { margin: 0; font-size: 2.5rem; text-shadow: 0 0 15px var(--neon); letter-spacing: 5px; }
-        .tagline { color: var(--neon-2); font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
+        h1 { margin: 0 0 5px 0; font-size: 2.2rem; text-shadow: 0 0 12px var(--neon); letter-spacing: 4px; }
+        .tagline { color: var(--neon-2); font-size: 0.65rem; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; }
         
-        .description { text-align: right; border-right: 3px solid var(--neon); padding-right: 15px; margin: 20px 0; }
-        [dir="ltr"] .description { text-align: left; border-right: none; border-left: 3px solid var(--neon); padding-right: 0; padding-left: 15px; }
-        .description p { font-size: 0.85rem; line-height: 1.7; color: #ddd; margin: 8px 0; }
+        .description { text-align: right; border-right: 3px solid var(--neon); padding-right: 12px; margin: 15px 0; }
+        [dir="ltr"] .description { text-align: left; border-right: none; border-left: 3px solid var(--neon); padding-right: 0; padding-left: 12px; }
+        .description p { font-size: 0.8rem; line-height: 1.6; color: #ddd; margin: 6px 0; }
 
-        .info-box { background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 15px; margin: 12px 0; border-right: 4px solid var(--neon); text-align: right; }
-        [dir="ltr"] .info-box { text-align: left; border-right: none; border-left: 4px solid var(--neon); }
-        .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 5px; }
-        .info-box span { font-size: 1.05rem; color: #fff; }
+        .info-box { background: rgba(255, 255, 255, 0.04); padding: 10px 12px; border-radius: 12px; margin: 8px 0; border-right: 3px solid var(--neon); text-align: right; }
+        [dir="ltr"] .info-box { text-align: left; border-right: none; border-left: 3px solid var(--neon); }
+        .info-box strong { color: var(--neon-2); font-size: 0.65rem; display: block; margin-bottom: 3px; }
+        .info-box span { font-size: 0.95rem; color: #fff; }
 
-        .info-box.emergency { border-right-color: var(--emergency); background: rgba(255, 51, 102, 0.05); }
+        .info-box.emergency { border-right-color: var(--emergency); background: rgba(255, 51, 102, 0.04); }
         [dir="ltr"] .info-box.emergency { border-left-color: var(--emergency); }
         .info-box.emergency strong { color: var(--emergency); }
         
-        .btn-container { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .btn { flex: 1; min-width: 45%; padding: 12px; border-radius: 12px; font-weight: bold; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; cursor: pointer; border: none; }
+        .btn-container { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
+        .btn { flex: 1; min-width: 45%; padding: 10px; border-radius: 10px; font-weight: bold; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.85rem; cursor: pointer; border: none; }
         .btn-call { background: var(--neon); }
         .btn-wa { background: #25D366; color: #fff; }
-        .btn-save { background: var(--neon-2); width: 100%; margin-top: 5px; }
+        .btn-save { background: var(--neon-2); width: 100%; margin-top: 4px; }
 
         .social-group {
-            background: rgba(0, 255, 204, 0.03);
+            background: rgba(0, 255, 204, 0.02);
             border: 1px dashed rgba(0, 255, 204, 0.3);
-            padding: 10px; border-radius: 15px; margin: 10px 0; text-align: right;
+            padding: 8px; border-radius: 12px; margin: 8px 0; text-align: right;
         }
         [dir="ltr"] .social-group { text-align: left; }
-        .social-label { font-size: 0.75rem; color: var(--neon-2); margin-bottom: 5px; display: block; }
+        .social-label { font-size: 0.7rem; color: var(--neon-2); margin-bottom: 4px; display: block; }
 
-        input, select { width: 100%; padding: 14px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
+        input, select { width: 100%; padding: 11px; margin: 6px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; font-size: 0.9rem; }
         [dir="ltr"] input, [dir="ltr"] select { text-align: left; }
-        #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; color: #000; margin-top: 15px; cursor: pointer; }
+        #subBtn { width: 100%; padding: 13px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 10px; font-weight: bold; color: #000; margin-top: 10px; cursor: pointer; font-size: 0.95rem; }
         
-        .signature-area { margin-top: 30px; font-size: 0.65rem; color: #555; border-top: 1px solid #222; padding-top: 20px; letter-spacing: 2px; }
+        .signature-area { margin-top: 20px; font-size: 0.6rem; color: #555; border-top: 1px solid #222; padding-top: 15px; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -103,8 +119,10 @@
 
 <div id="canvas-container"><canvas id="nfc-canvas"></canvas></div>
 
+<!-- شاشة التحميل المطورة والأنيقة -->
 <div id="loading-screen">
     <div class="loading-content">
+        <div class="loading-icon"><i class="fas fa-fingerprint"></i></div>
         <div id="m-text" class="neon-msg"></div>
         <div class="loader-wrapper"><div id="loader-bar"></div></div>
     </div>
@@ -123,8 +141,8 @@
 </div>
 
 <div class="card" id="displayCard" style="position: relative;">
-    <div onclick="unlockEdit()" id="editToggle" style="position: absolute; top: 25px; right: 25px; cursor: pointer; opacity: 0.5;">
-        <i class="fas fa-user-lock" style="color: var(--neon); font-size: 1.1rem;"></i>
+    <div onclick="unlockEdit()" id="editToggle" style="position: absolute; top: 20px; right: 20px; cursor: pointer; opacity: 0.5;">
+        <i class="fas fa-user-lock" style="color: var(--neon); font-size: 1rem;"></i>
     </div>
     <h1>أثَـــر</h1>
     <div class="tagline t-viewtag">بيانات صاحب الأثر</div>
@@ -298,22 +316,22 @@
 
     async function run() {
         if (!code) {
-            await changeMsg('" كل ما نتركه خلفنا سيحكي عنا يوماً "', 100);
+            await changeMsg(currentLang === 'ar' ? '" كل ما نتركه خلفنا سيحكي عنا يوماً "' : '" Everything we leave behind will tell our story "', 100);
             finish('mainLanding');
             return;
         }
-        await changeMsg('" كل ما نتركه خلفنا سيحكي عنا يوماً "', 30);
-        await changeMsg('جاري البحث عن صاحب الأثر...', 70);
+        await changeMsg(currentLang === 'ar' ? '" كل ما نتركه خلفنا سيحكي عنا يوماً "' : '" Everything we leave behind will tell our story "', 30);
+        await changeMsg(currentLang === 'ar' ? 'جاري البحث عن صاحب الأثر...' : 'Searching for Athar owner...', 70);
         try {
             const res = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
             const data = await res.json();
             if (data.status === "تم التفعيل") {
                 globalData = data; 
                 renderData(data);
-                await changeMsg('تم العثور على المعلومات!', 100, 800);
+                await changeMsg(currentLang === 'ar' ? 'تم العثور على المعلومات!' : 'Information found!', 100, 800);
                 finish('displayCard');
             } else {
-                await changeMsg('مستخدم جديد.. مرحباً بك في عالم أثَر', 100, 1000);
+                await changeMsg(currentLang === 'ar' ? 'مستخدم جديد.. مرحباً بك في عالم أثَر' : 'New user.. Welcome to Athar', 100, 1000);
                 document.getElementById('hCode').value = code;
                 finish('regCard');
             }
