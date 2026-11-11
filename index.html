@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +21,16 @@
             display: flex; flex-direction: column; align-items: center; 
             min-height: 100vh; overflow-x: hidden;
         }
+
+        /* زر تبديل اللغة العلوي */
+        #langToggle {
+            position: fixed; top: 20px; left: 20px; z-index: 10;
+            background: rgba(0, 255, 204, 0.1); border: 1px solid var(--neon);
+            color: var(--neon); padding: 8px 14px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: bold; cursor: pointer; backdrop-filter: blur(5px);
+            transition: 0.3s;
+        }
+        #langToggle:hover { background: var(--neon); color: #000; }
 
         #canvas-container { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
         #nfc-canvas { width: 100%; height: 100%; }
@@ -55,20 +65,34 @@
         .tagline { color: var(--neon-2); font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; }
         
         .description { text-align: right; border-right: 3px solid var(--neon); padding-right: 15px; margin: 20px 0; }
+        [dir="ltr"] .description { text-align: left; border-right: none; border-left: 3px solid var(--neon); padding-right: 0; padding-left: 15px; }
         .description p { font-size: 0.85rem; line-height: 1.7; color: #ddd; margin: 8px 0; }
 
         .instruction-section { text-align: right; margin-top: 25px; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid rgba(0,255,204,0.1); }
+        [dir="ltr"] .instruction-section { text-align: left; }
         .instruction-title { color: var(--neon); font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        [dir="ltr"] .instruction-title { flex-direction: row-reverse; justify-content: flex-end; }
         .instruction-list { list-style: none; padding: 0; margin: 0; }
         .instruction-list li { font-size: 0.75rem; color: #bbb; line-height: 1.6; margin-bottom: 12px; position: relative; padding-right: 20px; }
+        [dir="ltr"] .instruction-list li { padding-right: 0; padding-left: 20px; }
         .instruction-list li::before { content: "•"; color: var(--neon); position: absolute; right: 0; }
+        [dir="ltr"] .instruction-list li::before { right: auto; left: 0; }
 
         .info-box { background: rgba(255, 255, 255, 0.05); padding: 14px; border-radius: 15px; margin: 12px 0; border-right: 4px solid var(--neon); text-align: right; }
+        [dir="ltr"] .info-box { text-align: left; border-right: none; border-left: 4px solid var(--neon); }
         .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 5px; }
         .info-box span { font-size: 1.05rem; color: #fff; }
 
         .info-box.emergency { border-right-color: var(--emergency); background: rgba(255, 51, 102, 0.05); }
+        [dir="ltr"] .info-box.emergency { border-left-color: var(--emergency); }
         .info-box.emergency strong { color: var(--emergency); }
+
+        /* صندوق الإحصائيات الفخم */
+        .stats-box {
+            background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.2);
+            padding: 10px; border-radius: 15px; margin: 12px 0; display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 0.8rem; color: var(--neon-2);
+        }
         
         .btn-container { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
         .btn { flex: 1; min-width: 45%; padding: 12px; border-radius: 12px; font-weight: bold; text-decoration: none; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem; cursor: pointer; border: none; }
@@ -79,19 +103,22 @@
         .social-group {
             background: rgba(0, 255, 204, 0.03);
             border: 1px dashed rgba(0, 255, 204, 0.3);
-            padding: 10px;
-            border-radius: 15px;
-            margin: 10px 0;
+            padding: 10px; border-radius: 15px; margin: 10px 0; text-align: right;
         }
-        .social-label { font-size: 0.75rem; color: var(--neon-2); text-align: right; margin-bottom: 5px; display: block; }
+        [dir="ltr"] .social-group { text-align: left; }
+        .social-label { font-size: 0.75rem; color: var(--neon-2); margin-bottom: 5px; display: block; }
 
         input, select { width: 100%; padding: 14px; margin: 8px 0; background: rgba(0,0,0,0.6); border: 1px solid var(--neon); color: #fff; border-radius: 10px; text-align: right; box-sizing: border-box; }
+        [dir="ltr"] input, [dir="ltr"] select { text-align: left; }
         #subBtn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--neon), var(--neon-2)); border: none; border-radius: 12px; font-weight: bold; color: #000; margin-top: 15px; cursor: pointer; }
         
         .signature-area { margin-top: 30px; font-size: 0.65rem; color: #555; border-top: 1px solid #222; padding-top: 20px; letter-spacing: 2px; }
     </style>
 </head>
 <body>
+
+<!-- زر تغيير اللغة -->
+<button id="langToggle" onclick="toggleLanguage()">EN / عربي</button>
 
 <div id="canvas-container"><canvas id="nfc-canvas"></canvas></div>
 
@@ -102,47 +129,42 @@
     </div>
 </div>
 
+<!-- بطاقة الترحيب (عند عدم وجود كود) -->
 <div class="card" id="mainLanding">
     <h1>أثَـــر</h1>
     <div class="tagline">ATHAR LEGACY GUIDE</div>
     
     <div class="description">
-        <p>في <span style="color: var(--neon); font-weight: bold;">أثَـــر</span>، نحوّل القطع الفنية إلى مخازن رقمية للذكريات.</p>
-        <p>دمجنا سحر الريزن اليدوي بتقنية NFC المتطورة لتخليد هويتك بلمسة واحدة من جوالك.</p>
-    </div>
-
-    <div class="instruction-section">
-        <div class="instruction-title"><i class="fas fa-magic"></i> كيف تبدأ أثرك؟</div>
-        <ul class="instruction-list">
-            <li>قم بتفعيل خاصية الـ NFC في هاتفك وقربه من القطعة.</li>
-            <li>للتفعيل الأول: سيفتح لك نموذج التسجيل، أدخل بياناتك واختر كلمة سر خاصة بك.</li>
-            <li>للتصفح: أي شخص يمرر هاتفه سيتمكن من رؤية بياناتك (الاسم، الجوال، فصيلة الدم).</li>
-        </ul>
-
-        <div class="instruction-title" style="margin-top: 20px; color: var(--neon-2);"><i class="fas fa-edit"></i> تحديث البيانات</div>
-        <ul class="instruction-list">
-            <li>عند مسح القطعة، اضغط على أيقونة القفل الصغير <i class="fas fa-user-lock" style="font-size: 0.6rem;"></i> في الزاوية العلوية.</li>
-            <li>أدخل كلمة السر التي اخترتها عند التسجيل لتتمكن من تعديل معلوماتك في أي وقت.</li>
-        </ul>
+        <p class="t-desc1">في <span style="color: var(--neon); font-weight: bold;">أثَـــر</span>، نحوّل القطع الفنية إلى مخازن رقمية للذكريات.</p>
+        <p class="t-desc2">دمجنا سحر الريزن اليدوي بتقنية NFC المتطورة لتخليد هويتك بلمسة واحدة من جوالك.</p>
     </div>
 
     <div class="signature-area">PROJECT BY: <span style="color: #999;">WELF BASSAM</span></div>
 </div>
 
+<!-- بطاقة عرض البيانات -->
 <div class="card" id="displayCard" style="position: relative;">
     <div onclick="unlockEdit()" id="editToggle" style="position: absolute; top: 25px; right: 25px; cursor: pointer; opacity: 0.5;">
         <i class="fas fa-user-lock" style="color: var(--neon); font-size: 1.1rem;"></i>
     </div>
     <h1>أثَـــر</h1>
-    <div class="tagline">بيانات صاحب الأثر</div>
+    <div class="tagline t-viewtag">بيانات صاحب الأثر</div>
+    
+    <!-- عداد الإحصائيات -->
+    <div class="stats-box">
+        <i class="fas fa-chart-line"></i>
+        <span id="statsText">عدد مرات المسح:</span> <strong id="visitCount" style="color:#fff; margin-right: 5px;">0</strong>
+    </div>
+
     <div id="displayFields"></div>
     <div class="btn-container">
-        <a id="cBtn" class="btn btn-call"><i class="fas fa-phone"></i> اتصال</a>
-        <a id="wBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> واتساب</a>
-        <button onclick="saveContact()" class="btn btn-save"><i class="fas fa-address-card"></i> حفظ في جهات الاتصال</button>
+        <a id="cBtn" class="btn btn-call"><i class="fas fa-phone"></i> <span class="t-call">اتصال</span></a>
+        <a id="wBtn" class="btn btn-wa"><i class="fab fa-whatsapp"></i> <span class="t-wa">واتساب</span></a>
+        <button onclick="saveContact()" class="btn btn-save"><i class="fas fa-address-card"></i> <span class="t-save">حفظ في جهات الاتصال</span></button>
     </div>
 </div>
 
+<!-- بطاقة التسجيل والتحديث -->
 <div class="card" id="regCard">
     <h1>أثَـــر</h1>
     <div class="tagline" id="regTitle">تفعيل قطعة جديدة</div>
@@ -152,23 +174,21 @@
         <input type="email" id="regEmail" placeholder="البريد الإلكتروني (اختياري)">
         
         <div class="social-group">
-            <span class="social-label"><i class="fas fa-share-alt"></i> ربط حساب التواصل (اختياري)</span>
+            <span class="social-label"><i class="fas fa-share-alt"></i> <span class="t-social">ربط حساب التواصل (اختياري)</span></span>
             <select id="regPlatform">
-                <option value="">اختر التطبيق...</option>
+                <option value="" class="t-selectapp">اختر التطبيق...</option>
                 <option>Snapchat</option><option>Instagram</option><option>Telegram</option><option>X</option>
             </select>
-            <input type="text" id="regAcc" placeholder="اكتب اسم المستخدم أو المعرف هنا...">
+            <input type="text" id="regAcc" placeholder="اسم المستخدم أو المعرف...">
         </div>
 
         <select id="regBlood">
-            <option value="">فصيلة الدم (اختياري)</option>
+            <option value="" class="t-selectblood">فصيلة الدم (اختياري)</option>
             <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
         </select>
         
         <input type="text" id="regMed" placeholder="أمراض مزمنة أو حساسية؟ (اختياري)">
-        
-        <!-- شرط منع البدء بالصفر: تتكون من 4 أرقام ولا تبدأ بالرقم 0 -->
-        <input type="text" id="regPass" placeholder="كلمة السر (4 أرقام لا تبدأ بـ 0 مثل 1234) *" pattern="[1-9][0-9]{3}" maxlength="4" title="يجب أن تكون 4 أرقام ولا تبدأ بالصفر" required>
+        <input type="text" id="regPass" placeholder="كلمة السر (4 أرقام لا تبدأ بـ 0) *" pattern="[1-9][0-9]{3}" maxlength="4" title="يجب أن تكون 4 أرقام ولا تبدأ بالصفر" required>
         
         <input type="hidden" id="hCode">
         <button type="submit" id="subBtn">بث الحياة في أثرك</button>
@@ -182,6 +202,69 @@
     const msgEl = document.getElementById('m-text');
     let currentPass = ""; 
     let globalData = {}; 
+    let currentLang = 'ar';
+
+    // نصوص اللغات (عربي / إنجليزي)
+    const translations = {
+        ar: {
+            tagline: "ATHAR LEGACY GUIDE",
+            viewtag: "بيانات صاحب الأثر",
+            regtitle: "تفعيل قطعة جديدة",
+            updatetitle: "تحديث بيانات الأثر",
+            call: "اتصال",
+            wa: "واتساب",
+            save: "حفظ في جهات الاتصال",
+            subreg: "بث الحياة في أثرك",
+            subup: "حفظ التغييرات",
+            stats: "عدد مرات المسح:",
+            nameLbl: "صاحب الأثر",
+            phoneLbl: "رقم الجوال",
+            emailLbl: "البريد الإلكتروني",
+            bloodLbl: "فصيلة الدم",
+            medLbl: "الحالة الصحية / حساسية",
+            socialLbl: "التواصل"
+        },
+        en: {
+            tagline: "ATHAR LEGACY GUIDE",
+            viewtag: "ATHAR OWNER PROFILE",
+            regtitle: "ACTIVATE NEW PIECE",
+            updatetitle: "UPDATE ATHAR DATA",
+            call: "Call",
+            wa: "WhatsApp",
+            save: "Save to Contacts",
+            subreg: "Breathe Life Into Your Athar",
+            subup: "Save Changes",
+            stats: "Total Scans:",
+            nameLbl: "Athar Owner",
+            phoneLbl: "Phone Number",
+            emailLbl: "Email",
+            bloodLbl: "Blood Type",
+            medLbl: "Medical Condition / Allergy",
+            socialLbl: "Social Media"
+        }
+    };
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        const root = document.getElementById('htmlRoot');
+        root.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+        root.setAttribute('lang', currentLang);
+        
+        // تحديث النصوص الثابتة
+        document.querySelector('.t-viewtag').innerText = translations[currentLang].viewtag;
+        document.querySelector('.t-call').innerText = translations[currentLang].call;
+        document.querySelector('.t-wa').innerText = translations[currentLang].wa;
+        document.querySelector('.t-save').innerText = translations[currentLang].save;
+        document.querySelector('.t-social').innerText = currentLang === 'ar' ? 'ربط حساب التواصل (اختياري)' : 'Link Social Account (Optional)';
+        document.getElementById('statsText').innerText = translations[currentLang].stats;
+        
+        const subBtn = document.getElementById('subBtn');
+        if(subBtn.innerText.includes('حفظ') || subBtn.innerText.includes('Save')) {
+            // يبقي النص مناسباً للحالة
+        }
+        
+        if(globalData.name) renderData(globalData);
+    }
 
     async function changeMsg(txt, p, duration = 1500) {
         msgEl.style.opacity = '0';
@@ -206,6 +289,7 @@
             if (data.status === "تم التفعيل") {
                 globalData = data; 
                 renderData(data);
+                document.getElementById('visitCount').innerText = data.visits || 1;
                 await changeMsg('تم العثور على المعلومات!', 100, 800);
                 finish('displayCard');
             } else {
@@ -219,18 +303,20 @@
     function renderData(data) {
         currentPass = data.password !== undefined && data.password !== null ? String(data.password).trim() : ""; 
         const container = document.getElementById('displayFields');
+        const t = translations[currentLang];
+        
         let html = `
-            <div class="info-box"><strong>صاحب الأثر</strong> <span>${data.name}</span></div>
-            <div class="info-box"><strong>رقم الجوال</strong> <span>${data.phone}</span></div>
+            <div class="info-box"><strong>${t.nameLbl}</strong> <span>${data.name}</span></div>
+            <div class="info-box"><strong>${t.phoneLbl}</strong> <span>${data.phone}</span></div>
         `;
-        if(data.email && data.email !== "undefined") html += `<div class="info-box"><strong>البريد الإلكتروني</strong> <span>${data.email}</span></div>`;
-        if(data.blood) html += `<div class="info-box" style="border-right-color: var(--neon-2);"><strong>فصيلة الدم</strong> <span style="color: var(--neon-2); font-weight: bold;">${data.blood}</span></div>`;
+        if(data.email && data.email !== "undefined") html += `<div class="info-box"><strong>${t.emailLbl}</strong> <span>${data.email}</span></div>`;
+        if(data.blood) html += `<div class="info-box" style="border-right-color: var(--neon-2);"><strong>${t.bloodLbl}</strong> <span style="color: var(--neon-2); font-weight: bold;">${data.blood}</span></div>`;
         
         if(data.medical && data.medical !== "undefined") {
-            html += `<div class="info-box emergency"><strong><i class="fas fa-heartbeat"></i> الحالة الصحية / حساسية</strong> <span style="color: #ff99bb;">${data.medical}</span></div>`;
+            html += `<div class="info-box emergency"><strong><i class="fas fa-heartbeat"></i> ${t.medLbl}</strong> <span style="color: #ff99bb;">${data.medical}</span></div>`;
         }
         
-        if(data.account && data.account !== "undefined") html += `<div class="info-box"><strong>التواصل</strong> <span>${data.account}</span></div>`;
+        if(data.account && data.account !== "undefined") html += `<div class="info-box"><strong>${t.socialLbl}</strong> <span>${data.account}</span></div>`;
         
         container.innerHTML = html;
         document.getElementById('cBtn').href = `tel:${data.phone}`;
@@ -257,7 +343,7 @@
     }
 
     function unlockEdit() {
-        const userPass = prompt("أدخل كلمة السر (4 أرقام):");
+        const userPass = prompt(currentLang === 'ar' ? "أدخل كلمة السر (4 أرقام):" : "Enter Password (4 digits):");
         if (userPass === null) return;
         
         const inputPass = String(userPass).trim();
@@ -267,10 +353,10 @@
             document.getElementById('displayCard').style.display = 'none';
             document.getElementById('regCard').style.display = 'block';
             setTimeout(() => document.getElementById('regCard').style.opacity = '1', 50);
-            document.getElementById('regTitle').innerText = "تحديث بيانات الأثر";
-            document.getElementById('subBtn').innerText = "حفظ التغييرات";
+            document.getElementById('regTitle').innerText = translations[currentLang].updatetitle;
+            document.getElementById('subBtn').innerText = translations[currentLang].subup;
         } else {
-            alert("عذراً، كلمة السر غير صحيحة.");
+            alert(currentLang === 'ar' ? "عذراً، كلمة السر غير صحيحة." : "Sorry, incorrect password.");
         }
     }
 
@@ -326,13 +412,13 @@
     document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
         const btn = document.getElementById('subBtn');
-        btn.innerText = 'جاري المعالجة...'; btn.disabled = true;
+        btn.innerText = currentLang === 'ar' ? 'جاري المعالجة...' : 'Processing...'; 
+        btn.disabled = true;
         const p = document.getElementById('regPlatform').value;
         const a = document.getElementById('regAcc').value;
         const params = new URLSearchParams();
         params.append('name', document.getElementById('regName').value);
         params.append('phone', document.getElementById('regPhone').value);
-        params.append('email', document.getElementById('regEmail, regEmail').value || document.getElementById('regEmail').value);
         params.append('email', document.getElementById('regEmail').value);
         params.append('account', p ? p + ": " + a : a);
         params.append('bloodType', document.getElementById('regBlood').value);
@@ -340,7 +426,7 @@
         params.append('password', String(document.getElementById('regPass').value).trim());
         params.append('itemCode', document.getElementById('hCode').value);
         fetch(webAppUrl, { method: 'POST', mode: 'no-cors', body: params })
-        .then(() => { alert('تم بنجاح!'); location.reload(); });
+        .then(() => { alert(currentLang === 'ar' ? 'تم بنجاح!' : 'Success!'); location.reload(); });
     };
 </script>
 </body>
