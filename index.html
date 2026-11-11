@@ -250,7 +250,7 @@
         
         const t = translations[currentLang];
         
-        // تحديث النصوص الثابتة
+        // تحديث النصوص والعناوين
         document.querySelector('.t-viewtag').innerText = t.viewtag;
         document.querySelector('.t-call').innerText = t.call;
         document.querySelector('.t-wa').innerText = t.wa;
@@ -258,7 +258,7 @@
         document.querySelector('.t-socialLbl').innerText = t.socialLbl;
         document.getElementById('statsText').innerText = t.stats;
         
-        // تحديث حقول التسجيل (Placeholders)
+        // تحديث حقول التسجيل والـ Placeholders بدقة تامة
         document.getElementById('regName').placeholder = t.pName;
         document.getElementById('regPhone').placeholder = t.pPhone;
         document.getElementById('regEmail').placeholder = t.pEmail;
