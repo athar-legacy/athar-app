@@ -68,7 +68,6 @@
         .info-box strong { color: var(--neon-2); font-size: 0.7rem; display: block; margin-bottom: 5px; }
         .info-box span { font-size: 1.05rem; color: #fff; }
 
-        /* تخصيص صندوق الطوارئ */
         .info-box.emergency { border-right-color: var(--emergency); background: rgba(255, 51, 102, 0.05); }
         .info-box.emergency strong { color: var(--emergency); }
         
@@ -165,7 +164,7 @@
     const bar = document.getElementById('loader-bar');
     const msgEl = document.getElementById('m-text');
     let currentPass = ""; 
-    let globalData = {}; // لحفظ البيانات لإنشاء ملف جهة الاتصال
+    let globalData = {}; 
 
     async function changeMsg(txt, p, duration = 1500) {
         msgEl.style.opacity = '0';
@@ -188,7 +187,7 @@
             const res = await fetch(`${webAppUrl}?read=${encodeURIComponent(code)}`);
             const data = await res.json();
             if (data.status === "تم التفعيل") {
-                globalData = data; // تخزين البيانات للاستخدام
+                globalData = data; 
                 renderData(data);
                 await changeMsg('تم العثور على المعلومات!', 100, 800);
                 finish('displayCard');
@@ -210,7 +209,6 @@
         if(data.email && data.email !== "undefined") html += `<div class="info-box"><strong>البريد الإلكتروني</strong> <span>${data.email}</span></div>`;
         if(data.blood) html += `<div class="info-box" style="border-right-color: var(--neon-2);"><strong>فصيلة الدم</strong> <span style="color: var(--neon-2); font-weight: bold;">${data.blood}</span></div>`;
         
-        // تمييز الحالة الصحية بلون خاص للطوارئ
         if(data.medical && data.medical !== "undefined") {
             html += `<div class="info-box emergency"><strong><i class="fas fa-heartbeat"></i> الحالة الصحية / حساسية</strong> <span style="color: #ff99bb;">${data.medical}</span></div>`;
         }
@@ -228,7 +226,6 @@
         document.getElementById('hCode').value = code;
     }
 
-    // دالة إنشاء ملف جهات الاتصال (vCard) لتنزيله بضغطة زر
     function saveContact() {
         if (!globalData.name || !globalData.phone) return;
         const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${globalData.name}\nTEL:${globalData.phone}\nEMAIL:${globalData.email || ''}\nNOTE:تم الحفظ عبر مشروع أثر - Athar Legacy\nEND:VCARD`;
@@ -315,7 +312,6 @@
         const p = document.getElementById('regPlatform').value;
         const a = document.getElementById('regAcc').value;
         const params = new URLSearchParams();
-        params.append('name', document.getElementById('regName5'] || document.getElementById('regName').value);
         params.append('name', document.getElementById('regName').value);
         params.append('phone', document.getElementById('regPhone').value);
         params.append('email', document.getElementById('regEmail').value);
